@@ -1,0 +1,673 @@
+/* Уточнение концепции Warm Travertine: полноэкранная десктопная фотография и адаптивная мобильная версия. */
+:root {
+  --color-paper-2: oklch(93% .012 80);
+  --color-light: oklch(99% .004 85);
+  --color-rule-2: oklch(68% .018 75);
+  --color-accent-soft: oklch(94% .03 245);
+  --color-accent-hi: var(--color-accent-hover);
+  --travertine-white: #f7f4ec;
+  --travertine-muted: #d2d2c9;
+  --travertine-scrim: #111c26e6;
+  --travertine-scrim-left: #111c26fa;
+  --travertine-scrim-mid: #111c26b8;
+  --travertine-scrim-soft: #111c2640;
+  --travertine-top-scrim: #111c2680;
+  --travertine-header-rule: #f7f4ec33;
+  --travertine-title-shadow: 0 3px 20px oklch(14% 0.03 240 / 0.5);
+  --travertine-icon: oklch(56% 0.22 255);
+  --travertine-heading: "Montserrat", system-ui, sans-serif;
+  --travertine-btn-font: "Montserrat", system-ui, sans-serif;
+  --travertine-menu-height: 88px;
+  --travertine-gutter: max(40px, calc((100% - 1320px) / 2));
+}
+
+.travertine-page h1 { overflow-wrap: break-word; min-width: 0; text-wrap: balance; }
+.travertine-page .quiz-choice { border: 1px solid var(--color-rule-2); background: var(--color-light); }
+.travertine-page .quiz-choice:hover { border-color: var(--color-accent); background: var(--color-paper-2); }
+.travertine-page .quiz-choice:has(input:checked) { border-color: var(--color-accent); background: var(--color-accent-soft); box-shadow: inset 0 0 0 1px var(--color-accent); }
+.travertine-page .quiz-choice:has(input:disabled) { border-color: var(--color-rule); background: var(--color-paper-2); }
+.travertine-page .quiz-choice:has(input:focus-visible) { outline: 2px solid var(--color-focus); outline-offset: 3px; }
+.travertine-page .quiz-messengers .quiz-choice {
+  box-sizing: border-box;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  min-height: calc(56px - var(--quiz-control-trim));
+  height: calc(56px - var(--quiz-control-trim));
+  padding: calc(12px - var(--quiz-control-trim) / 2) 16px;
+}
+.travertine-page .quiz-messengers .quiz-choice:has(input:checked),
+.travertine-page .quiz-messengers .quiz-choice.is-selected {
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+  box-shadow: inset 0 0 0 1px var(--color-accent);
+  color: var(--color-ink);
+}
+.travertine-page .quiz-messengers input[type="radio"],
+.travertine-page .quiz-messenger-radio {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+  pointer-events: none;
+}
+.travertine-page .quiz-messenger-text {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+.travertine-page .quiz-messenger-icon {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+}
+.travertine-page .quiz-options:not(.quiz-messengers) { grid-template-columns: minmax(0, 1fr); }
+
+/* Общие стили страницы Warm Travertine */
+.travertine-page {
+  background: #111c26;
+}
+
+/* Единая прокрутка без светлого фона за фотографией при отскоке. */
+html:has(.travertine-page) {
+  background: #111c26;
+  overscroll-behavior-y: none;
+}
+
+/* Десктопная архитектура: полноэкранная фотография со слайдами (100% экрана) и контент поверх */
+.viewport {
+  position: relative;
+  width: 100%;
+  min-height: 100svh;
+  height: auto;
+  overflow: clip;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  max-width: none;
+  padding: 0;
+  margin: 0;
+}
+
+header {
+  position: relative;
+  z-index: 5;
+  flex: 0 0 auto;
+  height: var(--travertine-menu-height);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px var(--travertine-gutter) 28px;
+  background: transparent;
+  border: 0;
+  gap: 16px;
+}
+
+header .brand-svg-logo text,
+header .brand-svg-logo path[fill="#1C2445"] {
+  fill: var(--travertine-white);
+}
+
+.portal-tag {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  padding: 4px 12px;
+  background: transparent;
+  color: var(--travertine-white);
+  border: 1px solid var(--travertine-header-rule);
+  border-radius: 999px;
+  flex: 0 0 auto;
+}
+
+/* ─── Главная кнопка CTA ─────────────────────────────────────────────── */
+.btn-travertine {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  min-height: 84px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 28px 48px;
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  border: var(--rule-hair) solid var(--color-btn-edge);
+  border-radius: var(--radius-btn);
+  font-family: var(--travertine-btn-font, "Montserrat", system-ui, sans-serif);
+  font-size: clamp(16px, 1.75vw, 20px);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: var(--shadow-btn);
+  transition: background-color 150ms ease, transform 150ms ease;
+}
+
+.btn-travertine span {
+  white-space: nowrap;
+}
+
+.btn-travertine svg {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.btn-travertine:hover {
+  background: var(--color-accent-hover);
+  transform: translateY(-2px);
+}
+
+.btn-travertine:active {
+  background: var(--color-accent-active);
+  transform: translateY(0);
+}
+
+.btn-travertine:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+/* Слайдер на десктопе занимает 100% экрана */
+.arch-wrapper {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  margin: 0;
+  padding: 0;
+}
+
+.arch-portal {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--color-paper-card);
+}
+
+.hero-slider {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  transition: opacity 1400ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity;
+  pointer-events: none;
+  z-index: 0;
+}
+
+html.has-js .hero-slide {
+  opacity: 0;
+}
+
+html.has-js .hero-slide.prev {
+  opacity: 1;
+  z-index: 1;
+}
+
+html.has-js .hero-slide.active {
+  opacity: 1;
+  z-index: 2;
+}
+
+.hero-slide picture,
+.hero-slide img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+}
+
+/* Двойной благородный градиент на десктопе: затемнение смещено влево, оставляя центр и правую часть фотографии светлыми */
+.arch-portal::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to right,
+      var(--travertine-scrim-left) 0%,
+      var(--travertine-scrim-left) 24%,
+      var(--travertine-scrim-mid) 40%,
+      var(--travertine-scrim-soft) 56%,
+      transparent 76%),
+    linear-gradient(to bottom,
+      var(--travertine-top-scrim) 0%,
+      transparent 18%,
+      transparent 80%,
+      var(--travertine-scrim) 100%);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Контентная сетка поверх фотографии — выровнена по единой левой линии с шапкой и футером */
+.portal-grid {
+  position: relative;
+  z-index: 4;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 20px var(--travertine-gutter);
+}
+
+.intro-column {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: min(720px, 56%);
+  background: transparent;
+  padding: 0;
+  margin: 0;
+}
+
+.travertine-page .hero-title {
+  font-family: var(--travertine-heading);
+  font-weight: 800;
+  font-size: clamp(28px, 2.7vw, 42px);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+  color: var(--travertine-white);
+  text-shadow: var(--travertine-title-shadow);
+  margin: 0;
+}
+
+
+
+
+.hero-subtitle {
+  font-size: clamp(16px, 1.4vw, 19px);
+  color: var(--travertine-muted);
+  font-weight: 500;
+  max-width: 480px;
+  margin: 0;
+}
+
+/* 5 пунктов вертикально друг за другом в полной версии сайта */
+.travertine-services {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 4px 0;
+  padding: 16px 0;
+  border: 0;
+  list-style: none;
+}
+
+.service-row-warm {
+  font-family: var(--font-services);
+  font-size: 13px;
+  color: var(--travertine-white);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 500;
+}
+
+.service-mark {
+  display: block;
+  width: 16px;
+  height: 24px;
+  flex: 0 0 16px;
+}
+
+.service-mark path {
+  fill: var(--travertine-icon);
+}
+
+.action-terrace {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.catalog-blurb {
+  font-family: var(--font-services, "Manrope", sans-serif);
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--travertine-white);
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Десктопный футер */
+footer {
+  position: relative;
+  z-index: 5;
+  flex: 0 0 auto;
+  background: transparent;
+  border: 0;
+  color: var(--travertine-muted);
+  padding: 16px var(--travertine-gutter) 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  gap: 16px;
+}
+
+.footer-links {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  color: var(--travertine-muted);
+  text-decoration: underline;
+  text-decoration-color: var(--travertine-header-rule);
+  text-underline-offset: 0.25em;
+  transition: color 150ms ease, text-decoration-color 150ms ease;
+}
+
+.footer-links a:hover {
+  color: var(--travertine-white);
+  text-decoration-color: var(--travertine-white);
+}
+
+/* Селектор премиальных шрифтов в шапке */
+.header-right-tools {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Невысокие экраны десктопа: безопасная прокрутка без срезания контента */
+@media (min-width: 961px) and (max-height: 740px) {
+  .viewport {
+    height: auto;
+    min-height: 100svh;
+    overflow: clip;
+  }
+  .intro-column {
+    gap: 12px;
+  }
+  .travertine-services {
+    gap: 8px;
+    padding: 8px 0;
+  }
+  .btn-travertine {
+    min-height: 72px;
+    padding: 20px 40px;
+    font-size: clamp(15px, 1.6vw, 18px);
+  }
+}
+
+/* Мобильная версия: картинка занимает около половины экрана (50svh), заголовок накладывается на картинку, а список и кнопка ниже */
+@media (max-width: 960px) {
+  :root {
+    --travertine-gutter: 24px;
+  }
+
+  .viewport {
+    height: auto;
+    min-height: 100svh;
+    overflow: visible;
+    display: block;
+  }
+
+  header {
+    position: absolute;
+    inset: 0 0 auto;
+    z-index: 5;
+    padding: 20px var(--travertine-gutter);
+    border-bottom: 0;
+  }
+
+  .arch-wrapper {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: 50svh;
+    min-height: 320px;
+    z-index: 1;
+    pointer-events: auto;
+  }
+
+  .arch-portal {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+  }
+
+  .arch-portal::after {
+    background: linear-gradient(to bottom,
+      #111c26d9 0%,
+      #111c2699 18%,
+      #111c2633 34%,
+      transparent 48%,
+      var(--travertine-scrim) 96%);
+  }
+
+  .portal-grid {
+    display: block;
+    width: 100%;
+    max-width: none;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  .intro-column {
+    position: relative;
+    max-width: none;
+    background: var(--color-paper);
+    padding: 32px var(--travertine-gutter) 36px;
+    gap: 20px;
+  }
+
+  .portal-tag {
+    transform: translateY(5px);
+  }
+
+  /* На мобильных заголовок накладывается на нижнюю часть фотографии (50svh) */
+  .travertine-page .hero-title {
+    position: absolute;
+    bottom: calc(100% + 24px);
+    left: var(--travertine-gutter);
+    right: var(--travertine-gutter);
+    width: calc(100% - (var(--travertine-gutter) * 2));
+    max-width: 680px;
+    margin: 0;
+    z-index: 4;
+    color: var(--travertine-white);
+    text-shadow: var(--travertine-title-shadow);
+    font-size: clamp(26.6px, 6.22vw, 40px);
+    line-height: 1.14;
+    pointer-events: none;
+  }
+
+
+  .hero-subtitle {
+    color: var(--color-ink);
+    font-weight: 700;
+    font-size: clamp(18px, 4vw, 22px);
+    line-height: 1.35;
+  }
+
+  .travertine-services {
+    display: flex;
+    flex-direction: column;
+    border: 0;
+    padding: 16px 0;
+    gap: 16px;
+  }
+
+  .service-row-warm {
+    color: var(--color-ink);
+    font-size: 15px;
+    line-height: 1.45;
+  }
+
+  .service-mark {
+    width: 18px;
+    height: 24px;
+    flex: 0 0 18px;
+  }
+
+  .catalog-blurb {
+    font-family: var(--font-services, "Manrope", sans-serif);
+    font-size: 18px;
+    line-height: 1.45;
+    font-weight: 700;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  .btn-travertine {
+    width: fit-content;
+    max-width: 100%;
+    min-height: 72px;
+    padding: 20px 40px;
+    font-size: clamp(15px, 3.8vw, 18px);
+    gap: 16px;
+  }
+
+  footer {
+    background: var(--color-paper);
+    border: 0;
+    color: var(--color-muted);
+    padding: 24px var(--travertine-gutter) 32px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .footer-links a {
+    color: var(--color-muted);
+    text-decoration-color: var(--color-rule);
+  }
+
+  .footer-links a:hover {
+    color: var(--color-accent);
+    text-decoration-color: var(--color-accent);
+  }
+}
+
+/* Компактные мобильные экраны (до 560px) */
+@media (max-width: 560px) {
+  :root {
+    --travertine-menu-height: 70px;
+    --travertine-gutter: 20px;
+  }
+
+  header {
+    padding: 16px var(--travertine-gutter);
+    gap: 12px;
+  }
+
+  .brand-svg-logo {
+    height: 34px;
+  }
+
+  .portal-tag {
+    font-size: 11px;
+    padding: 4px 8px;
+    transform: translateY(5px);
+  }
+
+  .arch-wrapper {
+    height: 50svh;
+    min-height: 290px;
+  }
+
+  .intro-column {
+    padding: 28px var(--travertine-gutter) 32px;
+    gap: 20px;
+  }
+
+  .travertine-page .hero-title {
+    bottom: calc(100% + 20px);
+    font-size: clamp(23.3px, 7.1vw, 31px);
+  }
+
+
+  .hero-subtitle {
+    font-size: clamp(17px, 4.6vw, 20px);
+  }
+
+  .travertine-services {
+    padding: 12px 0;
+    gap: 12px;
+  }
+
+  .service-row-warm {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .catalog-blurb {
+    font-size: 17px;
+    line-height: 1.45;
+  }
+
+  .btn-travertine {
+    min-height: 64px;
+    padding: 16px 32px;
+    font-size: clamp(14px, 3.8vw, 16.5px);
+    gap: 12px;
+  }
+
+  .btn-travertine svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  footer {
+    padding: 20px var(--travertine-gutter) 28px;
+  }
+}
+
+/* Доступ к содержимому с клавиатуры и резервная навигация без JavaScript. */
+.skip-link { position: fixed; top: 12px; left: 12px; z-index: 100; padding: 12px 20px; background: var(--color-light); color: var(--color-ink); transform: translateY(-200%); }
+.skip-link:focus { transform: translateY(0); }
+.no-script-note { position: relative; z-index: 5; padding: 16px var(--travertine-gutter); background: var(--color-paper); color: var(--color-ink); }
+@media (max-width: 560px) { .footer-links { flex-direction: column; gap: 12px; } }
+
+/* Компактные подписи мессенджеров: иконка и текст образуют одну группу. */
+@media (max-width: 560px) {
+  .travertine-page .quiz-messengers .quiz-choice { gap: 6px; padding-inline: 8px; justify-content: center; }
+  .travertine-page .quiz-messenger-text { font-size: 16px; }
+}
+
+/* Плавный первый показ текста без промежуточного системного начертания. */
+html.fonts-loading .intro-column { opacity: 0; }
+html.fonts-ready .intro-column { animation: intro-reveal 240ms ease-out both; }
+@keyframes intro-reveal { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  html.fonts-ready .intro-column { animation: none; }
+}

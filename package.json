@@ -1,0 +1,33 @@
+{
+  "name": "spain-property-for-sale",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server/index.mjs",
+    "start": "node server/index.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "postinstall": "node scripts/prepare-phone.mjs",
+    "build": "node scripts/build.mjs",
+    "dev:cloudflare": "npm run build && wrangler dev",
+    "check:cloudflare": "npm run build && wrangler deploy --dry-run --outdir .worker-build",
+    "deploy": "npm run build && wrangler deploy",
+    "check": "node scripts/check.mjs"
+  },
+  "dependencies": {
+    "geoip-country": "^5.0.202610310241",
+    "libphonenumber-js": "^1.11.20",
+    "zod": "^4.6.7"
+  },
+  "overrides": {
+    "geoip-country": {
+      "ip-address": "^10.7.5"
+    }
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "wrangler": "4.156.1"
+  }
+}

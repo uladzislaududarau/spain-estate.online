@@ -1,0 +1,27 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "spain-property-for-sale",
+  "main": "cloudflare/worker.mjs",
+  "account_id": "971a02a325eeac91f0bea1c10a9e9315",
+  "compatibility_date": "2026-11-04",
+  "workers_dev": true,
+  "keep_vars": true,
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "spain-property-leads",
+      "database_id": "6f9a1db6-506b-4671-9dae-663c7dcf71ae",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": true,
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  "vars": { "LEADS_ENABLED": "false" },
+  "triggers": { "crons": ["*/5 * * * *"] },
+  "observability": { "enabled": false }
+}

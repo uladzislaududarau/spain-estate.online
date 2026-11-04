@@ -1,0 +1,29 @@
+/* Юридические страницы: спокойная типографика и единая навигация. */
+:root { --legal-paper: #f9f8f5; --legal-ink: #1c2445; --legal-muted: #59616e; --legal-line: #d6d9df; --legal-blue: #2563eb; --legal-hover: #1d4ed8; --legal-white: #f8fbff; --legal-note: #eeece6; --legal-font: "Onest", system-ui, sans-serif; }
+* { box-sizing: border-box; }
+html, body { overflow-x: clip; }
+body { margin: 0; background: var(--legal-paper); color: var(--legal-ink); font: 16px/1.65 var(--legal-font); }
+.legal-wrap { width: min(100% - 48px, 1000px); margin-inline: auto; }
+header { padding-block: 28px; border-bottom: 1px solid var(--legal-line); }
+.legal-logo { width: 212px; height: auto; display: block; }
+.legal-logo path { fill: var(--legal-ink); }
+.legal-logo path[fill="#3B82F6"] { fill: var(--legal-blue); }
+main { max-width: 760px; padding-block: 48px; }
+h1 { font-size: clamp(30px, 4vw, 44px); line-height: 1.15; letter-spacing: -.03em; font-weight: 600; margin: 0 0 16px; overflow-wrap: break-word; min-width: 0; }
+h2 { font-size: 22px; line-height: 1.3; font-weight: 600; margin: 32px 0 12px; }
+p, ul { margin: 0 0 16px; }
+ul { padding-left: 24px; }
+li + li { margin-top: 8px; }
+.legal-meta { color: var(--legal-muted); font-size: 14px; }
+.legal-note { padding: 20px; background: var(--legal-note); border-left: 3px solid var(--legal-line); margin-block: 24px; }
+a { color: var(--legal-blue); text-underline-offset: 3px; }
+a:hover { color: var(--legal-hover); }
+a:focus-visible { outline: 3px solid var(--legal-blue); outline-offset: 4px; }
+.legal-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding-top: 32px; margin-top: 32px; border-top: 1px solid var(--legal-line); }
+.legal-action { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 12px 24px; border-radius: 8px; font-weight: 500; text-decoration: none; }
+.legal-action-primary { background: var(--legal-blue); color: var(--legal-white); }
+.legal-action-primary:hover, .legal-action-primary:active { background: var(--legal-hover); color: var(--legal-white); }
+.legal-action-secondary { border: 1px solid var(--legal-line); }
+.legal-action-secondary:active { background: var(--legal-note); }
+footer { padding-block: 24px 32px; border-top: 1px solid var(--legal-line); color: var(--legal-muted); font-size: 13px; }
+@media (max-width: 560px) { .legal-wrap { width: calc(100% - 40px); } header { padding-block: 24px; } main { padding-block: 32px; } .legal-actions { align-items: flex-start; flex-direction: column; } }
