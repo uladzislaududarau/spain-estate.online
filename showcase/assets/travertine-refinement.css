@@ -111,8 +111,7 @@ header {
   gap: 16px;
 }
 
-header .brand-svg-logo text,
-header .brand-svg-logo path[fill="#1C2445"] {
+header .brand-svg-logo .brand-wordmark {
   fill: var(--travertine-white);
 }
 

@@ -46,7 +46,7 @@ for (const [input, target] of [
 }
 // Лицензии поставляются вместе с используемыми ресурсами.
 for (const file of await readdir(path.join(source, 'assets'))) {
-  if (file === 'logo.svg' || /(?:OFL\.txt|\.LICENSE)$/.test(file)) await copyFile(path.join(source, 'assets', file), path.join(output, 'assets', file));
+  if (['logo.svg', 'logo-white.svg'].includes(file) || /(?:OFL\.txt|\.LICENSE)$/.test(file)) await copyFile(path.join(source, 'assets', file), path.join(output, 'assets', file));
 }
 await copyFile(path.join(source, 'favicon.ico'), path.join(output, 'favicon.ico'));
 await emit('robots.txt', robots(origin));

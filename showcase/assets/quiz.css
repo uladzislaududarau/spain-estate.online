@@ -139,8 +139,7 @@ body.quiz-open { position: fixed; top: var(--quiz-page-scroll-offset, 0px); left
 :root { --quiz-logo-ink: oklch(18% 0.025 250); --quiz-logo-accent: oklch(56% 0.22 255); }
 .quiz-top { min-height: 44px; justify-content: flex-start; }
 .quiz-logo { display: block; width: 184px; max-width: 100%; height: auto; color: var(--quiz-logo-ink); }
-.quiz-logo path { fill: var(--quiz-logo-ink); }
-.quiz-logo path[fill="#3B82F6"] { fill: var(--quiz-logo-accent); }
+.quiz-logo .brand-wordmark { fill: var(--quiz-logo-ink); }
 .quiz-dialog[data-stage=question] .quiz-actions { justify-content: space-between; }
 .quiz-dialog[data-stage=question] .quiz-actions > :only-child { margin-left: auto; }
 .quiz-dialog[data-stage=contact] .quiz-primary { width: min(100%, 360px); min-height: 72px; padding: 16px 40px; font-size: 22px; }
