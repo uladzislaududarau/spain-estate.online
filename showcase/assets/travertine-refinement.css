@@ -15,6 +15,8 @@
   --travertine-header-rule: #f7f4ec33;
   --travertine-title-shadow: 0 3px 20px oklch(14% 0.03 240 / 0.5);
   --travertine-icon: oklch(56% 0.22 255);
+  --service-capsule-border: #f7f4ec38;
+  --service-capsule-surface: #f7f4ec08;
   --travertine-heading: "Montserrat", system-ui, sans-serif;
   --travertine-btn-font: "Montserrat", system-ui, sans-serif;
   --travertine-menu-height: 88px;
@@ -316,22 +318,32 @@ html.has-js .hero-slide.active {
 .travertine-services {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   margin: 4px 0;
-  padding: 16px 0;
+  padding: 8px 0;
   border: 0;
   list-style: none;
 }
 
 .service-row-warm {
   font-family: var(--font-services);
-  font-size: 13px;
+  font-size: 15px;
+  line-height: 1.4;
   color: var(--travertine-white);
   display: flex;
   align-items: center;
   gap: 12px;
   font-weight: 500;
+  align-self: flex-start;
+  max-width: 100%;
+  min-height: 44px;
+  padding: 10px 20px 10px 16px;
+  border: 1px solid var(--service-capsule-border);
+  border-radius: 999px;
+  background: var(--service-capsule-surface);
 }
+
+.service-row-warm span { min-width: 0; }
 
 .service-mark {
   display: block;
@@ -428,6 +440,8 @@ footer {
 @media (max-width: 960px) {
   :root {
     --travertine-gutter: 24px;
+    --service-capsule-border: #3b82f633;
+    --service-capsule-surface: #ffffff80;
   }
 
   .viewport {
@@ -524,12 +538,12 @@ footer {
     flex-direction: column;
     border: 0;
     padding: 16px 0;
-    gap: 16px;
+    gap: 10px;
   }
 
   .service-row-warm {
     color: var(--color-ink);
-    font-size: 15px;
+    font-size: 17px;
     line-height: 1.45;
   }
 
@@ -622,12 +636,14 @@ footer {
 
   .travertine-services {
     padding: 12px 0;
-    gap: 12px;
+    gap: 8px;
   }
 
   .service-row-warm {
-    font-size: 14px;
+    font-size: 16px;
     line-height: 1.4;
+    width: 100%;
+    padding: 11px 18px;
   }
 
   .catalog-blurb {
