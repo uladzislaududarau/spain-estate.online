@@ -6,6 +6,10 @@
   "compatibility_date": "2026-11-04",
   "workers_dev": true,
   "keep_vars": true,
+  "routes": [
+    { "pattern": "spain-estate.online", "custom_domain": true },
+    { "pattern": "www.spain-estate.online", "custom_domain": true }
+  ],
   "d1_databases": [
     {
       "binding": "DB",

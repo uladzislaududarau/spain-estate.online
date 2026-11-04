@@ -10,9 +10,9 @@
 
 [Требует уточнения] До приёма заявок добавить в Settings → Variables and Secrets: RESEND_API_KEY как Secret. Затем проверить сохранение и доставку тестовой заявки. Секреты не передаются в браузер или GitHub.
 
-[Требует уточнения] Домен добавлен на бесплатный тариф Cloudflare. Публичные NS уже указывают на athena.ns.cloudflare.com и viddy.ns.cloudflare.com; ожидается активация зоны Cloudflare. После активации подключить основной домен и www к Worker и закрепить Custom Domains в routes конфигурации Wrangler.
+[Подтверждено] Домен активирован на бесплатном тарифе Cloudflare. NS: athena.ns.cloudflare.com и viddy.ns.cloudflare.com. Custom Domains для основного домена и www закреплены в routes конфигурации Wrangler.
 
-[Требует уточнения] Автоматические сборки пока не подключены: существующая установка Cloudflare GitHub App не предоставляет доступ к новому репозиторию. Нужно добавить только spain-estate.online в выбранные репозитории и завершить Connect в разделе Builds нового Worker.
+[Подтверждено] В Cloudflare GitHub App добавлен только новый репозиторий spain-estate.online, прежние разрешения сохранены. Новый Worker подключён к main этого репозитория; push запускает сборку и деплой.
 
 [Подтверждено] Новый отправитель планируется Spain Property for Sale <leads@notify.spain-estate.online>. Перед отправкой необходимо подтвердить домен notify.spain-estate.online в Resend. Получатели задаются через LEAD_NOTIFICATION_EMAILS, несколько адресов — через запятую.
 
