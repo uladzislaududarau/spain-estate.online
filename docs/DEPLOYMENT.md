@@ -8,13 +8,15 @@
 
 [Подтверждено] Первый деплой доступен на https://spain-property-for-sale.phewcy-dev.workers.dev. Создана отдельная D1 spain-property-leads, применены обе миграции. LEAD_ENCRYPTION_KEY создан как Secret; отправитель и получатели email настроены. LEADS_ENABLED=false.
 
-[Требует уточнения] До приёма заявок добавить в Settings → Variables and Secrets: RESEND_API_KEY как Secret. Затем проверить сохранение и доставку тестовой заявки. Секреты не передаются в браузер или GitHub.
+[Подтверждено] RESEND_API_KEY добавлен как Secret в новый Worker. Переменные Telegram удалены. Перед включением приёма проверить сохранение и доставку тестовой заявки. Секреты не передаются в браузер или GitHub.
 
 [Подтверждено] Домен активирован на бесплатном тарифе Cloudflare. NS: athena.ns.cloudflare.com и viddy.ns.cloudflare.com. Custom Domains для основного домена и www закреплены в routes конфигурации Wrangler.
 
 [Подтверждено] В Cloudflare GitHub App добавлен только новый репозиторий spain-estate.online, прежние разрешения сохранены. Новый Worker подключён к main этого репозитория; push запускает сборку и деплой.
 
-[Подтверждено] Новый отправитель планируется Spain Property for Sale <leads@notify.spain-estate.online>. Перед отправкой необходимо подтвердить домен notify.spain-estate.online в Resend. Получатели задаются через LEAD_NOTIFICATION_EMAILS, несколько адресов — через запятую.
+[Подтверждено] Отправитель — Spain Property for Sale <leads@notify.spain-estate.online>. Домен notify.spain-estate.online подтверждён в Resend (Verified). Получатели задаются через LEAD_NOTIFICATION_EMAILS, несколько адресов — через запятую.
+
+[Подтверждено] Для привязки сайта удалены только две парковочные A-записи основного домена и CNAME www. Резервная копия парковочных записей сохранена локально; почтовые записи сохранены.
 
 [Подтверждено] Сначала D1 сохраняет зашифрованную заявку, затем идут уведомления. Сбой уведомлений не отменяет запись. Cron каждые 5 минут выполняет повторы и очистку заявок старше 180 дней. Копии сообщений удаляются оператором отдельно.
 
