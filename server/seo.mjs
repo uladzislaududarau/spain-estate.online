@@ -10,7 +10,7 @@ export function siteOrigin(value = '') {
 export function renderLanding(html, origin = '') {
   if (!origin) return html;
   const escaped = origin.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;');
-  const image = `${escaped}/assets/slides/villa-marbella-modern.webp`;
+  const image = `${escaped}/assets/slides/01-marbella-modern-infinity-villa.webp`;
   const schema = JSON.stringify({ '@context': 'https://schema.org', '@type': 'WebSite', name: 'Spain Property for Sale', url: `${origin}/`, inLanguage: 'ru' }).replaceAll('<', '\\u003c');
   return html.replace('content="noindex, follow"', 'content="index, follow, max-image-preview:large"')
     .replace('<!-- SITE_METADATA -->', `<link rel="canonical" href="${escaped}/">

@@ -73,14 +73,15 @@ test('Определение страны возвращает только ко
 });
 test('Оптимизированный фон отдается как WebP на основной странице и в витрине', async t => {
   const { base } = await harness(t);
-  for (const url of ['/assets/slides/villa-marbella-modern.webp', '/showcase/assets/slides/960/villa-marbella-modern.webp']) {
+  for (const url of ['/assets/slides/01-marbella-modern-infinity-villa.webp', '/showcase/assets/slides/960/01-marbella-modern-infinity-villa.webp']) {
     const response = await fetch(base + url);
     assert.equal(response.status, 200);
     assert.equal(response.headers.get('content-type'), 'image/webp');
     const bytes = Buffer.from(await response.arrayBuffer());
     assert.equal(bytes.subarray(0, 4).toString(), 'RIFF');
     assert.equal(bytes.subarray(8, 12).toString(), 'WEBP');
-    assert.ok(bytes.length < 200000);
+    const maxBytes = url.includes('/960/') ? 100000 : 250000;
+    assert.ok(bytes.length < maxBytes);
   }
 });
 test('Информационный лендинг принимает заявку без выбранного региона', async t => {

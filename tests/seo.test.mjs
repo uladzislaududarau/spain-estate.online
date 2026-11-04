@@ -12,7 +12,7 @@ test('Метаданные не рекламируют выдуманный до
   const production = renderLanding(html, siteOrigin('https://example.com'));
   assert.match(production, /rel="canonical" href="https:\/\/example.com\/"/);
   assert.match(production, /content="index, follow, max-image-preview:large"/);
-  assert.match(production, /https:\/\/example.com\/assets\/slides\/villa-marbella-modern.webp/);
+  assert.match(production, /https:\/\/example.com\/assets\/slides\/01-marbella-modern-infinity-villa.webp/);
   const schema = JSON.parse(production.match(/<script type="application\/ld\+json">(.*?)<\/script>/s)[1]);
   assert.equal(schema.url, 'https://example.com/');
   assert.doesNotMatch(sitemap('https://example.com'), /\/en\/|privacy|legal/);
