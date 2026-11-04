@@ -1,4 +1,4 @@
-export const GOOGLE_ADS_ID = 'AW-18527353101';
+export const GOOGLE_ADS_ID = 'AW-18554200616';
 export const CONSENT_VERSION = 2;
 export function googleConsent(preferences) {
   return {

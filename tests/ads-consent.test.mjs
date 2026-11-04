@@ -17,8 +17,8 @@ test('Согласие передаётся до загрузки Google Ads, п
   const apply = createAdsConsent((...args) => calls.push(args), src => calls.push(['load', src]));
   apply({ analytics: false, marketing: true });
   assert.deepEqual(calls[0], ['consent', 'update', googleConsent({ analytics: false, marketing: true })]);
-  assert.deepEqual(calls[2], ['config', 'AW-18527353101']);
-  assert.equal(calls[3][1], 'https://www.googletagmanager.com/gtag/js?id=AW-18527353101');
+  assert.deepEqual(calls[2], ['config', 'AW-18554200616']);
+  assert.equal(calls[3][1], 'https://www.googletagmanager.com/gtag/js?id=AW-18554200616');
   apply({ analytics: true, marketing: true });
   assert.equal(calls.filter(call => call[0] === 'load').length, 1);
   apply({ analytics: false, marketing: false });
