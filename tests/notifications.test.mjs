@@ -49,11 +49,11 @@ test('Ошибки адресов и отправителя не вызываю�
   assert.equal(calls, 0);
 });
 
-test('Wrangler сохраняет DB и переменные панели, приём выключен до проверки уведомлений', async () => {
+test('Wrangler сохраняет DB и переменные панели, проверенный приём заявок включён', async () => {
   const raw = await readFile(new URL('../wrangler.jsonc', import.meta.url), 'utf8');
   const config = JSON.parse(raw.replace(/^\s*\/\/.*$/gm, ''));
   assert.equal(config.keep_vars, true);
-  assert.equal(config.vars.LEADS_ENABLED, 'false');
+  assert.equal(config.vars.LEADS_ENABLED, 'true');
   assert.equal(config.d1_databases[0].binding, 'DB');
   assert.equal(config.d1_databases[0].database_name, 'spain-property-leads');
   assert.match(config.d1_databases[0].database_id, /^[\da-f-]{36}$/);

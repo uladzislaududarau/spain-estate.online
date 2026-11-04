@@ -6,9 +6,9 @@
 
 [Подтверждено] DB binding должен указывать на отдельную базу spain-property-leads; миграции находятся в migrations. keep_vars сохраняет переменные панели.
 
-[Подтверждено] Первый деплой доступен на https://spain-property-for-sale.phewcy-dev.workers.dev. Создана отдельная D1 spain-property-leads, применены обе миграции. LEAD_ENCRYPTION_KEY создан как Secret; отправитель и получатели email настроены. LEADS_ENABLED=false.
+[Подтверждено] Сайт опубликован на https://spain-estate.online, www привязан к тому же Worker. Технический адрес: https://spain-property-for-sale.phewcy-dev.workers.dev. Создана отдельная D1 spain-property-leads, применены обе миграции. LEAD_ENCRYPTION_KEY создан как Secret; отправитель и получатели email настроены. LEADS_ENABLED=true закреплён в Wrangler после проверки сохранения и email-отправки.
 
-[Подтверждено] RESEND_API_KEY добавлен как Secret в новый Worker. Переменные Telegram удалены. Перед включением приёма проверить сохранение и доставку тестовой заявки. Секреты не передаются в браузер или GitHub.
+[Подтверждено] RESEND_API_KEY добавлен как Secret в новый Worker. Переменные Telegram удалены. 4 ноября 2026 года тестовая заявка сохранена в D1, повтор распознан как дубликат, статус email — sent после первой попытки. Это подтверждает успешный ответ Resend, но не прочтение письма получателем. Секреты не передаются в браузер или GitHub.
 
 [Подтверждено] Домен активирован на бесплатном тарифе Cloudflare. NS: athena.ns.cloudflare.com и viddy.ns.cloudflare.com. Custom Domains для основного домена и www закреплены в routes конфигурации Wrangler.
 
