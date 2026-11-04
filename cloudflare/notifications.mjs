@@ -54,25 +54,21 @@ export function leadMessage(lead, timeZone = 'Asia/Nicosia', format = 'text') {
   return blocks.join('\n\n');
 }
 export function channelConfigured(channel, env) {
-  if (channel === 'telegram') return Boolean(env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID);
+  if (channel !== 'email') return false;
   try { return Boolean(emailSettings(env)); } catch { return false; }
 }
 export async function sendNotification(channel, lead, env, fetcher = fetch) {
-  const email = channel === 'email' ? emailSettings(env) : null;
-  if (channel === 'email' ? !email : !channelConfigured(channel, env)) return false;
+  if (channel !== 'email') return false;
+  const email = emailSettings(env);
+  if (!email) return false;
   const timeZone = env.LEAD_NOTIFICATION_TIME_ZONE || 'Asia/Nicosia';
   const text = leadMessage(lead, timeZone);
-  const response = channel === 'telegram'
-    ? await fetcher(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: AbortSignal.timeout(8000),
-      body: JSON.stringify({ chat_id: env.TELEGRAM_CHAT_ID, text: leadMessage(lead, timeZone, 'telegram'), parse_mode: 'HTML', link_preview_options: { is_disabled: true }, protect_content: true })
-    })
-    : await fetcher('https://api.resend.com/emails', {
+  const response = await fetcher('https://api.resend.com/emails', {
       method: 'POST', signal: AbortSignal.timeout(8000),
       headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json', 'Idempotency-Key': `spain-property-lead/${lead.leadId}` },
       body: JSON.stringify({ ...email, subject: 'Заявка с сайта Spain Property for Sale', text, html: leadMessage(lead, timeZone, 'email') })
     });
   const result = await response.json().catch(() => null);
-  if (!response.ok || (channel === 'telegram' ? result?.ok !== true : !result?.id)) throw new Error('notification_failed');
+  if (!response.ok || !result?.id) throw new Error('notification_failed');
   return true;
 }

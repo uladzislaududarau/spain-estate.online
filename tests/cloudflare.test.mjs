@@ -19,7 +19,7 @@ function lead() {
   const savedAt = new Date().toISOString(); const body = payload();
   return { ...body, leadId: crypto.randomUUID(), savedAt, consent: { ...body.consent, timestamp: savedAt } };
 }
-const readyEnv = { LEADS_ENABLED: 'true', TELEGRAM_BOT_TOKEN: 'test-only', TELEGRAM_CHAT_ID: 'test-chat' };
+const readyEnv = { LEADS_ENABLED: 'true' };
 function request(body, headers = {}) {
   return new Request('https://landing.example/api/lead', { method: 'POST', headers: { Origin: 'https://landing.example', 'Content-Type': 'application/json', ...headers }, body: JSON.stringify(body) });
 }
@@ -111,31 +111,28 @@ test('Повторное применение схемы не удаляет с�
   assert.equal((await db.prepare('SELECT id FROM leads').first()).id, saved.leadId);
 });
 
-test('D1 повторяет неудачный Telegram, не отправляя успешный email повторно', async t => {
-  const db = await database(t); let telegramFails = true; const sent = [];
+test('Успешный email завершает очередь без Telegram и повторной отправки', async t => {
+  const db = await database(t); const sent = [];
   const env = { DB: db, LEAD_ENCRYPTION_KEY: secret, ...readyEnv,
     RESEND_API_KEY: 'test-only', LEAD_EMAIL_FROM: 'test@example.com', LEAD_NOTIFICATION_EMAILS: 'receiver@example.com' };
   const store = await createCloudStore(env, async (url, options) => {
-    const email = url === 'https://api.resend.com/emails';
-    sent.push({ email, options });
-    if (!email && telegramFails) return Response.json({ ok: false }, { status: 503 });
-    return Response.json(email ? { id: 'test-email' } : { ok: true });
+    sent.push({ url, options });
+    return Response.json({ id: 'test-email' });
   });
   const value = lead(); await store.save(value); await store.deliver(value.leadId);
-  let row = await db.prepare('SELECT * FROM leads').first();
-  assert.equal(row.telegram_status, 'pending'); assert.equal(row.email_status, 'sent');
-  assert.equal(row.last_error, 'delivery_failed');
-  telegramFails = false;
+  const row = await db.prepare('SELECT * FROM leads').first();
+  assert.equal(row.email_status, 'sent');
+  assert.equal(row.telegram_status, 'pending');
+  assert.equal(row.last_error, null);
   await db.prepare('UPDATE leads SET next_attempt_at = 0').run();
-  await store.deliver(value.leadId);
-  row = await db.prepare('SELECT * FROM leads').first();
-  assert.equal(row.telegram_status, 'sent');
-  assert.equal(sent.filter(item => item.email).length, 1);
-  assert.equal(sent.find(item => item.email).options.headers['Idempotency-Key'], `spain-property-lead/${value.leadId}`);
   assert.deepEqual(await store.pending(), []);
+  await store.deliver(value.leadId);
+  assert.equal(sent.length, 1);
+  assert.equal(sent[0].url, 'https://api.resend.com/emails');
+  assert.equal(sent[0].options.headers['Idempotency-Key'], `spain-property-lead/${value.leadId}`);
 });
 
-test('Сбой Resend не теряет сохранённый лид; повтор отправляет всем email без повторного Telegram', async t => {
+test('Сбой Resend не теряет сохранённый лид; повтор отправляет всем email', async t => {
   const db = await database(t); let fails = true; const calls = [];
   const env = { DB: db, LEAD_ENCRYPTION_KEY: secret, ...readyEnv,
     RESEND_API_KEY: 'test-only', LEAD_EMAIL_FROM: 'Spain Property for Sale <leads@example.com>', LEAD_NOTIFICATION_EMAILS: 'one@example.com,two@example.com' };
@@ -147,14 +144,19 @@ test('Сбой Resend не теряет сохранённый лид; повт�
   const value = lead(); const saved = await store.save(value);
   await store.deliver(saved.leadId);
   let row = await db.prepare('SELECT * FROM leads').first();
-  assert.equal(row.email_status, 'pending'); assert.equal(row.telegram_status, 'sent');
+  assert.equal(row.email_status, 'pending');
+  assert.deepEqual(await store.pending(), []);
+  await db.prepare('UPDATE leads SET next_attempt_at = 0').run();
+  assert.deepEqual(await store.pending(), [saved.leadId]);
   assert.equal((await decrypt((await keys(secret)).encryption, row.payload)).contact, value.contact);
   fails = false;
   await db.prepare('UPDATE leads SET next_attempt_at = 0').run();
   await store.deliver(saved.leadId);
   row = await db.prepare('SELECT * FROM leads').first();
   assert.equal(row.email_status, 'sent');
-  assert.equal(calls.filter(call => call.url.includes('api.telegram.org')).length, 1);
+  assert.equal(calls.length, 2);
+  assert.ok(calls.every(call => call.url === 'https://api.resend.com/emails'));
+  assert.deepEqual(await store.pending(), []);
   for (const call of calls.filter(call => call.url === 'https://api.resend.com/emails')) assert.deepEqual(JSON.parse(call.options.body).to, ['one@example.com', 'two@example.com']);
 });
 

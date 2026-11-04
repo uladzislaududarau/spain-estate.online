@@ -2,7 +2,7 @@
 
 [Подтверждено] Самостоятельный проект подбора недвижимости в Испании на https://spain-estate.online. Оператор — SERGEY VAKORIN; контакты и условия опубликованы в правовых документах.
 
-Статический HTML/CSS/JavaScript, Cloudflare Worker, D1, серверные Telegram и Resend.
+Статический HTML/CSS/JavaScript, Cloudflare Worker, D1, email-уведомления через Resend.
 
 ```sh
 npm ci

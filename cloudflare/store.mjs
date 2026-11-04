@@ -34,19 +34,14 @@ export async function createCloudStore(env, fetcher = fetch) {
       const lease = crypto.randomUUID();
       const row = await db.prepare(`UPDATE leads SET lease_token = ?, lease_until = ?
         WHERE id = ? AND lease_until <= ? AND next_attempt_at <= ?
-        AND (telegram_status != 'sent' OR email_status != 'sent') RETURNING *`)
+        AND email_status != 'sent' RETURNING *`)
         .bind(lease, now + 120000, id, now, now).first();
       if (!row) return;
       let failed = false;
       try {
         const lead = await decrypt(key.encryption, row.payload);
-        for (const channel of ['telegram', 'email']) {
-          if (row[`${channel}_status`] === 'sent') continue;
-          try {
-            if (await sendNotification(channel, lead, env, fetcher)) {
-              await db.prepare(`UPDATE leads SET ${channel}_status = 'sent' WHERE id = ? AND lease_token = ?`).bind(id, lease).run();
-            }
-          } catch { failed = true; }
+        if (await sendNotification('email', lead, env, fetcher)) {
+          await db.prepare("UPDATE leads SET email_status = 'sent' WHERE id = ? AND lease_token = ?").bind(id, lease).run();
         }
       } catch { failed = true; }
       // Содержимое ошибок сторонних API не сохраняется: в нём могут оказаться токены или контакты.
@@ -55,7 +50,7 @@ export async function createCloudStore(env, fetcher = fetch) {
         .bind(Date.now() + delay, failed ? 'delivery_failed' : null, id, lease).run();
     },
     async pending() {
-      const result = await db.prepare("SELECT id FROM leads WHERE next_attempt_at <= ? AND lease_until <= ? AND (telegram_status != 'sent' OR email_status != 'sent') ORDER BY next_attempt_at LIMIT 5")
+      const result = await db.prepare("SELECT id FROM leads WHERE next_attempt_at <= ? AND lease_until <= ? AND email_status != 'sent' ORDER BY next_attempt_at LIMIT 5")
         .bind(Date.now(), Date.now()).all();
       return result.results.map(row => row.id);
     },
