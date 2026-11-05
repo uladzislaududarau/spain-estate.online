@@ -394,15 +394,16 @@ footer {
   flex-wrap: wrap;
 }
 
-.footer-links a {
+.footer-links :is(a, .cookie-settings-link) {
   color: var(--travertine-muted);
-  text-decoration: underline;
+  text-decoration: none;
   text-decoration-color: var(--travertine-header-rule);
   text-underline-offset: 0.25em;
   transition: color 150ms ease, text-decoration-color 150ms ease;
 }
 
-.footer-links a:hover {
+.footer-links :is(a, .cookie-settings-link):hover {
+  text-decoration: underline;
   color: var(--travertine-white);
   text-decoration-color: var(--travertine-white);
 }
@@ -580,12 +581,12 @@ footer {
     gap: 12px;
   }
 
-  .footer-links a {
+  .footer-links :is(a, .cookie-settings-link) {
     color: var(--color-muted);
     text-decoration-color: var(--color-rule);
   }
 
-  .footer-links a:hover {
+  .footer-links :is(a, .cookie-settings-link):hover {
     color: var(--color-accent);
     text-decoration-color: var(--color-accent);
   }
