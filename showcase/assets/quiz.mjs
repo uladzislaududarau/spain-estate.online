@@ -2,6 +2,7 @@ import { THANK_YOU_PATH, isThankYouPath, receiptFromSession, rememberSavedLead }
 import { steps, copy, policyVersion } from './quiz.config.mjs';
 import { telegramUsername, normalizeName } from './contact.mjs';
 import { createPhoneField } from './phone-field.mjs';
+import { availableQuizHeight, fieldScrollDelta } from './quiz-viewport.mjs';
 
 const key = 'spain-property-quiz-v2';
 let lang = document.documentElement.lang === 'en' ? 'en' : 'ru';
@@ -133,7 +134,8 @@ function buildShell({ currentStep = step, currentMessenger = messenger, complete
   }
   return shell;
 }
-function render() {
+function render({ preserveScroll = false } = {}) {
+  const previousScroll = preserveScroll ? dialog.querySelector('.quiz-content')?.scrollTop || 0 : 0;
   clearAdvance();
   clearAutoClose();
   phoneField?.cancel(); phoneField = undefined;
@@ -146,7 +148,8 @@ function render() {
   dialog.dataset.view = view;
   dialog.replaceChildren(shell);
   dialog.scrollTop = 0;
-  dialog.querySelector('#quiz-title')?.focus({ preventScroll: true });
+  if (preserveScroll) dialog.querySelector('.quiz-content').scrollTop = previousScroll;
+  else dialog.querySelector('#quiz-title')?.focus({ preventScroll: true });
 }
 function hasAnswer(question) {
   return question.multiple ? answers[question.id]?.length > 0 : Boolean(answers[question.id]);
@@ -230,7 +233,7 @@ function renderContact(content, shell, t, { currentMessenger = messenger, measur
     const radio = node('input', { type: 'radio', name: 'messenger', value: method, class: 'quiz-messenger-radio' });
     radio.checked = isSelected;
     // Выбор мессенджера не открывает клавиатуру: поле активируется только по нажатию.
-    radio.addEventListener('change', () => { messenger = method; persist(); render(); });
+    radio.addEventListener('change', () => { messenger = method; persist(); render({ preserveScroll: true }); });
     const icon = createMessengerIcon(method);
     label.append(radio, icon, node('span', { class: 'quiz-messenger-text' }, method === 'whatsapp' ? 'WhatsApp' : 'Telegram'));
     fieldset.append(label);
@@ -362,19 +365,35 @@ function sizeQuiz() {
     measuredWidth = width;
   } finally { for (const surface of shells) surface.remove(); }
 }
-function updateAvailableHeight() {
-  const viewport = window.visualViewport;
-  dialog.style.setProperty('--quiz-available-height', `${Math.floor(viewport?.height || window.innerHeight)}px`);
-  dialog.style.setProperty('--quiz-viewport-offset', `${Math.max(0, viewport?.offsetTop || 0)}px`);
+let baselineHeight = 0;
+let viewportFrame;
+let revealFrame;
+let pendingReveal = false;
+const mobileQuiz = () => window.matchMedia('(max-width: 560px)').matches;
+function revealFocusedField() {
   if (!dialog.open) return;
-  // Прокручивается только содержимое квиза, без переноса окна браузером к полю.
   const input = document.activeElement;
   const content = input?.closest('.quiz-content');
   if (!content || !input.matches('input:not([type=radio]):not([type=checkbox]), select')) return;
-  const field = input.getBoundingClientRect();
-  const area = content.getBoundingClientRect();
-  if (field.bottom > area.bottom - 12) content.scrollTop += field.bottom - area.bottom + 12;
-  else if (field.top < area.top + 12) content.scrollTop -= area.top + 12 - field.top;
+  content.scrollTop += fieldScrollDelta(input.getBoundingClientRect(), content.getBoundingClientRect());
+}
+function updateAvailableHeight({ reveal = false } = {}) {
+  pendingReveal ||= reveal;
+  cancelAnimationFrame(viewportFrame);
+  viewportFrame = requestAnimationFrame(() => {
+    const reveal = pendingReveal;
+    pendingReveal = false;
+    if (!dialog.open) return;
+    const viewport = window.visualViewport;
+    const visible = viewport?.height || window.innerHeight;
+    const height = mobileQuiz() ? availableQuizHeight(baselineHeight || visible, visible) : Math.floor(visible);
+    dialog.style.setProperty('--quiz-available-height', height + 'px');
+    dialog.style.setProperty('--quiz-viewport-offset', Math.max(0, viewport?.offsetTop || 0) + 'px');
+    if (reveal) {
+      cancelAnimationFrame(revealFrame);
+      revealFrame = requestAnimationFrame(revealFocusedField);
+    }
+  });
 }
 function queueSizing() {
   cancelAnimationFrame(sizingFrame);
@@ -383,10 +402,42 @@ function queueSizing() {
 new ResizeObserver(() => {
   if (dialog.open && Math.abs(dialog.getBoundingClientRect().width - measuredWidth) > 0.5) queueSizing();
 }).observe(dialog);
-window.addEventListener('resize', () => { updateAvailableHeight(); queueSizing(); });
-window.visualViewport?.addEventListener('resize', updateAvailableHeight);
-window.visualViewport?.addEventListener('scroll', updateAvailableHeight);
-dialog.addEventListener('focusin', () => requestAnimationFrame(updateAvailableHeight));
+window.addEventListener('resize', () => {
+  if (!dialog.open) return;
+  const widthChanged = Math.abs(dialog.getBoundingClientRect().width - measuredWidth) > 1;
+  if (widthChanged) {
+    baselineHeight = Math.max(window.innerHeight, window.visualViewport?.height || 0);
+    queueSizing();
+  }
+  updateAvailableHeight({ reveal: true });
+});
+window.visualViewport?.addEventListener('resize', () => updateAvailableHeight({ reveal: true }));
+// Прокрутка visualViewport не должна запускать новую прокрутку активного поля.
+window.visualViewport?.addEventListener('scroll', () => updateAvailableHeight());
+dialog.addEventListener('focusin', () => updateAvailableHeight({ reveal: true }));
+
+let touchY = 0;
+let touchX = 0;
+dialog.addEventListener('touchstart', event => {
+  touchY = event.touches[0]?.clientY || 0;
+  touchX = event.touches[0]?.clientX || 0;
+}, { passive: true });
+dialog.addEventListener('touchmove', event => {
+  if (event.touches.length !== 1 || !mobileQuiz()) return;
+  const content = event.target.closest?.('.quiz-content');
+  const nextY = event.touches[0].clientY;
+  const delta = nextY - touchY;
+  const horizontal = event.touches[0].clientX - touchX;
+  touchY = nextY;
+  touchX = event.touches[0].clientX;
+  if (Math.abs(horizontal) >= Math.abs(delta)) return;
+  // На границах списка не передаём жест фоновой странице и не растягиваем окно Safari.
+  if (!content || content.scrollHeight <= content.clientHeight + 1
+    || (delta > 0 && content.scrollTop <= 0)
+    || (delta < 0 && content.scrollTop + content.clientHeight >= content.scrollHeight - 1)) {
+    if (event.cancelable) event.preventDefault();
+  }
+}, { passive: false });
 document.fonts.ready.then(queueSizing);
 document.fonts.addEventListener('loadingdone', queueSizing);
 function openQuiz() {
@@ -396,6 +447,7 @@ function openQuiz() {
   document.body.style.setProperty('--quiz-page-scroll-offset', `${-pageScrollY}px`);
   document.documentElement.classList.add('quiz-open');
   document.body.classList.add('quiz-open');
+  baselineHeight = window.visualViewport?.height || window.innerHeight;
   dialog.showModal();
   render();
   updateAvailableHeight();

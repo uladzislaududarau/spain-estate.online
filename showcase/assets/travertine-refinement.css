@@ -611,12 +611,12 @@ footer {
   .portal-tag {
     font-size: 11px;
     padding: 4px 8px;
-    transform: translateY(5px);
+    transform: translateY(0);
   }
 
   .arch-wrapper {
-    height: 50svh;
-    min-height: 290px;
+    height: 65svh;
+    min-height: 377px;
   }
 
   .intro-column {

@@ -206,3 +206,32 @@ body.quiz-open { position: fixed; top: var(--quiz-page-scroll-offset, 0px); left
 .quiz-content-enter { animation: quiz-step-enter 220ms ease-out both; }
 @keyframes quiz-step-enter { from { opacity: 0; translate: 0 4px; } to { opacity: 1; translate: 0 0; } }
 @media (prefers-reduced-motion: reduce) { .quiz-content-enter { animation: none; } }
+
+/* На телефоне верх окна неподвижен; клавиатура сокращает только область содержимого. */
+@media (max-width: 560px) {
+  .quiz-dialog[data-sized] {
+    --quiz-window-gap: 24px;
+    inset-block-start: calc(var(--quiz-viewport-offset, 0px) + max(12px, env(safe-area-inset-top, 0px)));
+    height: min(var(--quiz-fixed-height), 600px, calc(var(--quiz-available-height, 100svh) - max(12px, env(safe-area-inset-top, 0px)) - 12px));
+    max-height: calc(var(--quiz-available-height, 100svh) - max(12px, env(safe-area-inset-top, 0px)) - 12px);
+    overflow: hidden;
+  }
+  .quiz-shell { padding: 12px 16px 12px; }
+  .quiz-top { min-height: 36px; margin-bottom: 6px; }
+  .quiz-logo { width: 152px; }
+  .quiz-progress { margin-bottom: 14px; }
+  .quiz-title { margin-bottom: 8px; }
+  .quiz-intro { margin-bottom: 12px; font-size: 14px; line-height: 1.4; }
+  .quiz-options { gap: 6px; }
+  .quiz-choice { min-height: 48px; padding: 10px 12px; gap: 10px; font-size: 15px; line-height: 1.35; }
+  .quiz-field { margin-top: 12px; }
+  .quiz-field label { margin-bottom: 5px; }
+  .quiz-consent { margin-top: 12px; }
+  .quiz-dialog[data-sized] .quiz-actions,
+  .quiz-dialog[data-sized] .quiz-success-links { margin-top: 12px; }
+  .quiz-dialog[data-stage=contact] .quiz-actions { position: static; top: auto; gap: 0; }
+  .quiz-dialog[data-stage=contact] .quiz-primary { min-height: 52px; padding-block: 12px; font-size: 20px; }
+  .quiz-dialog[data-sized] .quiz-content { overflow-x: hidden; scroll-behavior: auto; overflow-anchor: none; }
+  .quiz-content-enter { animation-name: quiz-step-fade; }
+}
+@keyframes quiz-step-fade { from { opacity: 0; } to { opacity: 1; } }
