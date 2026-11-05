@@ -10,7 +10,7 @@ let answers = {};
 let contact = { whatsapp: '', telegram: '' };
 let messenger = 'whatsapp';
 let contactName = '';
-let consent = false;
+let consent = true;
 let submitting = false;
 let success = false;
 let timer;
@@ -28,7 +28,7 @@ try {
       else if (valid.includes(saved.answers?.[question.id])) answers[question.id] = saved.answers[question.id];
     }
     step = Number.isInteger(saved.step) ? Math.min(steps.length, Math.max(0, saved.step)) : 0;
-    if (saved.schemaVersion !== 4) { const unanswered = steps.findIndex(question => question.multiple ? !answers[question.id]?.length : !answers[question.id]); step = unanswered < 0 ? steps.length : unanswered; }
+    if (saved.schemaVersion !== 5) { const unanswered = steps.findIndex(question => question.multiple ? !answers[question.id]?.length : !answers[question.id]); step = unanswered < 0 ? steps.length : unanswered; }
     messenger = saved.messenger === 'telegram' ? 'telegram' : 'whatsapp';
     if (/^[A-Z]{2}$/.test(saved.phoneCountry)) { phoneState.country = saved.phoneCountry; phoneState.source = 'manual'; }
     if (/^[a-f\d-]{36}$/.test(saved.requestId)) requestId = saved.requestId;
@@ -36,7 +36,7 @@ try {
 } catch { /* Хранилище может быть отключено в браузере. */ }
 // Контакты и согласие остаются только в памяти вкладки.
 function persist() {
-  try { sessionStorage.setItem(key, JSON.stringify({ version: policyVersion, schemaVersion: 4, step, answers, messenger, requestId, phoneCountry: phoneState.source !== 'fallback' ? phoneState.country : null })); } catch {}
+  try { sessionStorage.setItem(key, JSON.stringify({ version: policyVersion, schemaVersion: 5, step, answers, messenger, requestId, phoneCountry: phoneState.source !== 'fallback' ? phoneState.country : null })); } catch {}
 }
 const dialog = document.createElement('dialog');
 dialog.className = 'quiz-dialog';
@@ -76,7 +76,7 @@ dialog.addEventListener('close', () => {
     contact = { whatsapp: '', telegram: '' };
     messenger = 'whatsapp';
     contactName = '';
-    consent = false;
+    consent = true;
     submitting = false;
     success = false;
     requestId = crypto.randomUUID();
@@ -306,7 +306,7 @@ function renderContact(content, shell, t, { currentMessenger = messenger, measur
       const result = await response.json();
       if (result.success !== true || !result.leadId) throw new Error('unconfirmed');
       success = true;
-      contact = { whatsapp: '', telegram: '' }; contactName = ''; consent = false;
+      contact = { whatsapp: '', telegram: '' }; contactName = ''; consent = true;
       try { sessionStorage.removeItem(key); } catch {}
       if (rememberSavedLead(result, lang)) { location.assign(THANK_YOU_PATH); return; }
       // При отключённом sessionStorage благодарность остаётся доступной в текущем окне.

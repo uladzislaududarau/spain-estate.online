@@ -8,7 +8,7 @@ import { randomUUID } from 'node:crypto';
 import { createApp } from '../server/index.mjs';
 import { createStore } from '../server/store.mjs';
 
-const payload = () => ({ requestId: randomUUID(), name: 'Тестовый клиент', language: 'ru', answers: { purpose: 'investment', propertyType: 'apartment', regions: ['costa-blanca', 'mallorca'], budgets: ['100k-200k', '200k-300k'], timeline: 'soon' }, region: 'marbella', messenger: 'telegram', contact: '@spain_test', consent: { accepted: true, policyVersion }, website: '' });
+const payload = () => ({ requestId: randomUUID(), name: 'Тестовый клиент', language: 'ru', answers: { purpose: 'investment', propertyType: 'apartment', regions: ['costa-blanca', 'mallorca'], budgets: ['100k-200k', '200k-300k'], timeline: 'visit-next-month' }, region: 'marbella', messenger: 'telegram', contact: '@spain_test', consent: { accepted: true, policyVersion }, website: '' });
 async function harness(t, options = {}) {
   const storage = await mkdtemp(path.join(os.tmpdir(), 'spain-property-test-'));
   const app = await createApp({ storage, ...options });

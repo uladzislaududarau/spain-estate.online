@@ -8,7 +8,7 @@ const env = { RESEND_API_KEY: 'test-only', LEAD_EMAIL_FROM: 'Spain Property for 
 const lead = {
   leadId: 'test-lead', name: 'Тест', savedAt: '2026-11-02T12:00:00.000Z', language: 'ru',
   messenger: 'telegram', contact: '@spain_test',
-  answers: { regions: ['mallorca'], purpose: 'investment', propertyType: 'villa', budgets: ['200k-300k'], timeline: 'soon' },
+  answers: { regions: ['mallorca'], purpose: 'investment', propertyType: 'villa', budgets: ['200k-300k'], timeline: 'visit-next-month' },
   consent: { accepted: true, policyVersion, timestamp: '2026-11-02T12:00:00.000Z' }
 };
 
@@ -69,7 +69,8 @@ test('Уведомление содержит понятные блоки, ме�
   assert.match(text, /Время: 14:00\nЧасовой пояс: Asia\/Nicosia\n\nИмя:/);
   assert.match(text, /Регион Испании: Майорка/);
   assert.match(text, /Критерии подбора:/);
-  assert.match(text, /Срок покупки: В ближайшее время/);
+  assert.match(text, /Приезд в Испанию: В ближайший месяц/);
+  assert.match(leadMessage({ ...lead, answers: { ...lead.answers, timeline: 'soon' } }), /Срок покупки: В ближайшее время/);
   assert.doesNotMatch(text, /Согласие|Не подтверждено/);
   assert.doesNotMatch(text, /test-lead|ID:|2026-11-02T|Telegram —/);
   assert.match(leadMessage({ ...lead, messenger: 'whatsapp', contact: '+34612345678' }, 'UTC'), /Способ связи: WhatsApp\nКонтакт: \+34612345678/);

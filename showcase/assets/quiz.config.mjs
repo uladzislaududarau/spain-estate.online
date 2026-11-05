@@ -5,8 +5,8 @@ export const steps = [
     "multiple": true,
     "exclusive": "undecided",
     "title": {
-      "ru": "Какой регион Испании вы рассматриваете?",
-      "en": "Which region of Spain are you considering?"
+      "ru": "В каком регионе Испании вы рассматриваете недвижимость?",
+      "en": "Which region of Spain are you considering for your property?"
     },
     "options": [
       [
@@ -15,24 +15,34 @@ export const steps = [
         "Costa Blanca"
       ],
       [
-        "costa-del-sol",
-        "Коста-дель-Соль / Марбелья",
-        "Costa del Sol / Marbella"
+        "costa-calida",
+        "Коста-Калида / Мар-Менор",
+        "Costa Cálida / Mar Menor"
+      ],
+      [
+        "valencia",
+        "Валенсия и окрестности",
+        "Valencia and surroundings"
+      ],
+      [
+        "costa-dorada",
+        "Коста-Дорада",
+        "Costa Dorada"
       ],
       [
         "barcelona",
-        "Барселона и окрестности",
-        "Barcelona and surroundings"
+        "Барселона и Коста-Брава",
+        "Barcelona and Costa Brava"
       ],
       [
-        "costa-brava",
-        "Коста-Брава",
-        "Costa Brava"
+        "costa-del-sol",
+        "Коста-дель-Соль",
+        "Costa del Sol"
       ],
       [
         "mallorca",
-        "Майорка",
-        "Mallorca"
+        "Майорка / острова",
+        "Mallorca / islands"
       ],
       [
         "undecided",
@@ -49,24 +59,24 @@ export const steps = [
     },
     "options": [
       [
-        "residence-permit",
-        "Для получения ВНЖ",
-        "Residence permit"
-      ],
-      [
         "permanent-home",
         "Для постоянного проживания",
-        "Permanent home"
+        "For permanent residence"
       ],
       [
         "investment",
-        "Для инвестиций",
-        "Investment"
+        "Для инвестиций и сдачи в аренду",
+        "For investment and rental income"
       ],
       [
-        "rental",
-        "Для сдачи в аренду",
-        "Rental income"
+        "personal-and-rental",
+        "Для себя и сдачи в аренду",
+        "For personal use and rental income"
+      ],
+      [
+        "holiday-home",
+        "Для отдыха — второй дом",
+        "For holidays — a second home"
       ]
     ]
   },
@@ -94,8 +104,8 @@ export const steps = [
       ],
       [
         "townhouse",
-        "Таунхаус",
-        "Townhouse"
+        "Таунхаус / бунгало",
+        "Townhouse / bungalow"
       ],
       [
         "commercial",
@@ -147,24 +157,34 @@ export const steps = [
   {
     "id": "timeline",
     "title": {
-      "ru": "Когда планируете приобретать?",
-      "en": "When are you planning to buy?"
+      "ru": "Когда вы планируете приехать в Испанию?",
+      "en": "When are you planning to come to Spain?"
     },
     "options": [
       [
-        "soon",
-        "В ближайшее время",
-        "As soon as possible"
+        "already-in-spain",
+        "Уже нахожусь в Испании",
+        "Already in Spain"
       ],
       [
-        "3-6-months",
-        "Через 3–6 месяцев",
-        "In 3–6 months"
+        "visit-next-month",
+        "В ближайший месяц",
+        "Within the next month"
       ],
       [
-        "6-plus-months",
-        "Более чем через 6 месяцев",
-        "In more than 6 months"
+        "visit-3-6-months",
+        "В течение 3–6 месяцев",
+        "Within 3–6 months"
+      ],
+      [
+        "visit-later",
+        "Позже чем через полгода",
+        "In more than six months"
+      ],
+      [
+        "online-viewings",
+        "Пока не планирую приезжать — готов смотреть онлайн",
+        "No visit planned yet — happy to view online"
       ]
     ]
   }
@@ -192,7 +212,7 @@ export const copy = {
     "phoneHint": "Выберите страну и введите ваш номер телефона без кода страны.",
     "consentBefore": "Я соглашаюсь с ",
     "consentLink": "условиями обработки персональных данных",
-    "consentAfter": " для обработки моего запроса оператором сайта SERGEY VAKORIN.",
+    "consentAfter": " для получения подборки и связи по моему запросу.",
     "country": "Страна и телефонный код",
     "nationalPlaceholder": "Номер телефона",
     "countryDetected": "Страну можно изменить.",
@@ -229,7 +249,7 @@ export const copy = {
     "phoneHint": "Choose your country and enter your phone number without the country code.",
     "consentBefore": "I agree to the ",
     "consentLink": "personal data processing terms",
-    "consentAfter": " for my enquiry to be processed by website operator SERGEY VAKORIN.",
+    "consentAfter": " to receive a property selection and be contacted about my enquiry.",
     "country": "Country and calling code",
     "nationalPlaceholder": "Phone number",
     "countryDetected": "You can change the country.",
@@ -244,4 +264,14 @@ export const copy = {
     "successTitle": "Thank you for your request.",
     "successText": "We will send your selection shortly using your chosen method."
   }
+};
+
+// Читаемые ответы для ранее сохранённых заявок после обновления вопросов.
+export const legacyAnswerLabels = {
+  'costa-brava': 'Коста-Брава',
+  'residence-permit': 'Для получения ВНЖ',
+  rental: 'Для сдачи в аренду',
+  soon: 'В ближайшее время',
+  '3-6-months': 'Через 3–6 месяцев',
+  '6-plus-months': 'Более чем через 6 месяцев'
 };

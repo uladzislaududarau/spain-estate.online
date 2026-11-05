@@ -7,7 +7,7 @@ import { sendToGoogleSheets, sheetRow, sheetColumns } from '../cloudflare/google
 
 const env = { GOOGLE_SHEETS_ENABLED: 'true', GOOGLE_SHEETS_WEBHOOK_SECRET: 'a'.repeat(64), GOOGLE_SHEETS_WEBHOOK_URL: 'https://script.google.com/macros/s/test-deployment/exec' };
 const lead = { leadId: randomUUID(), savedAt: '2026-11-05T12:34:56.000Z', name: 'Тест', contact: '@test_contact', messenger: 'telegram', language: 'ru',
-  answers: { regions: ['mallorca'], purpose: 'investment', propertyType: 'villa', budgets: ['200k-300k', '300k-500k'], timeline: 'soon' },
+  answers: { regions: ['mallorca'], purpose: 'investment', propertyType: 'villa', budgets: ['200k-300k', '300k-500k'], timeline: 'visit-next-month' },
   consent: { accepted: true, timestamp: '2026-11-05T12:34:56.000Z', policyVersion: '2026-11-04' } };
 
 test('Sheets получает подписанный запрос с ID, датами и отдельными критериями без секретов в URL', async () => {
@@ -22,6 +22,8 @@ test('Sheets получает подписанный запрос с ID, дат�
   assert.equal(payload.values.length, sheetColumns.length); assert.equal(payload.values[0], lead.leadId);
   assert.equal(payload.values[1], '05.11.2026'); assert.equal(payload.values[2], '14:34:56');
   assert.equal(payload.values[11], '200 000–300 000 €\n300 000–500 000 €');
+  assert.equal(payload.values[12], 'Приезд в Испанию: В ближайший месяц');
+  assert.equal(sheetRow({ ...lead, answers: { ...lead.answers, timeline: 'soon' } })[12], 'В ближайшее время');
 });
 
 test('Без включения канал не вызывается, чужие URL и ложное подтверждение отклоняются', async () => {

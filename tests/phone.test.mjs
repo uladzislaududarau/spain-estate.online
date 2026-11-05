@@ -45,7 +45,7 @@ test('Запоздалая GeoIP-подстановка не меняет руч
   assert.equal(countryFromLocale(['en'], supported), 'ES');
 });
 test('Сервер проверяет формат номера и соответствие выбранной стране', () => {
-  const lead = { requestId: randomUUID(), name: 'Тестовый клиент', language: 'ru', answers: { purpose: 'investment', propertyType: 'apartment', regions: ['costa-blanca', 'mallorca'], budgets: ['under-100k'], timeline: 'soon' }, region: 'marbella', messenger: 'whatsapp', phoneCountry: 'NO', contact: '+4740612345', consent: { accepted: true, policyVersion }, website: '' };
+  const lead = { requestId: randomUUID(), name: 'Тестовый клиент', language: 'ru', answers: { purpose: 'investment', propertyType: 'apartment', regions: ['costa-blanca', 'mallorca'], budgets: ['under-100k'], timeline: 'visit-next-month' }, region: 'marbella', messenger: 'whatsapp', phoneCountry: 'NO', contact: '+4740612345', consent: { accepted: true, policyVersion }, website: '' };
   assert.equal(validateLead(lead).data.contact, '+4740612345');
   assert.equal(validateLead({ ...lead, phoneCountry: 'ES' }).error, 'invalid_contact');
   assert.equal(validateLead({ ...lead, contact: '+471234' }).error, 'invalid_contact');

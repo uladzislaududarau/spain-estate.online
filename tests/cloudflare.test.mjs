@@ -12,7 +12,7 @@ const { Miniflare, convertV4MiniflareOptions } = createRequire(import.meta.resol
 const secret = '1'.repeat(64); // Исключительно тестовый ключ, не используется при публикации.
 function payload() {
   return { requestId: crypto.randomUUID(), name: 'Тест', language: 'ru', messenger: 'telegram', contact: '@spain_test', region: 'unspecified',
-    answers: { regions: ['mallorca'], purpose: 'investment', propertyType: 'villa', budgets: ['200k-300k'], timeline: 'soon' },
+    answers: { regions: ['mallorca'], purpose: 'investment', propertyType: 'villa', budgets: ['200k-300k'], timeline: 'visit-next-month' },
     consent: { accepted: true, policyVersion }, website: '' };
 }
 function lead() {

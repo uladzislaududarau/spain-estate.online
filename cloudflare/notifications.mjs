@@ -1,4 +1,4 @@
-import { steps } from '../showcase/assets/quiz.config.mjs';
+import { steps, legacyAnswerLabels } from '../showcase/assets/quiz.config.mjs';
 import { z } from 'zod';
 
 const emailAddress = z.string().email();
@@ -38,9 +38,9 @@ export function leadMessage(lead, timeZone = 'Asia/Nicosia', format = 'text') {
       'Часовой пояс: ' + (html ? escapeHtml(timeZone) : timeZone)
     ].join('\n');
   }
-  const labels = { regions: 'Регион Испании', purpose: 'Цель покупки', propertyType: 'Тип объекта', budgets: 'Бюджет', timeline: 'Срок покупки' };
+  const labels = { regions: 'Регион Испании', purpose: 'Цель покупки', propertyType: 'Тип объекта', budgets: 'Бюджет', timeline: Object.hasOwn(legacyAnswerLabels, lead.answers.timeline) ? 'Срок покупки' : 'Приезд в Испанию' };
   const answers = steps.map(question => {
-    const values = [].concat(lead.answers[question.id]).map(answer => value(question.options.find(option => option[0] === answer)?.[1] || answer));
+    const values = [].concat(lead.answers[question.id]).map(answer => value(question.options.find(option => option[0] === answer)?.[1] || legacyAnswerLabels[answer] || answer));
     return labels[question.id] + (question.id === 'budgets' ? ':\n' + values.join('\n') : ': ' + values.join(', '));
   });
   const blocks = [
