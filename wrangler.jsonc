@@ -25,7 +25,7 @@
     "html_handling": "drop-trailing-slash",
     "not_found_handling": "404-page"
   },
-  "vars": { "LEADS_ENABLED": "true", "GOOGLE_SHEETS_ENABLED": "false" },
+  "vars": { "LEADS_ENABLED": "true", "GOOGLE_SHEETS_ENABLED": "true" },
   "triggers": { "crons": ["*/5 * * * *"] },
   "observability": { "enabled": false }
 }
