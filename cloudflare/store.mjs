@@ -1,10 +1,13 @@
 import { keys, fingerprint, encrypt, decrypt } from './crypto.mjs';
 import { sendNotification } from './notifications.mjs';
+import { sendToGoogleSheets, sheetsEnabled } from './google-sheets.mjs';
 
 export async function createCloudStore(env, fetcher = fetch) {
   if (!env.DB) throw new Error('database_not_configured');
   const db = env.DB;
   const key = await keys(env.LEAD_ENCRYPTION_KEY);
+  const exportSheets = sheetsEnabled(env);
+  const pendingCondition = exportSheets ? "(email_status != 'sent' OR sheets_status != 'sent')" : "email_status != 'sent'";
   return {
     async rateLimit(ip) {
       const now = Date.now();
@@ -34,15 +37,23 @@ export async function createCloudStore(env, fetcher = fetch) {
       const lease = crypto.randomUUID();
       const row = await db.prepare(`UPDATE leads SET lease_token = ?, lease_until = ?
         WHERE id = ? AND lease_until <= ? AND next_attempt_at <= ?
-        AND email_status != 'sent' RETURNING *`)
+        AND ${pendingCondition} RETURNING *`)
         .bind(lease, now + 120000, id, now, now).first();
       if (!row) return;
       let failed = false;
       try {
         const lead = await decrypt(key.encryption, row.payload);
-        if (await sendNotification('email', lead, env, fetcher)) {
-          await db.prepare("UPDATE leads SET email_status = 'sent' WHERE id = ? AND lease_token = ?").bind(id, lease).run();
-        }
+        const deliverChannel = async (column, sender) => {
+          if (row[column] === 'sent') return;
+          try {
+            if (!await sender(lead)) { failed = true; return; }
+            await db.prepare(`UPDATE leads SET ${column} = 'sent' WHERE id = ? AND lease_token = ?`).bind(id, lease).run();
+          } catch { failed = true; }
+        };
+        await Promise.all([
+          deliverChannel('email_status', lead => sendNotification('email', lead, env, fetcher)),
+          ...(exportSheets ? [deliverChannel('sheets_status', lead => sendToGoogleSheets(lead, env, fetcher))] : [])
+        ]);
       } catch { failed = true; }
       // Содержимое ошибок сторонних API не сохраняется: в нём могут оказаться токены или контакты.
       const delay = Math.min(3600000, 60000 * 2 ** Math.min(row.attempts, 6));
@@ -50,7 +61,7 @@ export async function createCloudStore(env, fetcher = fetch) {
         .bind(Date.now() + delay, failed ? 'delivery_failed' : null, id, lease).run();
     },
     async pending() {
-      const result = await db.prepare("SELECT id FROM leads WHERE next_attempt_at <= ? AND lease_until <= ? AND email_status != 'sent' ORDER BY next_attempt_at LIMIT 5")
+      const result = await db.prepare(`SELECT id FROM leads WHERE next_attempt_at <= ? AND lease_until <= ? AND ${pendingCondition} ORDER BY created_at LIMIT 5`)
         .bind(Date.now(), Date.now()).all();
       return result.results.map(row => row.id);
     },

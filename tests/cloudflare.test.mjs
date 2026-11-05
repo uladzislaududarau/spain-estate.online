@@ -81,7 +81,7 @@ async function database(t) {
   const mf = new Miniflare(convertV4MiniflareOptions({ modules: true, script: 'export default { fetch() { return new Response("ok"); } };', d1Databases: ['DB'] }));
   t.after(() => mf.dispose());
   const db = await mf.getD1Database('DB');
-  for (const name of ['0001_leads.sql', '0002_lead_retention.sql']) {
+  for (const name of ['0001_leads.sql', '0002_lead_retention.sql', '0003_google_sheets.sql']) {
     const sql = await readFile(new URL('../migrations/' + name, import.meta.url), 'utf8');
     for (const statement of sql.split(';').filter(part => part.trim())) await db.prepare(statement).run();
   }
@@ -176,4 +176,60 @@ test('Очистка срока хранения удаляет только з�
   assert.equal(remaining.includes(ids[0]), false);
   assert.equal(remaining.includes(ids[1]), true);
   assert.equal(remaining.includes(ids[2]), true);
+});
+
+
+test('Ошибка Sheets не мешает email; повтор Sheets не повторяет отправленное письмо', async t => {
+  const db = await database(t); let sheetsFail = true; const calls = [];
+  const env = { DB: db, LEAD_ENCRYPTION_KEY: secret, LEADS_ENABLED: 'true',
+    RESEND_API_KEY: 'test-only', LEAD_EMAIL_FROM: 'test@example.com', LEAD_NOTIFICATION_EMAILS: 'receiver@example.com',
+    GOOGLE_SHEETS_ENABLED: 'true', GOOGLE_SHEETS_WEBHOOK_SECRET: 'a'.repeat(64), GOOGLE_SHEETS_WEBHOOK_URL: 'https://script.google.com/macros/s/test-script/exec' };
+  const store = await createCloudStore(env, async (url, options) => {
+    calls.push(url);
+    if (url === 'https://api.resend.com/emails') return Response.json({ id: 'test-email' });
+    const payload = JSON.parse(JSON.parse(options.body).payload);
+    return Response.json(sheetsFail ? { ok: false } : { ok: true, leadId: payload.leadId });
+  });
+  const saved = await store.save(lead()); await store.deliver(saved.leadId);
+  let row = await db.prepare('SELECT * FROM leads').first();
+  assert.equal(row.email_status, 'sent'); assert.equal(row.sheets_status, 'pending');
+  sheetsFail = false; await db.prepare('UPDATE leads SET next_attempt_at = 0').run();
+  assert.deepEqual(await store.pending(), [saved.leadId]); await store.deliver(saved.leadId);
+  row = await db.prepare('SELECT * FROM leads').first();
+  assert.equal(row.sheets_status, 'sent');
+  assert.equal(calls.filter(url => url === 'https://api.resend.com/emails').length, 1);
+  assert.equal(calls.filter(url => url.includes('script.google.com')).length, 2);
+  await db.prepare('UPDATE leads SET next_attempt_at = 0').run(); assert.deepEqual(await store.pending(), []);
+});
+
+test('Сохранённые ранее заявки выгружаются в Sheets без повторного email', async t => {
+  const db = await database(t); const calls = [];
+  const env = { DB: db, LEAD_ENCRYPTION_KEY: secret, GOOGLE_SHEETS_ENABLED: 'true',
+    GOOGLE_SHEETS_WEBHOOK_SECRET: 'a'.repeat(64), GOOGLE_SHEETS_WEBHOOK_URL: 'https://script.google.com/macros/s/test-script/exec' };
+  const store = await createCloudStore(env, async (url, options) => {
+    calls.push(url); return Response.json({ ok: true, leadId: JSON.parse(JSON.parse(options.body).payload).leadId });
+  });
+  const saved = await store.save(lead()); await db.prepare("UPDATE leads SET email_status = 'sent'").run();
+  assert.deepEqual(await store.pending(), [saved.leadId]); await store.deliver(saved.leadId);
+  assert.deepEqual(calls, [env.GOOGLE_SHEETS_WEBHOOK_URL]);
+  assert.equal((await db.prepare('SELECT sheets_status FROM leads').first()).sheets_status, 'sent');
+});
+
+test('Ошибка email не блокирует Sheets; успешная строка не экспортируется повторно', async t => {
+  const db = await database(t); let emailFails = true; const calls = [];
+  const env = { DB: db, LEAD_ENCRYPTION_KEY: secret,
+    RESEND_API_KEY: 'test-only', LEAD_EMAIL_FROM: 'test@example.com', LEAD_NOTIFICATION_EMAILS: 'receiver@example.com',
+    GOOGLE_SHEETS_ENABLED: 'true', GOOGLE_SHEETS_WEBHOOK_SECRET: 'a'.repeat(64), GOOGLE_SHEETS_WEBHOOK_URL: 'https://script.google.com/macros/s/test-script/exec' };
+  const store = await createCloudStore(env, async (url, options) => {
+    calls.push(url);
+    if (url === 'https://api.resend.com/emails') return emailFails ? Response.json({ error: 'unavailable' }, { status: 503 }) : Response.json({ id: 'test-email' });
+    return Response.json({ ok: true, leadId: JSON.parse(JSON.parse(options.body).payload).leadId });
+  });
+  const saved = await store.save(lead()); await store.deliver(saved.leadId);
+  let row = await db.prepare('SELECT * FROM leads').first();
+  assert.equal(row.email_status, 'pending'); assert.equal(row.sheets_status, 'sent');
+  emailFails = false; await db.prepare('UPDATE leads SET next_attempt_at = 0').run(); await store.deliver(saved.leadId);
+  row = await db.prepare('SELECT * FROM leads').first(); assert.equal(row.email_status, 'sent');
+  assert.equal(calls.filter(url => url.includes('script.google.com')).length, 1);
+  assert.equal(calls.filter(url => url === 'https://api.resend.com/emails').length, 2);
 });
