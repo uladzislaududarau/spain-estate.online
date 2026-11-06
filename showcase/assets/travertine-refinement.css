@@ -692,4 +692,5 @@ html.fonts-ready .intro-column { animation: intro-reveal 240ms ease-out both; }
 @media (min-width: 961px) {
   .travertine-page .hero-title { width: max-content; max-width: calc(100vw - var(--travertine-gutter) * 2); }
   .hero-title-line { display: block; white-space: nowrap; }
+  .hero-subtitle { width: max-content; max-width: calc(100vw - var(--travertine-gutter) * 2); white-space: nowrap; }
 }
