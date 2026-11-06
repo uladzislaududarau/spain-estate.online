@@ -244,10 +244,9 @@ function renderContact(content, shell, t, { currentMessenger = messenger, measur
   nameInput.addEventListener('input', () => { contactName = nameInput.value; nameInput.removeAttribute('aria-invalid'); error.textContent = ''; });
   nameField.append(nameInput);
   const field = node('div', { class: 'quiz-field' });
-  const input = node('input', { id: 'quiz-contact', name: 'contact', type: currentMessenger === 'whatsapp' ? 'tel' : 'text', autocomplete: currentMessenger === 'whatsapp' ? 'tel' : 'off', maxlength: 64, required: '', 'aria-describedby': currentMessenger === 'whatsapp' ? 'quiz-country-status quiz-error' : 'quiz-error', placeholder: currentMessenger === 'whatsapp' ? '+34 612 345 678' : '@username' });
+  const input = node('input', { id: 'quiz-contact', name: 'contact', type: currentMessenger === 'whatsapp' ? 'tel' : 'text', autocomplete: currentMessenger === 'whatsapp' ? 'tel' : 'off', maxlength: 64, required: '', 'aria-label': currentMessenger === 'whatsapp' ? t.phone : t.telegram, 'aria-describedby': currentMessenger === 'whatsapp' ? 'quiz-country-status quiz-error' : 'quiz-error', placeholder: currentMessenger === 'whatsapp' ? t.nationalPlaceholder : '@username / Telegram' });
   input.value = measuring ? '' : contact[currentMessenger];
   input.addEventListener('input', () => { contact[messenger] = input.value; input.removeAttribute('aria-invalid'); error.textContent = ''; });
-  field.append(node('label', { for: 'quiz-contact' }, currentMessenger === 'whatsapp' ? t.phone : t.telegram));
   if (currentMessenger === 'whatsapp') {
     if (!measuring) phoneState.hasInput = Boolean(input.value.trim());
     const component = createPhoneField({ input, lang, text: t, state: phoneState, staticOnly: measuring, onCountry: persist,

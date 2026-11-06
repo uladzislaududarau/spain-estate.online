@@ -615,7 +615,7 @@ footer {
   }
 
   .arch-wrapper {
-    height: 65svh;
+    height: var(--mobile-hero-height, 65svh);
     min-height: 377px;
   }
 
