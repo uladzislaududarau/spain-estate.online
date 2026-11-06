@@ -687,3 +687,9 @@ html.fonts-ready .intro-column { animation: intro-reveal 240ms ease-out both; }
 @media (prefers-reduced-motion: reduce) {
   html.fonts-ready .intro-column { animation: none; }
 }
+
+/* Две заданные строки только на десктопе; мобильные переносят текст свободно. */
+@media (min-width: 961px) {
+  .travertine-page .hero-title { width: max-content; max-width: calc(100vw - var(--travertine-gutter) * 2); }
+  .hero-title-line { display: block; white-space: nowrap; }
+}
