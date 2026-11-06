@@ -1,6 +1,40 @@
 export const policyVersion = '2026-11-05';
 export const steps = [
   {
+    "id": "propertyType",
+    "title": {
+      "ru": "Какой тип объекта вас интересует?",
+      "en": "What type of property interests you?"
+    },
+    "options": [
+      [
+        "apartment",
+        "Квартира / апартаменты",
+        "Apartment"
+      ],
+      [
+        "villa",
+        "Вилла / дом",
+        "Villa / house"
+      ],
+      [
+        "penthouse",
+        "Пентхаус",
+        "Penthouse"
+      ],
+      [
+        "townhouse",
+        "Таунхаус / бунгало",
+        "Townhouse / bungalow"
+      ],
+      [
+        "commercial",
+        "Коммерческая недвижимость",
+        "Commercial property"
+      ]
+    ]
+  },
+  {
     "id": "regions",
     "multiple": true,
     "exclusive": "undecided",
@@ -52,69 +86,6 @@ export const steps = [
     ]
   },
   {
-    "id": "purpose",
-    "title": {
-      "ru": "Для чего вы выбираете недвижимость?",
-      "en": "What is your main reason for buying?"
-    },
-    "options": [
-      [
-        "permanent-home",
-        "Для постоянного проживания",
-        "For permanent residence"
-      ],
-      [
-        "investment",
-        "Для инвестиций и сдачи в аренду",
-        "For investment and rental income"
-      ],
-      [
-        "personal-and-rental",
-        "Для себя и сдачи в аренду",
-        "For personal use and rental income"
-      ],
-      [
-        "holiday-home",
-        "Для отдыха — второй дом",
-        "For holidays — a second home"
-      ]
-    ]
-  },
-  {
-    "id": "propertyType",
-    "title": {
-      "ru": "Какой тип объекта вас интересует?",
-      "en": "What type of property interests you?"
-    },
-    "options": [
-      [
-        "apartment",
-        "Квартира / апартаменты",
-        "Apartment"
-      ],
-      [
-        "villa",
-        "Вилла / дом",
-        "Villa / house"
-      ],
-      [
-        "penthouse",
-        "Пентхаус",
-        "Penthouse"
-      ],
-      [
-        "townhouse",
-        "Таунхаус / бунгало",
-        "Townhouse / bungalow"
-      ],
-      [
-        "commercial",
-        "Коммерческая недвижимость",
-        "Commercial property"
-      ]
-    ]
-  },
-  {
     "id": "budgets",
     "multiple": true,
     "title": {
@@ -151,6 +122,35 @@ export const steps = [
         "1m-plus",
         "1 000 000 € и выше",
         "€1,000,000 and above"
+      ]
+    ]
+  },
+  {
+    "id": "purpose",
+    "title": {
+      "ru": "Для чего вы выбираете недвижимость?",
+      "en": "What is your main reason for buying?"
+    },
+    "options": [
+      [
+        "permanent-home",
+        "Для постоянного проживания",
+        "For permanent residence"
+      ],
+      [
+        "investment",
+        "Для инвестиций и сдачи в аренду",
+        "For investment and rental income"
+      ],
+      [
+        "personal-and-rental",
+        "Для себя и сдачи в аренду",
+        "For personal use and rental income"
+      ],
+      [
+        "holiday-home",
+        "Для отдыха — второй дом",
+        "For holidays — a second home"
       ]
     ]
   },

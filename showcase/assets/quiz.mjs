@@ -29,7 +29,7 @@ try {
       else if (valid.includes(saved.answers?.[question.id])) answers[question.id] = saved.answers[question.id];
     }
     step = Number.isInteger(saved.step) ? Math.min(steps.length, Math.max(0, saved.step)) : 0;
-    if (saved.schemaVersion !== 5) { const unanswered = steps.findIndex(question => question.multiple ? !answers[question.id]?.length : !answers[question.id]); step = unanswered < 0 ? steps.length : unanswered; }
+    if (saved.schemaVersion !== 6) { const unanswered = steps.findIndex(question => question.multiple ? !answers[question.id]?.length : !answers[question.id]); step = unanswered < 0 ? steps.length : unanswered; }
     messenger = saved.messenger === 'telegram' ? 'telegram' : 'whatsapp';
     if (/^[A-Z]{2}$/.test(saved.phoneCountry)) { phoneState.country = saved.phoneCountry; phoneState.source = 'manual'; }
     if (/^[a-f\d-]{36}$/.test(saved.requestId)) requestId = saved.requestId;
@@ -37,7 +37,7 @@ try {
 } catch { /* Хранилище может быть отключено в браузере. */ }
 // Контакты и согласие остаются только в памяти вкладки.
 function persist() {
-  try { sessionStorage.setItem(key, JSON.stringify({ version: policyVersion, schemaVersion: 5, step, answers, messenger, requestId, phoneCountry: phoneState.source !== 'fallback' ? phoneState.country : null })); } catch {}
+  try { sessionStorage.setItem(key, JSON.stringify({ version: policyVersion, schemaVersion: 6, step, answers, messenger, requestId, phoneCountry: phoneState.source !== 'fallback' ? phoneState.country : null })); } catch {}
 }
 const dialog = document.createElement('dialog');
 dialog.className = 'quiz-dialog';
