@@ -56,3 +56,9 @@ Applied cinematic-motion,local gsap-timeline/gsap-scrolltrigger and mobile-motio
 Scoped entrance animates child layers; scroll animates their `.hero-copy` parent with a short reversible fade/lift. This replaces the old full-screen-length fade that was barely visible before natural page exit. CTA remains reachable. Live reduced motion restores static visible copy.
 
 Production build and2existing font/semantic tests passed. Chrome157 browser checks passed at1440×900,768×1024,390×844,320×640:exact replacement copy,weight700,shadow present,primary action within viewport,no overflow,page errors0,quiz opens. Scroll samples at120/280/460px showed opacity≈.714/.333/0 (compact viewport≈.659/.205/0); real wheel reverse restored1. Reduced motion retained opacity1. Captures/video/rawresults:docs/qa/hero-motion-update/. Desktop initial,phone initial andphone mid-scroll captures were visually inspected. No real lead sent.
+
+## Region CTA wording update
+
+User-requested copy only:hero action is now uppercase“ВЫБРАТЬ РЕГИОН”;the supporting paragraph appends the exact largest/private-catalogue sentence. Existing quiz binding and motion remain unchanged. Claim provenance remains user-provided in the facts ledger;no independent market-ranking/inventory verification is claimed.
+
+Build and2existing semantic/font tests passed. Chrome157 checked1440×900,390×844,320×640:replacement text present,no overflow,heading below header,CTA within viewport,button opens the region question,Escape works,page errors0. Phone capture visually inspected. Evidence:docs/qa/region-cta-copy/. No lead submission.

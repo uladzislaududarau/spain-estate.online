@@ -119,10 +119,10 @@
     },
     {
       "id": "catalog-count-user-copy",
-      "value": "Более 3000 объектов с актуальными ценами и условиями.",
+      "value": "Более 3000 объектов с актуальными ценами и условиями. Крупнейший закрытый каталог недвижимости в Испании.",
       "source": "User-requested hero copy in conversation, 2026-11-16",
       "status": "user-provided-not-independently-verified",
-      "publicationDecision": "Use the exact user wording in the local preview; no inventory or live price audit claimed."
+      "publicationDecision": "Exact local-preview wording requested by user, including the largest/private-catalogue description; no independent market ranking or inventory verification claimed."
     }
   ]
 }

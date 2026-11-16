@@ -18,7 +18,7 @@ test('Локальные шрифты используют swap и не блок
 
 test('Заголовок и основное действие доступны до выполнения отложенных скриптов', () => {
   assert.match(html, /<h1\b[^>]*>Недвижимость в Испании для комфортного проживания и выгодных инвестиций\.<\/h1>/);
-  assert.match(html, /<button\b[^>]*data-open-quiz[^>]*>Начать поиск/);
+  assert.match(html, /<button\b[^>]*data-open-quiz[^>]*>ВЫБРАТЬ РЕГИОН/);
   assert.doesNotMatch(html, /document\.fonts\.load|style=["'][^"']*(?:visibility\s*:\s*hidden|opacity\s*:\s*0)/);
   for (const match of html.matchAll(/<script\b([^>]*)\bsrc=["'][^"']+["']([^>]*)>/g)) {
     assert.match(match[1] + match[2], /\bdefer\b|\btype=["']module["']/);
