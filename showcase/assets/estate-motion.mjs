@@ -16,8 +16,18 @@ if(gsap&&ScrollTrigger&&root){
   heroTrigger=ScrollTrigger.create({id:'estate-cinema',trigger:main,start:'top top',end:'bottom bottom',scrub:true,invalidateOnRefresh:true,onUpdate:self=>{
     player?.setProgress(self.progress);if(bar)bar.style.transform=`scaleX(${self.progress})`;const text=chapters[Math.min(3,Math.floor(self.progress*4))];if(chapter&&chapter.textContent!==text)chapter.textContent=text;
   }});
-  const intro=gsap.timeline({defaults:{ease:'power2.out',duration:.9}});intro.from('.hero-title',{y:20,opacity:.7},0).from('.hero-action',{y:10,opacity:.5},.15);
-  gsap.to('.hero-content',{scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:true},y:-70,opacity:0,ease:'none'});
+  const heroCopy=document.querySelector('.hero-copy');
+  // Entrance owns the child layers; native scroll owns only their parent.
+  const intro=gsap.timeline({defaults:{ease:'power3.out',duration:.85}});
+  intro.fromTo('.hero-title',{y:28,opacity:0},{y:0,opacity:1},0)
+    .fromTo('.hero-copy p',{y:18,opacity:0},{y:0,opacity:1},.12)
+    .fromTo('.hero-action',{y:14,opacity:0},{y:0,opacity:1},.24);
+  gsap.to(heroCopy,{
+    scrollTrigger:{id:'estate-hero-copy',trigger:'#hero',start:'top top',
+      end:()=>`+=${Math.round(Math.min(innerHeight*.55,420))}`,
+      scrub:.25,invalidateOnRefresh:true},
+    y:phone?-36:-64,opacity:0,ease:'none'
+  });
   const threshold=document.querySelector('#threshold');
   if(threshold){
     const tl=gsap.timeline({scrollTrigger:{id:'estate-threshold',trigger:threshold,start:'top bottom',end:'top top',scrub:true,invalidateOnRefresh:true}});

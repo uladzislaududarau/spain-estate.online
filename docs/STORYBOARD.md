@@ -17,3 +17,11 @@ Reduced motion initially and live: no pin or tall range, no canvas requests, all
 Quiz: region→city→type→budget→purpose→visit timeline→contact. Native dialog, focus enter/return/Escape, persistent answers, back/next. Budget reset visibly after geography/type changes, manual under-min allowed, alternatives same region first, expansion only opt-in. Contact retained in memory; no fake success. Successful conversion only after success:true +leadId from server. Consent unchecked by default.
 
 Proof plan:1440/768/390/375/320, wheel/touch reverse,0/25/50/75/100,fast seek,orientation/live reduced,offline frame fallback,keyboard/modal,local mocked success/error and actual isolated local API storage. Physical iOS/Android unavailable marked not-run.
+
+## Requested hero typography and scroll treatment
+
+Hero copy update: title weight700 with two dark text-shadow layers; display size69.12px at1440px and32px at390/320px. Subtitle and action use the user's exact replacement wording.
+
+Entrance: child title lifts28px to0, supporting copy18px to0, action14px to0; opacity0→1,0.85s power3.out, starts0/.12/.24s. Scroll separately owns `.hero-copy` (not its child entrance transforms): native top0→min(55%viewport,420px), scrubbing0.25s, opacity1→0 and y0→-64px desktop/-36px phone. Quarter states are opacity1/.75/.5/.25/0 with proportional displacement. Reverse follows the same progress. CTA stays an ordinary reachable control in normal flow. Reduced motion initially/live reverts the intro and scrub and preserves readable static HTML. The existing matchMedia lifecycle owns cleanup. Canvas/background ownership is unchanged.
+
+Header fade: a noninteractive pseudo-layer extends64px below the fixed header; multiple dark-to-transparent stops plus a gradient mask feather the blur boundary. No new border or layout spacer.

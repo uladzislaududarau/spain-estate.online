@@ -116,6 +116,13 @@
       "source": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/legal/ru-legal.html",
       "status": "source-retained",
       "publicationDecision": "retain limits; do not add financial/legal claims"
+    },
+    {
+      "id": "catalog-count-user-copy",
+      "value": "Более 3000 объектов с актуальными ценами и условиями.",
+      "source": "User-requested hero copy in conversation, 2026-11-16",
+      "status": "user-provided-not-independently-verified",
+      "publicationDecision": "Use the exact user wording in the local preview; no inventory or live price audit claimed."
     }
   ]
 }
