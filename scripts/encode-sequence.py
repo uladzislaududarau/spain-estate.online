@@ -15,8 +15,9 @@ with tempfile.TemporaryDirectory(prefix='estate-frames-') as tmp:
     def encode(job):
         tier,index,frame=job;target=a.out/tier/f'frame_{index:05d}.avif'
         cmd=['ffmpeg','-y','-hide_banner','-loglevel','error','-i',str(frame),'-frames:v','1']
-        if tier=='mobile':cmd+=['-vf','crop=480:720:440:0']
-        cmd+=['-c:v','libsvtav1','-crf','27' if tier=='desktop' else '30','-preset','8','-svtav1-params','lp=2','-pix_fmt','yuv420p','-f','avif',str(target)]
+        if tier=='mobile':cmd+=['-vf','crop=480:720:440:0,cas=0.2']
+        else:cmd+=['-vf','cas=0.2']
+        cmd+=['-c:v','libsvtav1','-crf','25' if tier=='desktop' else '28','-preset','4','-svtav1-params','lp=2:tune=0','-pix_fmt','yuv420p','-f','avif',str(target)]
         subprocess.run(cmd,check=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
     jobs=[(tier,i,f) for tier,step in [('desktop',1),('mobile',2)] for i,f in enumerate(frames[::step],1)]
     with ThreadPoolExecutor(max_workers=4) as pool:list(pool.map(encode,jobs))

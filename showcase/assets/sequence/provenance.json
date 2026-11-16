@@ -1,14 +1,31 @@
 {
   "source": "../../../../videoesp.mp4",
   "sourceSha256": "5a539d5d6038d41dd7c7f97fa244a0c882d26509d831e44bb8d6296685fe18ec",
-  "dimensions": [1280,720],
+  "dimensions": [
+    1280,
+    720
+  ],
   "fps": 24,
   "sourceFrames": 240,
   "durationSeconds": 10,
   "rightsBasis": "User-supplied file explicitly requested for this local build; public reuse rights not independently verified",
   "subjectStatus": "Illustrative architecture, no identified live listing or location claim",
-  "encoding": "FFmpeg libsvtav1 preset8, YUV420p, desktop CRF27, portrait mobile CRF30",
-  "desktop": {"count":240,"width":1280,"height":720,"bytes":11314384,"manifest":"desktop/manifest.json"},
-  "mobile": {"count":120,"width":480,"height":720,"bytes":2121842,"crop":"480:720:440:0","sourceStep":2,"manifest":"mobile/manifest.json"},
+  "encoding": "FFmpeg libsvtav1 preset4, cas=0.2 edge enhancement, YUV420p, desktop CRF25, portrait mobile CRF28",
+  "desktop": {
+    "count": 240,
+    "width": 1280,
+    "height": 720,
+    "bytes": 10343403,
+    "manifest": "desktop/manifest.json"
+  },
+  "mobile": {
+    "count": 120,
+    "width": 480,
+    "height": 720,
+    "bytes": 1890700,
+    "crop": "480:720:440:0",
+    "sourceStep": 2,
+    "manifest": "mobile/manifest.json"
+  },
   "editorialOrder": "Begin at source frame48 (2s), continue to end, then source0..47. Reverse uses same order backwards. Not a continuous physical camera path."
 }
