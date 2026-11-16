@@ -1,4 +1,4 @@
-import { readFile, writeFile, mkdir, copyFile, readdir, stat, rm } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, copyFile, readdir, stat, rm, cp } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildSiteOrigin, renderLanding, renderThankYou, robots, sitemap } from '../server/seo.mjs';
@@ -48,6 +48,9 @@ for (const [input, target] of [
 for (const file of await readdir(path.join(source, 'assets'))) {
   if (['logo.svg', 'logo-white.svg'].includes(file) || /(?:OFL\.txt|\.LICENSE)$/.test(file)) await copyFile(path.join(source, 'assets', file), path.join(output, 'assets', file));
 }
+// Manifest-driven sequence requests are dynamic and must be emitted in full.
+await cp(path.join(source, 'assets/sequence'), path.join(output, 'assets/sequence'), { recursive: true });
+await cp(path.join(source, 'assets/vendor'), path.join(output, 'assets/vendor'), { recursive: true });
 await copyFile(path.join(source, 'favicon.ico'), path.join(output, 'favicon.ico'));
 await emit('robots.txt', robots(origin));
 if (origin) await emit('sitemap.xml', sitemap(origin));

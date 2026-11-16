@@ -1,0 +1,121 @@
+{
+  "checkedDate": "2026-11-16",
+  "sourceCommit": "97b8a62a72de3b4477bd085a41f3e54ad664d11a",
+  "scope": "Local rebuild; evidence is original source and user brief. No live operator or availability verification claimed.",
+  "facts": [
+    {
+      "id": "project-name",
+      "value": "Spain Property for Sale",
+      "source": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/legal/ru-legal.html",
+      "status": "source-retained",
+      "publicationDecision": "retain existing project identity; not a claim of registered company name"
+    },
+    {
+      "id": "operator",
+      "value": "SERGEY VAKORIN",
+      "source": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/legal/ru-legal.html",
+      "status": "source-retained",
+      "publicationDecision": "retain legal document; independent identity verification not performed"
+    },
+    {
+      "id": "operator-address",
+      "value": "Atlandidos str. 5, Agios Athanasios, Limassol, 4103, Cyprus",
+      "source": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/legal/ru-legal.html",
+      "status": "source-retained",
+      "publicationDecision": "retain legal document only; not a Spanish property office claim"
+    },
+    {
+      "id": "operator-email",
+      "value": "phewcy.dev@gmail.com",
+      "source": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/legal/ru-legal.html",
+      "status": "source-retained",
+      "publicationDecision": "retain existing email; deliverability not tested"
+    },
+    {
+      "id": "service",
+      "value": "Collect criteria and contact details to respond with a property selection in Spain",
+      "source": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/legal/ru-legal.html",
+      "status": "source-retained",
+      "publicationDecision": "publish concise service description"
+    },
+    {
+      "id": "public-domain",
+      "value": "https://spain-estate.online",
+      "source": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/README.md",
+      "status": "source-retained",
+      "publicationDecision": "retain deployment origin configuration; local preview remains noindex"
+    },
+    {
+      "id": "phone-whatsapp",
+      "value": null,
+      "source": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/legal/ru-legal.html",
+      "status": "unverified",
+      "publicationDecision": "do not invent a public phone or WhatsApp destination; quiz collects visitor contact only"
+    },
+    {
+      "id": "inventory-count",
+      "value": "1000+ current listings / largest catalogue",
+      "source": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/index.html",
+      "status": "unverified",
+      "publicationDecision": "omit; no connected live property catalogue or evidence supporting quantity/superlative"
+    },
+    {
+      "id": "exclusive-offers",
+      "value": "Exclusive offers",
+      "source": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/index.html",
+      "status": "unverified",
+      "publicationDecision": "omit unsupported exclusivity"
+    },
+    {
+      "id": "services-inherited",
+      "value": [
+        "New and resale property",
+        "Mortgage assistance",
+        "Individual property tours"
+      ],
+      "source": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/index.html",
+      "status": "source-retained-unverified",
+      "publicationDecision": "preserve source audit; do not add guarantees or imply current operational capacity without confirmation"
+    },
+    {
+      "id": "pricing-ledger",
+      "value": {
+        "rows": 21,
+        "currency": "EUR",
+        "types": [
+          "apartment",
+          "villa"
+        ],
+        "specialNotes": [
+          "Barcelona villas: suburb",
+          "Valencia villas: suburb",
+          "Benidorm villas: Finestrat"
+        ]
+      },
+      "source": "User attachment a9064884-dbdb-4c1d-a909-047643a82a0f, pasted ADDITIONAL TASK, control table",
+      "status": "user-supplied",
+      "publicationDecision": "use as indicative thresholds, not live asking prices or available objects; no replacement with internet market values"
+    },
+    {
+      "id": "pricing-name-qualification",
+      "value": "No original screenshot/spreadsheet supplied. Use exact full names in pasted table; cropped-original names have not been independently confirmed.",
+      "source": "User additional task",
+      "status": "unverified-original-table",
+      "publicationDecision": "record limitation in docs, no claim of full spreadsheet verification"
+    },
+    {
+      "id": "media-provenance",
+      "value": "Existing photographs are declared illustrative by inherited legal page; supplied video has no identified address/listing.",
+      "source": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/legal/ru-legal.html",
+      "status": "illustrative",
+      "publicationDecision": "do not present scenes as a currently available specific property"
+    },
+    {
+      "id": "guarantees",
+      "value": "No guaranteed returns, mortgage approval, residence permits, availability, tax treatment, or purchase contract",
+      "source": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/legal/ru-legal.html",
+      "status": "source-retained",
+      "publicationDecision": "retain limits; do not add financial/legal claims"
+    }
+  ]
+}

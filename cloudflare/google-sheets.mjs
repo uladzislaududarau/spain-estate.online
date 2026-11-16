@@ -1,5 +1,7 @@
 import { steps, legacyAnswerLabels } from '../showcase/assets/quiz.config.mjs';
 
+import { pricingLines, attributionLines, regionLabel } from './pricing-labels.mjs';
+
 export const sheetColumns = [
   'ID заявки', 'Дата', 'Время', 'Часовой пояс', 'Имя', 'Способ связи', 'Контакт',
   'Язык', 'Регион Испании', 'Цель покупки', 'Тип объекта', 'Бюджет', 'Срок покупки',
@@ -10,7 +12,7 @@ export function sheetRow(lead, timeZone = 'Asia/Nicosia') {
   const date = new Date(lead.savedAt);
   const answer = id => {
     const question = steps.find(step => step.id === id);
-    return [].concat(lead.answers[id]).map(value => question.options.find(option => option[0] === value)?.[1] || legacyAnswerLabels[value] || value).join('\n');
+    return [].concat(lead.answers[id]).map(value => question.options.find(option => option[0] === value)?.[1] || legacyAnswerLabels[value] || (id === 'regions' ? regionLabel(value) : value === 'both' ? 'Квартира и вилла' : value === 'dynamic' ? 'Индивидуальный бюджет' : value)).join('\n');
   };
   return [
     lead.leadId,
@@ -18,9 +20,9 @@ export function sheetRow(lead, timeZone = 'Asia/Nicosia') {
     new Intl.DateTimeFormat('ru-RU', { timeZone, hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' }).format(date),
     timeZone, lead.name, lead.messenger === 'whatsapp' ? 'WhatsApp' : 'Telegram', lead.contact,
     lead.language === 'ru' ? 'Русский' : 'Английский', answer('regions'), answer('purpose'),
-    answer('propertyType'), answer('budgets'), (Object.hasOwn(legacyAnswerLabels, lead.answers.timeline) ? '' : 'Приезд в Испанию: ') + answer('timeline'),
+    answer('propertyType'), lead.pricing ? pricingLines(lead.pricing).join('\n') : answer('budgets'), (Object.hasOwn(legacyAnswerLabels, lead.answers.timeline) ? '' : 'Приезд в Испанию: ') + answer('timeline'),
     lead.consent.accepted ? 'Да' : 'Нет', lead.consent.timestamp, lead.consent.policyVersion,
-    lead.savedAt, 'https://spain-estate.online'
+    lead.savedAt, ['https://spain-estate.online', ...attributionLines(lead.attribution)].join('\n')
   ].map(value => String(value ?? ''));
 }
 

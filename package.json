@@ -12,7 +12,12 @@
     "dev:cloudflare": "npm run build && wrangler dev",
     "check:cloudflare": "npm run build && wrangler deploy --dry-run --outdir .worker-build",
     "deploy": "npm run build && wrangler deploy",
-    "check": "node scripts/check.mjs"
+    "check": "node scripts/check.mjs",
+    "preview": "STATIC_DIRECTORY=dist PORT=4322 node server/index.mjs",
+    "verify:sequence": "node scripts/verify-sequence.mjs",
+    "qa:quiz": "node scripts/qa-quiz.mjs",
+    "qa:motion": "node scripts/qa-motion.mjs",
+    "qa:a11y": "node scripts/qa-accessibility-performance.mjs"
   },
   "dependencies": {
     "geoip-country": "^5.0.202610310241",
@@ -28,6 +33,7 @@
     "node": ">=22"
   },
   "devDependencies": {
+    "axe-core": "^4.14.1",
     "wrangler": "4.156.1"
   }
 }

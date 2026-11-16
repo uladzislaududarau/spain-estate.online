@@ -1,0 +1,4 @@
+import{readFile,writeFile}from'node:fs/promises';import{createHash}from'node:crypto';import assert from'node:assert/strict';
+const root=new URL('../showcase/assets/sequence/',import.meta.url);const results=[];
+for(const tier of ['desktop','mobile']){const m=JSON.parse(await readFile(new URL(`${tier}/manifest.json`,root)));let total=0;assert.equal(m.frames.length,m.count);assert.equal(new Set(m.frames).size,m.count);for(const f of m.frames){const b=await readFile(new URL(`${tier}/${f}`,root));assert(b.subarray(4,16).toString().includes('avif'));assert.equal(createHash('sha256').update(b).digest('hex'),m.sha256[f]);total+=b.length;}assert.equal(total,m.bytes);results.push({tier,count:m.count,width:m.width,height:m.height,bytes:total,container:'AVIF ftyp + hashes verified'});}
+await writeFile(new URL('../docs/qa/sequence-integrity.json',import.meta.url),JSON.stringify(results,null,2));console.log(results);

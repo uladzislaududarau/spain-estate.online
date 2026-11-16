@@ -10,8 +10,10 @@ import { resolveCountry } from './country.mjs';
 import { siteOrigin, renderLanding, renderThankYou, robots, sitemap } from './seo.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-export async function createApp({ storage = path.join(root, 'storage', 'leads'), saveLead, allowedOrigin, geoProvider = '', countryResolver = resolveCountry, siteUrl = '' } = {}) {
+export async function createApp({ storage = path.join(root, 'storage', 'leads'), saveLead, allowedOrigin, geoProvider = '', countryResolver = resolveCountry, siteUrl = '', assetDirectory = 'showcase' } = {}) {
   const originUrl = siteOrigin(siteUrl);
+  const staticRoot = path.resolve(root, assetDirectory);
+  const sourceAssets = staticRoot === path.join(root, 'showcase');
   const store = saveLead ? null : await createStore(storage);
   const save = saveLead || (lead => store.save(lead));
   const buckets = new Map();
@@ -58,7 +60,7 @@ export async function createApp({ storage = path.join(root, 'storage', 'leads'),
         return json(200, { success: true, leadId: lead.leadId, status: 'saved', duplicate });
       }
       if (request.method !== 'GET' && request.method !== 'HEAD') return json(405, { code: 'method_not_allowed' });
-      if (pathname === '/robots.txt' || pathname === '/sitemap.xml') {
+      if (sourceAssets && (pathname === '/robots.txt' || pathname === '/sitemap.xml')) {
         if (pathname === '/sitemap.xml' && !originUrl) return json(404, { code: 'site_url_not_configured' });
         response.writeHead(200, { 'Content-Type': pathname === '/robots.txt' ? 'text/plain; charset=utf-8' : 'application/xml; charset=utf-8', 'Cache-Control': 'no-store' });
         return response.end(request.method === 'HEAD' ? undefined : pathname === '/robots.txt' ? robots(originUrl) : sitemap(originUrl));
@@ -69,21 +71,26 @@ export async function createApp({ storage = path.join(root, 'storage', 'leads'),
         return response.end();
       }
       let asset;
-      if (['/', '/thank-you', '/thank-you/'].includes(pathname)) asset = 'index.html';
+      if (pathname === '/') asset = 'index.html';
+      else if (['/thank-you', '/thank-you/'].includes(pathname)) asset = sourceAssets ? 'index.html' : 'thank-you/index.html';
+      else if (!sourceAssets && ['/robots.txt', '/sitemap.xml'].includes(pathname)) asset = pathname.slice(1);
       else if (pathname === '/favicon.ico') asset = 'favicon.ico';
       else if (pathname === '/favicon.svg') asset = 'favicon.svg';
-      else if (['/privacy', '/legal', '/en/privacy', '/en/legal'].includes(pathname)) asset = `legal/${pathname.startsWith('/en/') ? 'en' : 'ru'}-${pathname.endsWith('privacy') ? 'privacy' : 'legal'}.html`;
+      else if (['/privacy', '/legal', '/en/privacy', '/en/legal'].includes(pathname)) asset = sourceAssets ? `legal/${pathname.startsWith('/en/') ? 'en' : 'ru'}-${pathname.endsWith('privacy') ? 'privacy' : 'legal'}.html` : `${pathname.slice(1)}/index.html`;
       else {
-        const match = pathname.match(/^\/(?:showcase\/)?assets\/([a-zA-Z0-9_./-]+\.(?:css|mjs|js|webp|woff2|svg|png|ico|txt|xml))$/);
+        const match = pathname.match(/^\/(?:showcase\/)?assets\/([a-zA-Z0-9_./-]+\.(?:css|mjs|js|webp|avif|jpg|jpeg|json|woff2|svg|png|ico|txt|xml))$/);
         if (match && !match[1].includes('..')) asset = `assets/${match[1]}`;
       }
       if (!asset) return json(404, { code: 'not_found' });
       let data;
-      try { data = await readFile(path.join(root, 'showcase', asset)); }
+      try { data = await readFile(path.join(staticRoot, asset)); }
       catch (error) { if (error.code === 'ENOENT' || error.code === 'ENOTDIR') return json(404, { code: 'not_found' }); throw error; }
-      if (asset === 'index.html') data = Buffer.from(pathname.startsWith('/thank-you') ? renderThankYou(data.toString()) : renderLanding(data.toString(), originUrl));
+      if (sourceAssets && asset === 'index.html') data = Buffer.from(pathname.startsWith('/thank-you') ? renderThankYou(data.toString()) : renderLanding(data.toString(), originUrl));
       const type = asset.endsWith('.woff2') ? 'font/woff2'
         : asset.endsWith('.webp') ? 'image/webp'
+        : asset.endsWith('.avif') ? 'image/avif'
+        : /\.jpe?g$/.test(asset) ? 'image/jpeg'
+        : asset.endsWith('.json') ? 'application/json'
         : asset.endsWith('.svg') ? 'image/svg+xml'
         : asset.endsWith('.png') ? 'image/png'
         : asset.endsWith('.ico') ? 'image/x-icon'
@@ -92,7 +99,7 @@ export async function createApp({ storage = path.join(root, 'storage', 'leads'),
         : asset.endsWith('.txt') ? 'text/plain'
         : (asset.endsWith('.mjs') || asset.endsWith('.js')) ? 'text/javascript'
         : 'text/html';
-      response.writeHead(200, { 'Content-Type': (type === 'image/webp' || type === 'image/png' || type === 'image/x-icon' || type === 'font/woff2') ? type : `${type}; charset=utf-8`, 'Cache-Control': 'no-store' });
+      response.writeHead(200, { 'Content-Type': (type.startsWith('image/') || type === 'font/woff2') ? type : `${type}; charset=utf-8`, 'Cache-Control': 'no-store' });
       response.end(request.method === 'HEAD' ? undefined : data);
     } catch {
       // Персональные данные и содержимое ошибок не выводятся в открытые логи.
@@ -104,6 +111,6 @@ export async function createApp({ storage = path.join(root, 'storage', 'leads'),
 }
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const port = Number(process.env.PORT || 4321);
-  const app = await createApp({ storage: process.env.LEAD_STORAGE_DIR, allowedOrigin: process.env.APP_ORIGIN, geoProvider: process.env.VERCEL === '1' ? 'vercel' : process.env.GEO_PROVIDER || '', siteUrl: process.env.SITE_URL });
+  const app = await createApp({ storage: process.env.LEAD_STORAGE_DIR, allowedOrigin: process.env.APP_ORIGIN, geoProvider: process.env.VERCEL === '1' ? 'vercel' : process.env.GEO_PROVIDER || '', siteUrl: process.env.SITE_URL, assetDirectory: process.env.STATIC_DIRECTORY || 'showcase' });
   app.listen(port, '127.0.0.1', () => console.log(`Локальная версия: http://127.0.0.1:${port}`));
 }

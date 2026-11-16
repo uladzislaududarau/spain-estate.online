@@ -15,7 +15,10 @@ test('Благодарность требует подтверждения се�
   assert.equal(receiptFromSession().leadId, leadId);
   assert.deepEqual(Object.keys(JSON.parse(values.get(RECEIPT_KEY))).sort(), ['language', 'leadId', 'savedAt']);
 });
-test('Прямой визит, истёкшее подтверждение и недоступное хранилище не подтверждают лид', () => {
+test('Прямой визит, истёкшее подтверждение и недоступное хранилище не подтверждают лид', t => {
+  const originalStorage = Object.getOwnPropertyDescriptor(globalThis, 'sessionStorage');
+  Object.defineProperty(globalThis, 'sessionStorage', { configurable: true, get() { throw new Error('Storage blocked by browser policy'); } });
+  t.after(() => { if (originalStorage) Object.defineProperty(globalThis, 'sessionStorage', originalStorage); else delete globalThis.sessionStorage; });
   const now = 2000000;
   for (const raw of [null, '{}', 'broken', JSON.stringify({leadId, language: 'ru', savedAt: now - 1800001}), JSON.stringify({leadId, language: 'ru', savedAt: now + 1})]) assert.equal(readReceipt(raw, now), null);
   assert.equal(readReceipt(JSON.stringify({leadId, language: 'ru', savedAt: now}), now).leadId, leadId);

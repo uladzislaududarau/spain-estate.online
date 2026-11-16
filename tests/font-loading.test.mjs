@@ -1,43 +1,26 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import vm from 'node:vm';
 
 const html = await readFile(new URL('../showcase/index.html', import.meta.url), 'utf8');
-const script = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(match => match[1]).find(code => code.includes('fonts-loading'));
-function run(fonts) {
-  const classes = new Set();
-  const events = new Map();
-  let timeout;
-  vm.runInNewContext(script, {
-    document: { fonts, documentElement: { classList: { add: name => classes.add(name), remove: name => classes.delete(name) } }, addEventListener: (event, callback) => events.set(event, callback) },
-    setTimeout: (callback, delay) => { timeout = { callback, delay }; return 1; }, clearTimeout: () => { timeout = null; }
-  });
-  return { classes, events, timeout: () => timeout };
-}
-const flush = () => new Promise(resolve => setImmediate(resolve));
+const css = await readFile(new URL('../showcase/assets/estate.css', import.meta.url), 'utf8');
 
-test('Первый показ текста ожидает основные шрифты и продолжается при ошибке загрузки', async () => {
-  for (const fail of [false, true]) {
-    let finish;
-    const pending = new Promise((resolve, reject) => { finish = fail ? () => reject(new Error('network')) : resolve; });
-    const page = run({ load: () => pending });
-    assert.equal(page.classes.has('fonts-loading'), true);
-    page.events.get('DOMContentLoaded')();
-    finish([]);
-    await flush();
-    assert.equal(page.classes.has('fonts-loading'), false);
-    assert.equal(page.classes.has('fonts-ready'), true);
-    assert.equal(page.timeout(), null);
+test('Локальные шрифты используют swap и не блокируют первоначальный текст', () => {
+  const faces = [...css.matchAll(/@font-face\s*\{([^}]+)\}/g)].map(match => match[1]);
+  assert.ok(faces.length > 0);
+  for (const face of faces) {
+    assert.match(face, /font-display\s*:\s*swap/);
+    assert.match(face, /src\s*:\s*url\(['"]?\.\/[^)]+\.woff2['"]?\)/);
   }
+  assert.doesNotMatch(html, /fonts-loading|fonts-ready/);
+  assert.doesNotMatch(css, /\.fonts-loading/);
 });
 
-test('Зависший запрос шрифтов не скрывает текст дольше 1800 мс, отсутствие Font API не скрывает его', () => {
-  const page = run({ load: () => new Promise(() => {}) });
-  page.events.get('DOMContentLoaded')();
-  assert.equal(page.timeout().delay, 1800);
-  page.timeout().callback();
-  assert.equal(page.classes.has('fonts-loading'), false);
-  assert.equal(page.classes.has('fonts-ready'), true);
-  assert.equal(run(undefined).classes.size, 0);
+test('Заголовок и основное действие доступны до выполнения отложенных скриптов', () => {
+  assert.match(html, /<h1\b[^>]*>[\s\S]*?Ваш дом\.[\s\S]*?Ваша Испания\.[\s\S]*?<\/h1>/);
+  assert.match(html, /<button\b[^>]*data-open-quiz[^>]*>Найти свой дом/);
+  assert.doesNotMatch(html, /document\.fonts\.load|style=["'][^"']*(?:visibility\s*:\s*hidden|opacity\s*:\s*0)/);
+  for (const match of html.matchAll(/<script\b([^>]*)\bsrc=["'][^"']+["']([^>]*)>/g)) {
+    assert.match(match[1] + match[2], /\bdefer\b|\btype=["']module["']/);
+  }
 });

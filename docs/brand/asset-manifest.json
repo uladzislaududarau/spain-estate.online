@@ -1,0 +1,736 @@
+{
+  "checkedDate": "2026-11-16",
+  "sourceCommit": "97b8a62a72de3b4477bd085a41f3e54ad664d11a",
+  "assets": [
+    {
+      "path": "showcase/assets/apple-touch-icon.png",
+      "bytes": 2108,
+      "sha256": "a3603e4a626dc11445226cc5fd4d53eb038180584a1b33fe457929069b64be7b",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/apple-touch-icon.png",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        180,
+        180
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/favicon-32x32.png",
+      "bytes": 428,
+      "sha256": "4ddcec09dbd2ab05c969ac47adbb01c35231739766ce51d2231c46d6226c8f90",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/favicon-32x32.png",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        32,
+        32
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/favicon.svg",
+      "bytes": 244,
+      "sha256": "53421977fb6577405b1341b5ac3c583943fe9df453163975f716ff75c2f40fb7",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/favicon.svg",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "inherited project logo/favicon; official external provenance not independently established",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "svgActiveContentReview": {
+        "script": false,
+        "foreignObject": false,
+        "eventAttributes": false,
+        "externalReferences": false
+      },
+      "cropIntent": "Preserve proportions; do not invent replacement official mark"
+    },
+    {
+      "path": "showcase/assets/logo-white.svg",
+      "bytes": 10617,
+      "sha256": "f2fc8c5a245890c2ace5d863b620e21bc68cfb2a9f209b57be7cf4ac94ee790a",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/logo-white.svg",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "inherited project logo/favicon; official external provenance not independently established",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "svgActiveContentReview": {
+        "script": false,
+        "foreignObject": false,
+        "eventAttributes": false,
+        "externalReferences": false
+      },
+      "cropIntent": "Preserve proportions; do not invent replacement official mark"
+    },
+    {
+      "path": "showcase/assets/logo.svg",
+      "bytes": 10617,
+      "sha256": "87a140ba08ac77e865130b090c120f57a3c573ec62d5951bd6dd1d4960585f3b",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/logo.svg",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "inherited project logo/favicon; official external provenance not independently established",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "svgActiveContentReview": {
+        "script": false,
+        "foreignObject": false,
+        "eventAttributes": false,
+        "externalReferences": false
+      },
+      "cropIntent": "Preserve proportions; do not invent replacement official mark"
+    },
+    {
+      "path": "showcase/assets/manrope-cyrillic.woff2",
+      "bytes": 14352,
+      "sha256": "447c49583b1b735cc6f566151db1d24354cec41076c55dd98455cfbde9e806c1",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/manrope-cyrillic.woff2",
+      "creatorOwner": "manrope font authors; see bundled OFL",
+      "rightsStatus": "cleared",
+      "licenceEvidence": "showcase/assets/manrope-OFL.txt",
+      "subjectStatus": "font family and language subset in filename",
+      "useDecision": "preserve bundled font and licence; test actual Cyrillic coverage"
+    },
+    {
+      "path": "showcase/assets/manrope-latin-ext.woff2",
+      "bytes": 15160,
+      "sha256": "2f7335119075b2079f1d882530bbc18728461612bf90743203d73a74a48f4d9b",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/manrope-latin-ext.woff2",
+      "creatorOwner": "manrope font authors; see bundled OFL",
+      "rightsStatus": "cleared",
+      "licenceEvidence": "showcase/assets/manrope-OFL.txt",
+      "subjectStatus": "font family and language subset in filename",
+      "useDecision": "preserve bundled font and licence; test actual Cyrillic coverage"
+    },
+    {
+      "path": "showcase/assets/manrope-latin.woff2",
+      "bytes": 24532,
+      "sha256": "8c2def024c1bf31aacf3624ae3c4d701269b4ec3dc765c04830839f0d36b2d9e",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/manrope-latin.woff2",
+      "creatorOwner": "manrope font authors; see bundled OFL",
+      "rightsStatus": "cleared",
+      "licenceEvidence": "showcase/assets/manrope-OFL.txt",
+      "subjectStatus": "font family and language subset in filename",
+      "useDecision": "preserve bundled font and licence; test actual Cyrillic coverage"
+    },
+    {
+      "path": "showcase/assets/montserrat-cyrillic.woff2",
+      "bytes": 21492,
+      "sha256": "0b00fbd6edcc84cd5f77364bbeb06b75ed263c740061eba34511f1e2ac1a82d3",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/montserrat-cyrillic.woff2",
+      "creatorOwner": "montserrat font authors; see bundled OFL",
+      "rightsStatus": "cleared",
+      "licenceEvidence": "showcase/assets/montserrat-OFL.txt",
+      "subjectStatus": "font family and language subset in filename",
+      "useDecision": "preserve bundled font and licence; test actual Cyrillic coverage"
+    },
+    {
+      "path": "showcase/assets/montserrat-latin-ext.woff2",
+      "bytes": 68224,
+      "sha256": "920711de9ae96c18970fa4faca73cd302b93ac5ed57ebeb6bfec2ddeff930082",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/montserrat-latin-ext.woff2",
+      "creatorOwner": "montserrat font authors; see bundled OFL",
+      "rightsStatus": "cleared",
+      "licenceEvidence": "showcase/assets/montserrat-OFL.txt",
+      "subjectStatus": "font family and language subset in filename",
+      "useDecision": "preserve bundled font and licence; test actual Cyrillic coverage"
+    },
+    {
+      "path": "showcase/assets/montserrat-latin.woff2",
+      "bytes": 35508,
+      "sha256": "6438d7b8ea9c7c3992d5e2fd2afdb1ff948570a3ef0bedae76247b51632960ba",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/montserrat-latin.woff2",
+      "creatorOwner": "montserrat font authors; see bundled OFL",
+      "rightsStatus": "cleared",
+      "licenceEvidence": "showcase/assets/montserrat-OFL.txt",
+      "subjectStatus": "font family and language subset in filename",
+      "useDecision": "preserve bundled font and licence; test actual Cyrillic coverage"
+    },
+    {
+      "path": "showcase/assets/onest-cyrillic.woff2",
+      "bytes": 15860,
+      "sha256": "68e5e01d6265bd68967746d4f5a9d18d0e6cbb5d15583c7082d6384ab1229b27",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/onest-cyrillic.woff2",
+      "creatorOwner": "onest font authors; see bundled OFL",
+      "rightsStatus": "cleared",
+      "licenceEvidence": "showcase/assets/onest-OFL.txt",
+      "subjectStatus": "font family and language subset in filename",
+      "useDecision": "preserve bundled font and licence; test actual Cyrillic coverage"
+    },
+    {
+      "path": "showcase/assets/onest-latin-ext.woff2",
+      "bytes": 28452,
+      "sha256": "14e7d3079b75860e2ab50efc6c318c398fdb46ede9b56e625f12ae70a3c5d9a4",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/onest-latin-ext.woff2",
+      "creatorOwner": "onest font authors; see bundled OFL",
+      "rightsStatus": "cleared",
+      "licenceEvidence": "showcase/assets/onest-OFL.txt",
+      "subjectStatus": "font family and language subset in filename",
+      "useDecision": "preserve bundled font and licence; test actual Cyrillic coverage"
+    },
+    {
+      "path": "showcase/assets/onest-latin.woff2",
+      "bytes": 33760,
+      "sha256": "052df74533250c2e0ca0c4bdd32de594e107d99c1648e63820ef9c6142067828",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/onest-latin.woff2",
+      "creatorOwner": "onest font authors; see bundled OFL",
+      "rightsStatus": "cleared",
+      "licenceEvidence": "showcase/assets/onest-OFL.txt",
+      "subjectStatus": "font family and language subset in filename",
+      "useDecision": "preserve bundled font and licence; test actual Cyrillic coverage"
+    },
+    {
+      "path": "showcase/assets/slides/01-marbella-modern-infinity-villa.webp",
+      "bytes": 205738,
+      "sha256": "612196ddff8b9087628e5d2befade1fdfb80d1e1508d347ac090acdaa3275ac1",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/01-marbella-modern-infinity-villa.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        1920,
+        1200
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/02-costa-del-sol-sunset-residence.webp",
+      "bytes": 186062,
+      "sha256": "dd35841460dfb238b44a86bf8120260cf8a566c5f713da1bf4a2643a012dc9e6",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/02-costa-del-sol-sunset-residence.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        1920,
+        1200
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/03-mallorca-cliffside-penthouse-terrace.webp",
+      "bytes": 118832,
+      "sha256": "2e2d26e947fb4c03d5ed076c94f04b4a5f089c4de6a006b47c8ceae62961d2d8",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/03-mallorca-cliffside-penthouse-terrace.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        1920,
+        1200
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/04-ibiza-travertine-minimalist-villa.webp",
+      "bytes": 336700,
+      "sha256": "ea6292d46eee02497083b9d7635badfb5401951559445a0dcd1b76b1b14e8c49",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/04-ibiza-travertine-minimalist-villa.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        1920,
+        1200
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/05-marbella-golden-mile-villa.webp",
+      "bytes": 174004,
+      "sha256": "68032355837be9ebfc7230fcb1d046edeba92c607caf7593714e1c6c64feb550",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/05-marbella-golden-mile-villa.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        1920,
+        1200
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/06-altea-mediterranean-waterfront-estate.webp",
+      "bytes": 225148,
+      "sha256": "0aa10f33cdcf6adb5c6cfd8e2f259b51f68f3483a88070f67a354bb89bac5cd9",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/06-altea-mediterranean-waterfront-estate.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        1920,
+        1200
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/07-benahavis-mountain-sea-mansion.webp",
+      "bytes": 148512,
+      "sha256": "00d083446e63294e23ec66e39590fbb9ea5b081f2caf6f2342ec9710c9ee7c31",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/07-benahavis-mountain-sea-mansion.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        1920,
+        1200
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/08-mediterranean-indoor-outdoor-lounge.webp",
+      "bytes": 148088,
+      "sha256": "43fc3f8b481e73bd424a8c9518bae9e9103b82a5747607e89bb794b4c6807cfe",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/08-mediterranean-indoor-outdoor-lounge.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        1920,
+        1200
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/09-sotogrande-architectural-water-villa.webp",
+      "bytes": 154028,
+      "sha256": "6ce872e08453a1cc72ea33fc6eb1c5779f1fe1907a5ca009a7557fefa27e90ed",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/09-sotogrande-architectural-water-villa.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        1920,
+        1200
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/10-fuengirola-seafront-penthouse-terrace.webp",
+      "bytes": 259330,
+      "sha256": "8a38f0797a858252e1e13758c788a263cd2cd65abe00f1659c90df1c6adcd6cc",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/10-fuengirola-seafront-penthouse-terrace.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        1920,
+        1200
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/960/01-marbella-modern-infinity-villa.webp",
+      "bytes": 61764,
+      "sha256": "2401b70a310fca96fbf5e5ee0bab5142964ae182932c976937eb737d098aef2d",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/960/01-marbella-modern-infinity-villa.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        960,
+        600
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/960/02-costa-del-sol-sunset-residence.webp",
+      "bytes": 67524,
+      "sha256": "6d2668dab3cfec52953bff4fb2d5628b6585e8f0b97405b59a17ea1f41a68ecd",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/960/02-costa-del-sol-sunset-residence.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        960,
+        600
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/960/03-mallorca-cliffside-penthouse-terrace.webp",
+      "bytes": 28720,
+      "sha256": "f895a89a9ed366231d032a5264e82c89f4eb6c50849643df24fce670df705d2d",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/960/03-mallorca-cliffside-penthouse-terrace.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        960,
+        600
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/960/04-ibiza-travertine-minimalist-villa.webp",
+      "bytes": 95968,
+      "sha256": "ac66c4d84b90f077d0ba140f2f32c56d698ce9df3832ab76e5e9bb22b2dd8b23",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/960/04-ibiza-travertine-minimalist-villa.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        960,
+        600
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/960/05-marbella-golden-mile-villa.webp",
+      "bytes": 54446,
+      "sha256": "2401590a2485f1b5745a6975fcc98ebfbc6b36c24bf9a7a12364a09c91fece7d",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/960/05-marbella-golden-mile-villa.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        960,
+        600
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/960/06-altea-mediterranean-waterfront-estate.webp",
+      "bytes": 59000,
+      "sha256": "963277ee58f6caa2a82042bd388880c58df2390863ea281a792fa23f98f177b6",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/960/06-altea-mediterranean-waterfront-estate.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        960,
+        600
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/960/07-benahavis-mountain-sea-mansion.webp",
+      "bytes": 43634,
+      "sha256": "4f2d6c44eedf28f30d4cde134908334468e7d22c03b170e9376fa1f015c2a291",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/960/07-benahavis-mountain-sea-mansion.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        960,
+        600
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/960/08-mediterranean-indoor-outdoor-lounge.webp",
+      "bytes": 52342,
+      "sha256": "8627d52bbd07cf4b44aad583966dc6eed0843dc60fb142001281d4ef97838899",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/960/08-mediterranean-indoor-outdoor-lounge.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        960,
+        600
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/960/09-sotogrande-architectural-water-villa.webp",
+      "bytes": 45248,
+      "sha256": "704ad0c2d933848f734772c2cb1cc199b086fd76bd2b96c1d4236a583d38da11",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/960/09-sotogrande-architectural-water-villa.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        960,
+        600
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/960/10-fuengirola-seafront-penthouse-terrace.webp",
+      "bytes": 87914,
+      "sha256": "be26c95dacaa392861313df778d85b1b868b2a97af03ac52155697e0820b48a7",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/960/10-fuengirola-seafront-penthouse-terrace.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        960,
+        600
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/960/penthouse-fuengirola-sea.webp",
+      "bytes": 81176,
+      "sha256": "49534e9d79eae720680ffa58eebc232d94f519df44d20c6290d15087ffbec216",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/960/penthouse-fuengirola-sea.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        1200,
+        727
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/960/penthouse-marbella-duplex.webp",
+      "bytes": 139128,
+      "sha256": "8ebbebdb27732229f46b50ff3b8c74f46b7a21227a1c105a7ed5a7d1e250776a",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/960/penthouse-marbella-duplex.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        1200,
+        748
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/960/townhouse-marbella-luxury.webp",
+      "bytes": 63266,
+      "sha256": "2c53c520e02a557182b1f883c48a8b3d674b115e1e7e2cb9f2a2762e593ecd27",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/960/townhouse-marbella-luxury.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        1200,
+        750
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/960/villa-alicante-pool.webp",
+      "bytes": 108930,
+      "sha256": "9da0832000459e9a7cd8c7b14ddb10f139848a5e660fbf5baa50b5e9d1f01bb1",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/960/villa-alicante-pool.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        1200,
+        675
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/960/villa-marbella-modern.webp",
+      "bytes": 60496,
+      "sha256": "ebd0f7ba86a2aaa5545f72f962d718bbc2d52a270fbded05cf764cfd3caf50e0",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/960/villa-marbella-modern.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        1200,
+        749
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/960/villa-marbella-terrace.webp",
+      "bytes": 59954,
+      "sha256": "8384c2deecb206ff477587cea8dbdd18d21e7b803467d6244f669387582dc895",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/960/villa-marbella-terrace.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        1200,
+        771
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/penthouse-fuengirola-sea.webp",
+      "bytes": 189772,
+      "sha256": "c7d0588d8a9714272eff00f74cb4f756d92bf4e1338aa48201618ec12c27a5ed",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/penthouse-fuengirola-sea.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        1920,
+        1163
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/penthouse-marbella-duplex.webp",
+      "bytes": 313866,
+      "sha256": "4d6d83d9cf4bdd462345298056c312713d9279fd740a3757c9a4ec83d908c860",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/penthouse-marbella-duplex.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        1920,
+        1197
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/townhouse-marbella-luxury.webp",
+      "bytes": 146000,
+      "sha256": "acc8cabd6030696e379a7c082fce1335f7b335a73b8cfe58776d75615219e00f",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/townhouse-marbella-luxury.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        1920,
+        1200
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/villa-alicante-pool.webp",
+      "bytes": 243946,
+      "sha256": "bbad0f0370842d992b956a23b7baa83201ec4cb7eccb189786af4fb5d7dd1f66",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/villa-alicante-pool.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/villa-marbella-modern.webp",
+      "bytes": 135614,
+      "sha256": "ca3fd7969613f5cae72c5b8232388ee733dca5a99bd4a037655ac1e6e15b2ccd",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/villa-marbella-modern.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        1920,
+        1198
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "showcase/assets/slides/villa-marbella-terrace.webp",
+      "bytes": 136196,
+      "sha256": "7e8a31f9fb6dc2d799587836f969343059c68f70bed8c8534ffc6469b5a376c2",
+      "sourcePage": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/assets/slides/villa-marbella-terrace.webp",
+      "creatorOwner": "Not independently established; inherited repository asset",
+      "rightsStatus": "pending",
+      "licenceEvidence": null,
+      "subjectStatus": "illustrative, not proof of listing availability",
+      "useDecision": "retain locally only where needed; publication rights review remains required",
+      "dimensions": [
+        1867,
+        1200
+      ],
+      "cropIntent": "Choose per scene; responsive 960 variants exist for inherited slides"
+    },
+    {
+      "path": "../videoesp.mp4",
+      "bytes": 5862259,
+      "sha256": "5a539d5d6038d41dd7c7f97fa244a0c882d26509d831e44bb8d6296685fe18ec",
+      "sourcePage": "User supplied file in workspace, identified explicitly as video",
+      "creatorOwner": "Unknown; user supplied",
+      "rightsStatus": "cleared-for-requested-local-processing",
+      "licenceEvidence": "User explicit rebuild instruction with supplied video; no public reuse licence inferred",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "durationSeconds": 10,
+      "fps": 24,
+      "videoFrames": 240,
+      "codec": "H264",
+      "metadataNote": "ISO Media produced by Google metadata does not establish camera/source authenticity",
+      "subjectStatus": "Illustrative architecture; exact location, listing, creator and reality/synthetic status not established",
+      "cropIntent": "Author independent desktop/phone cover crop without warping architecture",
+      "useDecision": "Use for requested local preview and derivatives; do not identify as live listing or 4K footage"
+    },
+    {
+      "id": "cinematic-avif-sequence",
+      "source": "../../videoesp.mp4",
+      "sourceSha256": "5a539d5d6038d41dd7c7f97fa244a0c882d26509d831e44bb8d6296685fe18ec",
+      "subject": "User supplied architectural illustration; no identified live listing",
+      "rights": "User instructed local use; public rights not independently established",
+      "provenance": "showcase/assets/sequence/provenance.json",
+      "desktopManifest": "showcase/assets/sequence/desktop/manifest.json",
+      "mobileManifest": "showcase/assets/sequence/mobile/manifest.json",
+      "transforms": "ActualAVIF encoding,desktop native1280x720,mobile authored480x720crop;runtime editorial order starts2s and wraps",
+      "intendedUse": "Canvas scroll sequence and still posters; on-page illustrative label"
+    }
+  ]
+}

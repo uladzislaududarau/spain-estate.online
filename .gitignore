@@ -53,3 +53,6 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+
+# Local browser captures, recordings and traces; retained on disk for review.
+docs/qa/

@@ -1,4 +1,5 @@
 import { steps, legacyAnswerLabels } from '../showcase/assets/quiz.config.mjs';
+import { pricingLines, attributionLines, regionLabel } from './pricing-labels.mjs';
 import { z } from 'zod';
 
 const emailAddress = z.string().email();
@@ -40,7 +41,7 @@ export function leadMessage(lead, timeZone = 'Asia/Nicosia', format = 'text') {
   }
   const labels = { regions: 'Регион Испании', purpose: 'Цель покупки', propertyType: 'Тип объекта', budgets: 'Бюджет', timeline: Object.hasOwn(legacyAnswerLabels, lead.answers.timeline) ? 'Срок покупки' : 'Приезд в Испанию' };
   const answers = steps.map(question => {
-    const values = [].concat(lead.answers[question.id]).map(answer => value(question.options.find(option => option[0] === answer)?.[1] || legacyAnswerLabels[answer] || answer));
+    const values = [].concat(lead.answers[question.id]).map(answer => value(question.options.find(option => option[0] === answer)?.[1] || legacyAnswerLabels[answer] || (question.id === 'regions' ? regionLabel(answer) : answer === 'both' ? 'Квартира и вилла' : answer === 'dynamic' ? 'Индивидуальный бюджет' : answer)));
     return labels[question.id] + (question.id === 'budgets' ? ':\n' + values.join('\n') : ': ' + values.join(', '));
   });
   const blocks = [
@@ -48,7 +49,9 @@ export function leadMessage(lead, timeZone = 'Asia/Nicosia', format = 'text') {
     dateAndTime(lead.savedAt),
     'Имя: ' + value(lead.name) + '\nЯзык: ' + value(lead.language === 'ru' ? 'Русский' : 'Английский'),
     'Способ связи: ' + value(lead.messenger === 'whatsapp' ? 'WhatsApp' : 'Telegram') + '\nКонтакт: ' + value(lead.contact),
-    'Критерии подбора:', ...answers
+    'Критерии подбора:', ...answers,
+    ...pricingLines(lead.pricing).map(line => value(line)),
+    ...attributionLines(lead.attribution).map(line => value(line))
   ];
   if (format === 'email') return '<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:#1c2445">' + blocks.map(block => '<p style="margin:0 0 16px">' + block.replaceAll('\n', '<br>') + '</p>').join('') + '</div>';
   return blocks.join('\n\n');
