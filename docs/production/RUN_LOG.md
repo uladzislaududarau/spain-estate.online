@@ -42,3 +42,9 @@ Current browser results: motion passed five viewports with distinct forward stat
 Recorded desktop cadence p95 was33.3ms with trace/video enabled; smaller widths sampled≈16.8ms. This does not establish physical-device FPS. A separate unrecorded sample and refreshed cold-load measurements are retained in docs/qa. No blanket60fps claim. Final raw reports supersede older numbers in this historical log.
 
 Current cold-load lab results: LCP824/828/836ms,CLS0.000846,initial transfer629,999B on documentedCPU4/1.6Mbps/150msprofile. Full axe:zero violations in nine sampled combinations after the fallback correction.
+
+## Requested header, hero and footer corrections
+
+User-directed small visual/content update: shared smaller logo widths (180px desktop,140px phone,120px compact), header bottom border removed, uppercase quick-search button opens the existing quiz directly. Hero heading uses the supplied full sentence; supporting copy retained, home-search action moved below it, auxiliary tagline/scroll cue/visible illustration label removed. Footer tagline removed; mobile footer is a left-aligned single column with tighter white links. Existing illustrative footer disclosure remains. AntiGravity fixed-background structure is retained.
+
+Validation: production build passed; existing font/semantic-baseline tests updated for the requested copy and passed2/2. Chrome157 checks passed at1440×900,768×1024,390×844,320×640:equal header/footer logo widths,no header border,no overflow,full primary action in viewport,both buttons open the quiz,Escape restores focus,no hash/scroll navigation from quick search,white footer links with matching left edges on mobile,no page errors. Captures/results:docs/qa/small-edits/. Desktop hero,phone hero andphone footer images were visually inspected. No lead submission. The longer user-supplied heading intentionally takes multiple lines; no generic two-line rule overrides this copy.
