@@ -25,3 +25,20 @@ Final verification 2026-11-16 (Chrome157.0.8103.51, production4322):
 Not run: physical iOS/Android,real email/Sheets/Ads delivery,screenreader audit,fullprocess/GPU memory profile. Publicmedia rights/location require confirmation before publication. No deploy,remote push,DNS,production traffic submission. Commercial €500restaurant offer does not apply to this unrelated real-estate task.
 
 Refinement after independent critique: shared original logo now used in quiz; desktop scene shortened from350to300svh and phone270to250svh; regional heading made literal; request follow-up explained without response-time guarantees; verified inherited email route added; no-JS immediate email action added. Source dimensions/frame counts unchanged. Affected motion/quiz checks rerun; final captures refreshed. No invented business proof added to fill evidence gaps.
+
+
+## Continuation after AntiGravity changes
+
+Source baseline: `7f949d9` (blue/navy palette, fixed whole-page Canvas background, semantic scrolling overlays, AVIF sharpening/re-encode). Preserved in `recovery/antigravity-7f949d9`. Root Cleopatra changes belong to the parallel restaurant project and were not edited. Root AGENTS and the new project tree were rediscovered before changes.
+
+Observed regression: at 390 × 844, live reduced motion moved the background into normal flow, leaving a full empty poster viewport before the identity/action (h1 y≈1219). Corrected only fallback geometry: a static decorative fixed background no longer consumes content flow space. Added an actual first-screen heading assertion to motion QA. AntiGravity palette, panels, content structure, new encodes and pixel alignment are retained.
+
+Current asset integrity: 240 desktop AVIFs = 10,343,403 bytes; 120 portrait AVIFs = 1,890,700 bytes. Total 12,234,103 bytes. Current cache caps are 32/16 MiB, four concurrent requests; backing caps remain 2/1.2 MP. No claim that resident cache equals total memory.
+
+Build, syntax, integrity and 92/92 automated tests passed after the correction. Browser verification is being refreshed against the current production preview, not inherited from the previous teal/sticky layout. Previous lab metrics and reviews above are historical evidence about that prior source.
+
+Current browser results: motion passed five viewports with distinct forward states, exact reverse frame IDs, mask reversibility, native input, live reduced motion with first-screen identity, resize, no-JS and failed-media fallback. No uncaught/page resource errors. Quiz passed all eight scenario groups on production4322 with no real POSTs. Focused final axe passed six landing/quiz combinations with zero violations. Current captures were inspected (blue/navy background/panels, same identity in quiz, phone search and static reduced hero). This continuation's visual review is self-review; the second independent critic had a usage-limit failure and produced no completed report. No independent result is invented.
+
+Recorded desktop cadence p95 was33.3ms with trace/video enabled; smaller widths sampled≈16.8ms. This does not establish physical-device FPS. A separate unrecorded sample and refreshed cold-load measurements are retained in docs/qa. No blanket60fps claim. Final raw reports supersede older numbers in this historical log.
+
+Current cold-load lab results: LCP824/828/836ms,CLS0.000846,initial transfer629,999B on documentedCPU4/1.6Mbps/150msprofile. Full axe:zero violations in nine sampled combinations after the fallback correction.

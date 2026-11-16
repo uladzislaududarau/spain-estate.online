@@ -1,3 +1,9 @@
+# Current architecture update — 2026-11-16
+
+AntiGravity commit `7f949d9` supersedes the original hero-only sticky track below. The Canvas is a fixed decorative page background; normalized progress spans `#main` from top/top to bottom/bottom. Hero, approach, region comparison, threshold and request content scroll in ordinary document flow. Header stays fixed. Blue/navy panels and re-encoded AVIFs are preserved. Reduced motion keeps one static fixed poster behind the same normal-flow content, with no spacer before the hero. Cache limits are now 32 MiB desktop / 16 MiB phone with at most four requests; backing caps remain 2 MP / 1.2 MP. These counters do not measure total GPU/process memory.
+
+The original planning record follows for provenance. Its hero-track lengths and old cache settings are historical.
+
 # Scenes and fallbacks
 
 Hero/sequence (single progress): source AVIF 240 desktop /120 mobile. 0% best villa establishing poster and title;25% pool exterior;50% open sea;75% terrace;100% interior ending. Source has hard cuts, preserved honestly, not fake continuous 3D. Source frame index maps to round(p*(N-1)). Desktop native scroll range about 250vh; phone about170vh, stable 100svh stage. Static semantic title/support/CTA never wait for animation. Small decorative chapter label changes with progress. Hero typography moves only 20px before settling; no text swapped out of accessibility tree. Poster from villa shot remains beneath canvas, exact source sequence starts at first living-room source frame. Initial poster mismatch resolved by using first source frame or starting crop after prototype review.

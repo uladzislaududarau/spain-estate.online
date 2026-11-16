@@ -232,8 +232,9 @@ h2{font-size:clamp(40px,5.2vw,76px)}.page-frame{padding-left:var(--frame);paddin
 /* REDUCED MOTION SUPPORT */
 @media(prefers-reduced-motion:reduce){
  html{scroll-behavior:auto}
- .cinema{position:relative;height:100svh}
- .cinema-stage{position:relative;height:100svh}
+ /* The static decorative background occupies no narrative flow space. */
+ .cinema{position:fixed;height:100svh}
+ .cinema-stage{position:absolute;height:100%}
  .cinema-canvas{display:none!important}
  .threshold-image{clip-path:none!important}
  .threshold-image img{transform:none!important}

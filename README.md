@@ -22,9 +22,9 @@ This is localhost, not a remotely accessible sharing link.
 
 ## Implementation
 
-The actual stack is preserved: HTML/CSS/ES modules, Node API and Cloudflare Worker/D1. GSAP 3.15.1 and ScrollTrigger are local vendor files. No second scroller or real-time 3D renderer is added.
+AntiGravity structure preserved from `7f949d9`: the architectural sequence stays fixed behind the entire page, while semantic content scrolls above it. The current palette is Mediterranean blue / midnight navy. The actual stack is preserved: HTML/CSS/ES modules, Node API and Cloudflare Worker/D1. GSAP 3.15.1 and ScrollTrigger are local vendor files. No second scroller or real-time 3D renderer is added.
 
-The supplied `../videoesp.mp4` becomes 240 desktop AVIF frames (1280 × 720) and 120 phone frames (480 × 720 portrait crop). Scroll position drives exact frame indices in both directions. A bounded decoded cache, request cancellation, poster fallback and live reduced-motion support manage the media. The source contains shot cuts and is labelled as an architectural illustration.
+The current re-encoded `../videoesp.mp4` becomes 240 desktop AVIF frames (1280 × 720) and 120 phone frames (480 × 720 portrait crop). Scroll position drives exact frame indices in both directions. A bounded decoded cache, request cancellation, poster fallback and live reduced-motion support manage the media. The source contains shot cuts and is labelled as an architectural illustration.
 
 The integrated quiz supports nine regions, 21 cities, multiple selections, apartment/villa eligibility kept separate, adaptive ranges, low custom budgets, geographic notes and alternatives. Server-side recomputation preserves trusted pricing. Original purpose, visit and contact questions remain. Encrypted local storage, Cloudflare/D1, email and the existing 18-column Sheets integration remain supported; UTM details are added. No credentials are shipped to the browser.
 
