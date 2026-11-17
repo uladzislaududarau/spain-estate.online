@@ -58,11 +58,11 @@ if(gsap&&ScrollTrigger&&root){
   if(new URLSearchParams(location.search).get('background')==='video')useVideo();
   else{
     const q=new URLSearchParams(location.search);
-    const preferStandard=!phone&&(q.get('quality')==='standard'||(window.innerWidth<1600&&(window.devicePixelRatio||1)<1.5&&q.get('quality')!=='4k'));
+    const preferStandard=!phone&&q.get('quality')!=='4k';
     const folder=phone?'mobile':(preferStandard?'desktop-standard':'desktop');
     const base=`/assets/cinema-main/${folder}/`;
     const loadManifest=(dir)=>fetch(dir+'manifest.json',{signal:controller.signal}).then(r=>{if(!r.ok)throw new Error('sequence_manifest');return r.json().then(m=>({manifest:m,dir}));});
-    loadManifest(base).catch(()=>loadManifest('/assets/cinema-main/desktop/')).then(({manifest,dir})=>{
+    (window.__cinemaBoot?.folder===folder ? window.__cinemaBoot.manifest.then(manifest=>({manifest,dir:base})) : loadManifest(base)).catch(()=>loadManifest('/assets/cinema-main/desktop/')).then(({manifest,dir})=>{
       if(dead)return;
       if(!Array.isArray(manifest.frames)||manifest.frames.length!==manifest.count||manifest.count<2||manifest.width<1||manifest.height<1)throw new Error('sequence_manifest_shape');
       player=new ScrollCinematicSequence(canvas,manifest,dir,{mobile:phone,onFatal:useVideo});activePlayer=player;

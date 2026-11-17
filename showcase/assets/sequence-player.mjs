@@ -9,17 +9,19 @@ export class ScrollCinematicSequence {
     this.cap=(mobile?48:(is4K?224:96))*1024**2;this.blobCap=(mobile?16:(is4K?64:32))*1024**2;
     this.frameBytes=manifest.width*manifest.height*4;
     this.maxEntries=Math.max(2,Math.floor(this.cap/this.frameBytes));
-    this.parallel=mobile?2:4;this.blobBytes=0;this.maxObservedBytes=0;this.drawTimes=[];
+    this.parallel=2;this.blobBytes=0;this.maxObservedBytes=0;this.drawTimes=[];
     this.progress=0;this.desired=0;this.rendered=-1;this.direction=1;this.active=true;this.disposed=false;this.dirty=true;this.fatal=false;
+    this.previewCache=new Map();this.previewPending=new Set();this.lastSeek=0;
+    this.previewChanged=()=>{this.dirty=true;};window.addEventListener('sp:cinema-progress',this.previewChanged);
     this.resize();this.pump();
   }
   targets(){
     const result=[this.desired];
-    for(let distance=1;result.length<this.maxEntries&&distance<this.manifest.count;distance++){
+    for(let distance=1;result.length<Math.min(3,this.maxEntries)&&distance<this.manifest.count;distance++){
       for(const sign of [this.direction,-this.direction]){
         const i=this.desired+distance*sign;
         if(i>=0&&i<this.manifest.count)result.push(i);
-        if(result.length>=this.maxEntries)break;
+        if(result.length>=Math.min(3,this.maxEntries))break;
       }
     }
     return result;
@@ -27,9 +29,9 @@ export class ScrollCinematicSequence {
   setProgress(p){
     this.progress=Math.min(1,Math.max(0,p));const next=Math.round(this.progress*(this.manifest.count-1));
     if(next===this.desired)return;
+    if(window.__cinemaBoot)window.__cinemaBoot.target=next;
     this.direction=Math.sign(next-this.desired)||this.direction;this.desired=next;this.dirty=true;
-    for(const [i,controller] of this.pending)if(Math.abs(i-next)>this.maxEntries)controller.abort();
-    this.pump();
+    this.lastSeek=performance.now();clearTimeout(this.seekTimer);this.seekTimer=setTimeout(()=>this.pump(),120);
   }
   setActive(value){
     if(this.disposed)return;this.active=value;
@@ -52,6 +54,7 @@ export class ScrollCinematicSequence {
   }
   pump(){
     if(this.disposed||!this.active||document.hidden)return;
+    if(performance.now()-this.lastSeek<110){clearTimeout(this.seekTimer);this.seekTimer=setTimeout(()=>this.pump(),120);return;}
     for(const i of this.targets()){
       if(this.pending.size>=this.parallel)break;
       if(this.cache.has(i)||this.pending.has(i)||this.failed.has(i))continue;
@@ -91,23 +94,36 @@ export class ScrollCinematicSequence {
       }
     }finally{this.pending.delete(i);if(!this.disposed)this.pump();}
   }
+  requestPreview(){
+    const boot=window.__cinemaBoot;if(!boot?.blobs.size||this.previewPending.size>=2)return;
+    const index=[...boot.blobs.keys()].sort((a,b)=>Math.abs(a-this.desired)-Math.abs(b-this.desired))[0];
+    if(this.previewCache.has(index)||this.previewPending.has(index))return;
+    this.previewPending.add(index);
+    createImageBitmap(boot.blobs.get(index)).then(bitmap=>{
+      if(this.disposed){bitmap.close();return;}
+      while(this.previewCache.size>=4){const farthest=[...this.previewCache.keys()].sort((a,b)=>Math.abs(b-this.desired)-Math.abs(a-this.desired))[0];this.release(this.previewCache.get(farthest));this.previewCache.delete(farthest);}
+      this.previewCache.set(index,bitmap);this.dirty=true;
+    }).catch(()=>{}).finally(()=>this.previewPending.delete(index));
+  }
   release(bitmap){if(bitmap?.close)bitmap.close();else if(bitmap)bitmap.src='';}
   draw(){
     if(this.disposed||!this.active||document.hidden||!this.dirty)return;
     let index=this.cache.has(this.desired)?this.desired:undefined;
+    let quality='full';
     if(index===undefined){
-      // Keep the last valid image; never paint an obsolete frame on the wrong side of motion.
-      const candidates=[...this.cache.keys()].filter(i=>this.rendered<0||(i-this.rendered)*(this.desired-this.rendered)>=0&&Math.abs(i-this.rendered)<=Math.abs(this.desired-this.rendered));
-      index=candidates.sort((a,b)=>Math.abs(a-this.desired)-Math.abs(b-this.desired))[0];
+      this.requestPreview();
+      const choices=[...this.cache.keys()].map(i=>({i,quality:'full'})).concat([...this.previewCache.keys()].map(i=>({i,quality:'preview'})));
+      const nearest=choices.sort((a,b)=>Math.abs(a.i-this.desired)-Math.abs(b.i-this.desired))[0];
+      if(nearest){index=nearest.i;quality=nearest.quality;}
     }
     if(index===undefined)return;
-    if(index===this.rendered&&!this.resized){this.dirty=false;return;}
-    const bitmap=this.cache.get(index);const start=performance.now();
+    if(index===this.rendered&&quality===this.renderedQuality&&!this.resized){this.dirty=false;return;}
+    const bitmap=(quality==='full'?this.cache:this.previewCache).get(index);const start=performance.now();
     const scale=Math.max(this.w/bitmap.width,this.h/bitmap.height),w=bitmap.width*scale,h=bitmap.height*scale;
     this.ctx.drawImage(bitmap,(this.w-w)/2,(this.h-h)/2,w,h);
-    this.canvas.dataset.painted='true';this.rendered=index;this.dirty=false;this.resized=false;
+    this.canvas.dataset.painted='true';this.rendered=index;this.renderedQuality=quality;this.dirty=false;this.resized=false;
     this.drawTimes.push(performance.now()-start);if(this.drawTimes.length>500)this.drawTimes.shift();
   }
-  state(){return {renderer:'canvas-avif-fullhd',progress:this.progress,count:this.manifest.count,requested:this.desired,rendered:this.rendered,width:this.manifest.width,height:this.manifest.height,residentBytes:this.cache.size*this.frameBytes,maxResidentBytes:this.maxObservedBytes,cacheCap:this.cap,compressedBytes:this.blobBytes,compressedCap:this.blobCap,backingBytes:this.canvas.width*this.canvas.height*4,pending:this.pending.size,failures:[...this.failed],active:this.active,disposed:this.disposed};}
-  dispose(){this.disposed=true;for(const controller of this.pending.values())controller.abort();for(const bitmap of this.cache.values())this.release(bitmap);this.cache.clear();this.blobs.clear();this.blobBytes=0;this.canvas.width=1;this.canvas.height=1;delete this.canvas.dataset.painted;}
+  state(){return {renderer:'canvas-avif-fullhd',quality:this.renderedQuality,previewLoaded:window.__cinemaBoot?.loaded||0,progress:this.progress,count:this.manifest.count,requested:this.desired,rendered:this.rendered,width:this.manifest.width,height:this.manifest.height,residentBytes:this.cache.size*this.frameBytes,maxResidentBytes:this.maxObservedBytes,cacheCap:this.cap,compressedBytes:this.blobBytes,compressedCap:this.blobCap,backingBytes:this.canvas.width*this.canvas.height*4,pending:this.pending.size,failures:[...this.failed],active:this.active,disposed:this.disposed};}
+  dispose(){this.disposed=true;clearTimeout(this.seekTimer);window.removeEventListener('sp:cinema-progress',this.previewChanged);for(const bitmap of this.previewCache.values())this.release(bitmap);this.previewCache.clear();for(const controller of this.pending.values())controller.abort();for(const bitmap of this.cache.values())this.release(bitmap);this.cache.clear();this.blobs.clear();this.blobBytes=0;this.canvas.width=1;this.canvas.height=1;delete this.canvas.dataset.painted;}
 }
