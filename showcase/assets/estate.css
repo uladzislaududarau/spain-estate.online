@@ -535,14 +535,14 @@ html{background:#0b1320}
   justify-content: center;
   overflow: hidden;
   background-color: #0b1320;
-  transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 1.1s cubic-bezier(0.4, 0, 0.2, 1) .25s, visibility 0s linear 1.35s;
   will-change: opacity;
-  cursor: pointer;
+  cursor: default;
 }
 
 .preloader-overlay.is-exiting {
   opacity: 0;
-  pointer-events: none;
+  pointer-events: auto;
   visibility: hidden;
 }
 
@@ -554,7 +554,11 @@ html{background:#0b1320}
   height: auto;
   user-select: none;
   -webkit-user-select: none;
+  animation: preloaderStageIn .9s cubic-bezier(.4,0,.2,1) both;
 }
+@keyframes preloaderStageIn{from{opacity:0}to{opacity:1}}
+@keyframes preloaderStageOut{from{opacity:1}to{opacity:0}}
+.preloader-overlay.is-exiting .preloader-stage{animation:preloaderStageOut .7s cubic-bezier(.4,0,.2,1) both}
 
 .preloader-svg {
   display: block;
