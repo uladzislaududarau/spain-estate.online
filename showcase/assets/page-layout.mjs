@@ -47,4 +47,16 @@ window.addEventListener('pagehide',()=>{
   tableResize.disconnect();
   window.removeEventListener('scroll',shadeHeader);
   window.removeEventListener('pageshow',shadeHeader);
+  window.removeEventListener('resize',sizeBackdrop);
 },{once:true});
+
+// Browser toolbar height changes must not zoom a cover-fitted video.
+const backdrop=document.querySelector('#cinema');let backdropWidth=0;
+function sizeBackdrop(){
+ const width=innerWidth;if(width===backdropWidth)return;backdropWidth=width;
+ if(width<800){
+  backdrop?.style.setProperty('--cinema-fixed-height',`${Math.ceil(Math.max(innerHeight,visualViewport?.height||0,matchMedia('(pointer:coarse)').matches?(screen.height||0):0))}px`);
+  document.querySelector('#hero')?.style.setProperty('--hero-fixed-height',`${Math.ceil(Math.min(innerHeight,visualViewport?.height||innerHeight))}px`);
+ }else{backdrop?.style.removeProperty('--cinema-fixed-height');document.querySelector('#hero')?.style.removeProperty('--hero-fixed-height');}
+}
+sizeBackdrop();window.addEventListener('resize',sizeBackdrop,{passive:true});

@@ -5,11 +5,11 @@ import { readFile } from 'node:fs/promises';
 const html = await readFile(new URL('../showcase/index.html', import.meta.url), 'utf8');
 const css = await readFile(new URL('../showcase/assets/estate.css', import.meta.url), 'utf8');
 
-test('Локальные шрифты ограничивают позднюю замену и не блокируют текст надолго', () => {
+test('Локальные шрифты используют swap; видимый Hero подготавливается прелоадером', () => {
   const faces = [...css.matchAll(/@font-face\s*\{([^}]+)\}/g)].map(match => match[1]);
   assert.ok(faces.length > 0);
   for (const face of faces) {
-    assert.match(face, /font-display\s*:\s*fallback/);
+    assert.match(face, /font-display\s*:\s*swap/);
     assert.match(face, /src\s*:\s*url\(['"]?\.\/[^)]+\.woff2['"]?\)/);
   }
   assert.doesNotMatch(html, /fonts-loading|fonts-ready/);
