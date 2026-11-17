@@ -12,14 +12,12 @@ export function createContentMotion(gsap, {phone}) {
   document.querySelectorAll('[data-kinetic-heading]').forEach(heading => {
     const lines = heading.querySelectorAll('.kinetic-line > span');
     gsap.set(lines, {yPercent:135, rotation:phone?3:6, rotationX:45, transformPerspective:1000});
-    const closing=heading.id==='search-title';
-    timeline(heading.id, closing?document.querySelector('#search'):heading,
-      closing?'clamp(top 90%)':'clamp(top 98%)',closing?'clamp(bottom top)':'clamp(bottom 8%)')
-      .to(lines, {yPercent:0, rotation:0, rotationX:0, duration:closing?.3:.38, stagger:.055}, 0)
+    timeline(heading.id, heading, 'clamp(top 98%)', 'clamp(bottom 8%)')
+      .to(lines, {yPercent:0, rotation:0, rotationX:0, duration:.38, stagger:.055}, 0)
       .to(lines, {yPercent:-35, x:phone?-12:-65, rotation:-1, duration:.14, stagger:.025}, .86);
   });
 
-  const copy = '.approach-copy > p, .service-list > div, .section-heading > p, .threshold-copy p, .search-copy > p, .selection-includes > li, .request-action > p, .footer-details > p';
+  const copy = '.approach-copy > p, .service-list > div, .section-heading > p, .threshold-copy p, .selection-copy > p, .selection-includes > li, .request-action > p, .footer-details > p';
   document.querySelectorAll(copy).forEach((element, index) => {
     timeline(`copy-${index}`, element)
       .fromTo(element, {y:phone?45:85, opacity:.55}, {y:0, opacity:1, duration:.4}, 0)
@@ -29,8 +27,7 @@ export function createContentMotion(gsap, {phone}) {
   document.querySelectorAll('[data-scroll-photo]').forEach(frame => {
     const picture = frame.querySelector('picture');
     const image = frame.querySelector('img');
-    const section=frame.dataset.scrollPhoto==='search'?document.querySelector('#search'):frame;
-    timeline(`photo-${frame.dataset.scrollPhoto}`, section, 'clamp(top bottom)', 'clamp(top top)')
+    timeline(`photo-${frame.dataset.scrollPhoto}`, frame, 'clamp(top bottom)', 'clamp(top top)')
       .fromTo(picture, {clipPath:phone?'inset(14% 22% 14% 22% round 120px)':'inset(18% 34% 18% 34% round 240px)'},
         {clipPath:'inset(0% 0% 0% 0% round 0px)', duration:1}, 0)
       .fromTo(image, {scale:1.55, yPercent:-9}, {scale:1.02, yPercent:0, duration:1}, 0);
