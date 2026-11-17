@@ -708,3 +708,22 @@ html{background:#0b1320}
 html.boot-pending{overflow:hidden;scroll-behavior:auto}
 html[data-hero-fonts=fallback]{--font-display:Arial,sans-serif;--font-body:Arial,sans-serif}
 .preloader-overlay{touch-action:none;overscroll-behavior:none}
+
+/* One CTA treatment shared by Hero and the coast explorer. */
+.hero-action .search-cta,#region-search,.coast-pinned #region-search{
+ display:inline-flex;align-items:center;justify-content:space-between;gap:32px;
+ min-height:64px;padding:20px 28px;border:0;border-radius:99px;
+ background:#2563eb;color:#fff;box-shadow:none;text-align:left;
+ font:600 16px/1.4 var(--font-body);letter-spacing:normal;
+}
+#region-search .region-cta-label,.coast-pinned #region-search .region-cta-label{flex:1;text-align:left;font:inherit;transform:none;white-space:normal}
+#region-search .region-cta-icon,.coast-pinned #region-search .region-cta-icon{position:static;flex:0 0 24px;font-size:24px;line-height:1}
+.hero-action .search-cta:hover,.hero-action .search-cta:active,#region-search:hover,#region-search:active{transform:none}
+.hero-action .search-cta:hover,#region-search:hover{background:#2563eb;color:#fff}
+.hero-action .search-cta:focus-visible,#region-search:focus-visible{background:#fff;color:#15263d}
+@media(hover:hover) and (pointer:fine){
+ .hero-action .search-cta:hover,#region-search:hover{background:#fff;color:#15263d}
+}
+@media(max-width:799px){
+ .hero-action .search-cta,#region-search,.coast-pinned #region-search{min-height:58px;padding:18px 24px;gap:24px;font-size:14px}
+}
