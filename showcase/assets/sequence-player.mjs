@@ -130,7 +130,7 @@ export class ScrollCinematicSequence {
     if(index===undefined)return;
     if(index===this.rendered&&quality===this.renderedQuality&&!this.resized){this.dirty=false;return;}
     const bitmap=(quality==='full'?this.cache:this.previewCache).get(index);const start=performance.now();
-    const scale=Math.max(this.w/bitmap.width,this.h/bitmap.height),w=bitmap.width*scale,h=bitmap.height*scale;
+    const scale=Math.max(this.w/bitmap.width,this.h/bitmap.height)*(this.mobile?1.10:1),w=bitmap.width*scale,h=bitmap.height*scale;
     this.ctx.drawImage(bitmap,(this.w-w)/2,(this.h-h)/2,w,h);
     this.canvas.dataset.painted='true';this.rendered=index;this.renderedQuality=quality;this.dirty=false;this.resized=false;
     this.drawTimes.push(performance.now()-start);if(this.drawTimes.length>500)this.drawTimes.shift();

@@ -18,7 +18,7 @@
    if(document.hidden)await new Promise(resolve=>{const visible=()=>{if(!document.hidden){document.removeEventListener('visibilitychange',visible);resolve();}};document.addEventListener('visibilitychange',visible);});
    const blob=await request(previewBase+frame.file).then(r=>r.blob());boot.blobs.set(frame.index,blob);boot.loaded++;
    if(boot.loaded===1){const bitmap=await createImageBitmap(blob);const canvas=document.querySelector('#cinema canvas');
-    if(canvas&&!canvas.dataset.painted){const w=canvas.clientWidth,h=canvas.clientHeight;canvas.width=Math.round(w);canvas.height=Math.round(h);const ctx=canvas.getContext('2d',{alpha:false});const scale=Math.max(w/bitmap.width,h/bitmap.height);ctx.drawImage(bitmap,(w-bitmap.width*scale)/2,(h-bitmap.height*scale)/2,bitmap.width*scale,bitmap.height*scale);canvas.dataset.painted='true';}
+    if(canvas&&!canvas.dataset.painted){const w=canvas.clientWidth,h=canvas.clientHeight;canvas.width=Math.round(w);canvas.height=Math.round(h);const ctx=canvas.getContext('2d',{alpha:false});const scale=Math.max(w/bitmap.width,h/bitmap.height)*(phone?1.10:1);ctx.drawImage(bitmap,(w-bitmap.width*scale)/2,(h-bitmap.height*scale)/2,bitmap.width*scale,bitmap.height*scale);canvas.dataset.painted='true';}
     bitmap.close();boot.ready=true;}
    window.dispatchEvent(new CustomEvent('sp:cinema-progress',{detail:{loaded:boot.loaded,total:boot.total,ready:boot.ready}}));
    // Yield between low-priority overview downloads to the visible target frame.

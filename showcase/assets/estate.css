@@ -696,3 +696,6 @@ html{background:#0b1320}
 
 /* Safari toolbar changes must not repeatedly clear/resize the background. */
 @media(max-width:799px){.cinema{height:100lvh}}
+
+/* Crop the dark deck edge baked into the opening frame on phones. */
+@media(max-width:799px){.cinema-poster,.cinema-video{transform:scale(1.10);transform-origin:center}}
