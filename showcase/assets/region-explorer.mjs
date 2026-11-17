@@ -38,7 +38,10 @@ function render(animate=false){
 const explorerRegions=[...regions.filter(region=>region.id==='costa-blanca'),...regions.filter(region=>region.id!=='costa-blanca')];
 list.replaceChildren(...explorerRegions.map(region=>{
  const b=document.createElement('button');b.type='button';b.className='region-tab';b.dataset.region=region.id;b.append(document.createTextNode(region.name));
- const arrow=document.createElement('span');arrow.textContent='↗';arrow.setAttribute('aria-hidden','true');
+ const arrow=document.createElement('span');arrow.setAttribute('aria-hidden','true');
+ const ns='http://www.w3.org/2000/svg';const icon=document.createElementNS(ns,'svg');
+ for(const [key,value] of Object.entries({class:'icon-arrow',viewBox:'0 0 24 24',width:'24',height:'24',fill:'none',stroke:'currentColor','stroke-width':'1.25','stroke-linecap':'round','stroke-linejoin':'round','aria-hidden':'true',focusable:'false'}))icon.setAttribute(key,value);
+ const path=document.createElementNS(ns,'path');path.setAttribute('d','M5 19 19 5M5 5h14v14');icon.append(path);arrow.append(icon);
  b.append(arrow);b.addEventListener('click',()=>{if(selected===region.id)return;selected=region.id;render(true);});return b;
 }));
 for(const button of document.querySelectorAll('[data-explorer-type]'))button.addEventListener('click',()=>{
