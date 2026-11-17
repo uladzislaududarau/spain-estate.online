@@ -1,6 +1,7 @@
 import { securityHeaders } from './security.mjs';
 import http from 'node:http';
-import { readFile } from 'node:fs/promises';
+import { readFile, stat } from 'node:fs/promises';
+import { createReadStream } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { randomUUID, createHmac, randomBytes } from 'node:crypto';
@@ -78,10 +79,26 @@ export async function createApp({ storage = path.join(root, 'storage', 'leads'),
       else if (pathname === '/favicon.svg') asset = 'favicon.svg';
       else if (['/privacy', '/legal', '/en/privacy', '/en/legal'].includes(pathname)) asset = sourceAssets ? `legal/${pathname.startsWith('/en/') ? 'en' : 'ru'}-${pathname.endsWith('privacy') ? 'privacy' : 'legal'}.html` : `${pathname.slice(1)}/index.html`;
       else {
-        const match = pathname.match(/^\/(?:showcase\/)?assets\/([a-zA-Z0-9_./-]+\.(?:css|mjs|js|webp|avif|jpg|jpeg|json|woff2|svg|png|ico|txt|xml))$/);
+        const match = pathname.match(/^\/(?:showcase\/)?assets\/([a-zA-Z0-9_./-]+\.(?:css|mjs|js|webp|avif|jpg|jpeg|mp4|json|woff2|svg|png|ico|txt|xml))$/);
         if (match && !match[1].includes('..')) asset = `assets/${match[1]}`;
       }
       if (!asset) return json(404, { code: 'not_found' });
+      if(asset.endsWith('.mp4')){
+        const file=path.join(staticRoot,asset);let size;
+        try{size=(await stat(file)).size;}catch{return json(404,{code:'not_found'});}
+        const range=request.headers.range;
+        let start=0,end=size-1;
+        if(range){
+          const match=/^bytes=(\d*)-(\d*)$/.exec(range);
+          if(!match||(!match[1]&&!match[2])){response.writeHead(416,{'Content-Range':`bytes */${size}`});return response.end();}
+          if(!match[1])start=Math.max(0,size-Number(match[2]));
+          else{start=Number(match[1]);if(match[2])end=Math.min(end,Number(match[2]));}
+          if(!Number.isSafeInteger(start)||!Number.isSafeInteger(end)||start>end||start>=size){response.writeHead(416,{'Content-Range':`bytes */${size}`});return response.end();}
+        }
+        response.writeHead(range?206:200,{'Content-Type':'video/mp4','Accept-Ranges':'bytes','Content-Length':end-start+1,'Cache-Control':'public, max-age=3600',...(range?{'Content-Range':`bytes ${start}-${end}/${size}`}:{})});
+        if(request.method==='HEAD')return response.end();
+        const stream=createReadStream(file,{start,end});stream.on('error',()=>response.destroy());response.on('close',()=>stream.destroy());stream.pipe(response);return;
+      }
       let data;
       try { data = await readFile(path.join(staticRoot, asset)); }
       catch (error) { if (error.code === 'ENOENT' || error.code === 'ENOTDIR') return json(404, { code: 'not_found' }); throw error; }

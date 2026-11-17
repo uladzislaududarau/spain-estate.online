@@ -738,7 +738,7 @@
       "sourceSha256": "5a539d5d6038d41dd7c7f97fa244a0c882d26509d831e44bb8d6296685fe18ec",
       "rightsStatus": "User explicitly requested reuse for local preview on2026-11-17; public rights not independently established",
       "subjectStatus": "Architectural visualizations, not identified live listings",
-      "useDecision": "Native responsive picture elements; no new encoding; exterior / terrace / living-room composition",
+      "useDecision": "Superseded by original1920pxphotographs in the large scenes on2026-11-17; AVIF derivatives retained in repository",
       "cropIntent": "Desktop cover crop; authored portrait source at widths below600px; landscape frame on tablets; bounded inner scale1.14to1.06",
       "sources": [
         {
@@ -814,6 +814,32 @@
           ]
         }
       ]
+    },
+    {
+      "id": "native-scroll-video",
+      "path": "showcase/assets/cinema/architecture-scroll.mp4",
+      "bytes": 13121519,
+      "sha256": "47bd29abedd131ccbfba715f15987ed04469a4ac8d058714c937a772f0ab5e74",
+      "source": "User-supplied videoesp.mp4, source seconds2through10",
+      "sourceDimensions": [
+        1280,
+        720
+      ],
+      "outputDimensions": [
+        1280,
+        720
+      ],
+      "duration": 8,
+      "fps": 24,
+      "encoding": "H264 all-intra,gop1,CRF17,faststart; mild unsharp0.35; native source resolution, no4Kclaim",
+      "useDecision": "Paused native video driven by scroll, replaces runtime AVIF decoder and modulo source wrap",
+      "rightsStatus": "User-authorized local use; public rights not newly verified",
+      "photoScenes": [
+        "showcase/assets/slides/01-marbella-modern-infinity-villa.webp",
+        "showcase/assets/slides/penthouse-fuengirola-sea.webp",
+        "showcase/assets/slides/06-altea-mediterranean-waterfront-estate.webp"
+      ],
+      "photoSource": "Previously inventoried original-repository1920pxassets; descriptive scenes only, no location/listing attribution"
     }
   ]
 }

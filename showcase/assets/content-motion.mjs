@@ -3,7 +3,7 @@ export function createContentMotion(gsap, {phone}) {
   const scenes = [];
   const timeline = (id, trigger, start = 'clamp(top 94%)', end = 'clamp(bottom 12%)') => {
     const motion = gsap.timeline({defaults:{ease:'none'}, scrollTrigger:{
-      id:`estate-content-${id}`, trigger, start, end, scrub:true, invalidateOnRefresh:true
+      id:`estate-content-${id}`, trigger, start, end, scrub:.4, invalidateOnRefresh:true
     }});
     scenes.push({id, motion});
     return motion;
@@ -11,26 +11,29 @@ export function createContentMotion(gsap, {phone}) {
 
   document.querySelectorAll('[data-kinetic-heading]').forEach(heading => {
     const lines = heading.querySelectorAll('.kinetic-line > span');
-    gsap.set(lines, {yPercent:110, rotation:phone?1.5:3, opacity:.7});
-    timeline(heading.id, heading)
-      .to(lines, {yPercent:0, rotation:0, opacity:1, duration:.28, stagger:.035}, 0)
-      .to(lines, {yPercent:-12, x:phone?-4:-12, rotation:-.4, duration:.16, stagger:.025}, .84);
+    gsap.set(lines, {yPercent:135, rotation:phone?3:6, rotationX:45, transformPerspective:1000});
+    const closing=heading.id==='search-title';
+    timeline(heading.id, closing?document.querySelector('#search'):heading,
+      closing?'clamp(top 90%)':'clamp(top 98%)',closing?'clamp(bottom top)':'clamp(bottom 8%)')
+      .to(lines, {yPercent:0, rotation:0, rotationX:0, duration:closing?.3:.38, stagger:.055}, 0)
+      .to(lines, {yPercent:-35, x:phone?-12:-65, rotation:-1, duration:.14, stagger:.025}, .86);
   });
 
   const copy = '.approach-copy > p, .service-list > div, .section-heading > p, .threshold-copy p, .search-copy > p, .selection-includes > li, .request-action > p, .footer-details > p';
   document.querySelectorAll(copy).forEach((element, index) => {
     timeline(`copy-${index}`, element)
-      .fromTo(element, {y:phone?18:28, opacity:.85}, {y:0, opacity:1, duration:.3}, 0)
-      .to(element, {y:phone?-4:-8, duration:.14}, .86);
+      .fromTo(element, {y:phone?45:85, opacity:.55}, {y:0, opacity:1, duration:.4}, 0)
+      .to(element, {y:phone?-12:-30, duration:.14}, .86);
   });
 
   document.querySelectorAll('[data-scroll-photo]').forEach(frame => {
     const picture = frame.querySelector('picture');
     const image = frame.querySelector('img');
-    timeline(`photo-${frame.dataset.scrollPhoto}`, frame, 'clamp(top bottom)', 'clamp(bottom top)')
-      .fromTo(picture, {clipPath:'inset(8% 9% 8% 9% round 24px)'},
-        {clipPath:'inset(0% 0% 0% 0% round 0px)', duration:.4}, 0)
-      .fromTo(image, {scale:1.14, yPercent:-2}, {scale:1.06, yPercent:2, duration:1}, 0);
+    const section=frame.dataset.scrollPhoto==='search'?document.querySelector('#search'):frame;
+    timeline(`photo-${frame.dataset.scrollPhoto}`, section, 'clamp(top bottom)', 'clamp(top top)')
+      .fromTo(picture, {clipPath:phone?'inset(14% 22% 14% 22% round 120px)':'inset(18% 34% 18% 34% round 240px)'},
+        {clipPath:'inset(0% 0% 0% 0% round 0px)', duration:1}, 0)
+      .fromTo(image, {scale:1.55, yPercent:-9}, {scale:1.02, yPercent:0, duration:1}, 0);
   });
   return scenes;
 }

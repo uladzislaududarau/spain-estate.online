@@ -1,4 +1,4 @@
-import { ScrollCinematicSequence } from './sequence-player.mjs';
+import { ScrollVideoPlayer } from './scroll-video.mjs';
 import { createContentMotion } from './content-motion.mjs';
 const {gsap,ScrollTrigger}=window;
 const root=document.querySelector('#cinema');
@@ -11,12 +11,13 @@ if(gsap&&ScrollTrigger&&root){
   const {phone,reduce}=context.conditions;let player;let dead=false;const controller=new AbortController();
   if(reduce){root.classList.remove('motion-enabled');return;}
   root.classList.add('motion-enabled');
-  const canvas=root.querySelector('canvas');const bar=root.querySelector('.cinema-progress-fill');const chapter=root.querySelector('[data-chapter]');
+  const video=root.querySelector('video');const bar=root.querySelector('.cinema-progress-fill');const chapter=root.querySelector('[data-chapter]');
   const chapters=['Архитектура света','Открытое пространство','Ближе к морю','Время для себя'];
   const main=document.querySelector('#main')||document.body;
-  heroTrigger=ScrollTrigger.create({id:'estate-cinema',trigger:main,start:'top top',end:'bottom bottom',scrub:true,invalidateOnRefresh:true,onUpdate:self=>{
-    player?.setProgress(self.progress);if(bar)bar.style.transform=`scaleX(${self.progress})`;const text=chapters[Math.min(3,Math.floor(self.progress*4))];if(chapter&&chapter.textContent!==text)chapter.textContent=text;
-  }});
+  const background={progress:0};
+  heroTrigger=gsap.to(background,{progress:1,ease:'none',scrollTrigger:{id:'estate-cinema',trigger:main,start:'top top',end:'bottom bottom',scrub:.45,invalidateOnRefresh:true},onUpdate:()=>{
+    player?.setProgress(background.progress);if(bar)bar.style.transform=`scaleX(${background.progress})`;const text=chapters[Math.min(3,Math.floor(background.progress*4))];if(chapter&&chapter.textContent!==text)chapter.textContent=text;
+  }}).scrollTrigger;
   const heroCopy=document.querySelector('.hero-copy');
   // Entrance owns the child layers; native scroll owns only their parent.
   const intro=gsap.timeline({defaults:{ease:'power3.out',duration:.85}});
@@ -32,19 +33,15 @@ if(gsap&&ScrollTrigger&&root){
   contentScenes=createContentMotion(gsap,{phone});
   const threshold=document.querySelector('#threshold');
   if(threshold){
-    const tl=gsap.timeline({scrollTrigger:{id:'estate-threshold',trigger:threshold,start:'top bottom',end:'top top',scrub:true,invalidateOnRefresh:true}});
-    tl.fromTo('.threshold-image',{clipPath:phone?'inset(8% 6% 8% 6% round 24px)':'inset(12% 18% 12% 18% round 32px)'},{clipPath:'inset(0% 0% 0% 0% round 0px)',duration:1,ease:'none'},0)
-      .fromTo('.threshold-image img',{scale:1.14,yPercent:-2},{scale:1.06,yPercent:2,duration:1,ease:'none'},0);
+    const tl=gsap.timeline({scrollTrigger:{id:'estate-threshold',trigger:threshold,start:'top bottom',end:'top top',scrub:.45,invalidateOnRefresh:true}});
+    tl.fromTo('.threshold-image',{clipPath:phone?'inset(15% 16% 15% 16% round 80px)':'inset(18% 30% 18% 30% round 200px)'},{clipPath:'inset(0% 0% 0% 0% round 0px)',duration:1,ease:'none'},0)
+      .fromTo('.threshold-image img',{scale:1.5,yPercent:-8},{scale:1.04,yPercent:0,duration:1,ease:'none'},0);
     immersiveTrigger=tl.scrollTrigger;
   }
-  const tier=phone?'mobile':'desktop';
-  fetch(`/assets/sequence/${tier}/manifest.json`,{signal:controller.signal}).then(r=>{if(!r.ok)throw Error('manifest');return r.json();}).then(manifest=>{
-    if(dead||disposed||!manifest.count||manifest.count>300||manifest.width>1280||manifest.height>720)return;
-    player=new ScrollCinematicSequence(canvas,manifest,`/assets/sequence/${tier}/`,{mobile:phone,startIndex:48,focalX:phone?.55:.5});activePlayer=player;player.setProgress(heroTrigger.progress);
-  }).catch(()=>{/* Keep permanent poster and usable content. */});
+  player=new ScrollVideoPlayer(video);activePlayer=player;player.setProgress(background.progress);
   const tick=()=>player?.draw();gsap.ticker.add(tick);
   const observer=new IntersectionObserver(entries=>{if(player)player.setActive(entries[0].isIntersecting&&!document.hidden);},{rootMargin:'200px'});observer.observe(root);
-  const resize=new ResizeObserver(()=>player?.resize());resize.observe(canvas);
+  const resize=new ResizeObserver(()=>player?.resize());resize.observe(video);
   // A shorter city table changes both the full-page sequence and mask bounds.
   let layoutFrame;let layoutWidth=0;let layoutHeight=0;
   const refreshLayout=()=>{
