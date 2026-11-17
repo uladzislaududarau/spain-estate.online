@@ -1,7 +1,7 @@
-@font-face{font-family:Onest;src:url('./onest-cyrillic.woff2') format('woff2');font-weight:100 900;font-display:swap;unicode-range:U+0400-052F,U+2DE0-2DFF,U+A640-A69F}
-@font-face{font-family:Onest;src:url('./onest-latin.woff2') format('woff2');font-weight:100 900;font-display:swap}
-@font-face{font-family:Manrope;src:url('./manrope-cyrillic.woff2') format('woff2');font-weight:200 800;font-display:swap;unicode-range:U+0400-052F,U+2DE0-2DFF,U+A640-A69F}
-@font-face{font-family:Manrope;src:url('./manrope-latin.woff2') format('woff2');font-weight:200 800;font-display:swap}
+@font-face{font-family:Onest;src:url('./onest-cyrillic.woff2') format('woff2');font-weight:100 900;font-display:fallback;unicode-range:U+0400-052F,U+2DE0-2DFF,U+A640-A69F}
+@font-face{font-family:Onest;src:url('./onest-latin.woff2') format('woff2');font-weight:100 900;font-display:fallback}
+@font-face{font-family:Manrope;src:url('./manrope-cyrillic.woff2') format('woff2');font-weight:200 800;font-display:fallback;unicode-range:U+0400-052F,U+2DE0-2DFF,U+A640-A69F}
+@font-face{font-family:Manrope;src:url('./manrope-latin.woff2') format('woff2');font-weight:200 800;font-display:fallback}
 :root{--ground:#f7f4ec;--ink:#15263d;--accent:#3b82f6;--accent-soft:#93c5fd;--muted:#8ea3bf;--surface:#0b1320;--frame:clamp(22px,3.34vw,64px);--brand-width:180px;--font-display:Onest,Arial,sans-serif;--font-body:Manrope,Arial,sans-serif;color-scheme:dark}
 *,*::before,*::after{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:110px}
 body{margin:0;background:#0b1320;color:var(--ground);font:16px/1.6 var(--font-body);-webkit-font-smoothing:antialiased}

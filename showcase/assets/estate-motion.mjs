@@ -35,11 +35,7 @@ if(gsap&&ScrollTrigger&&root){
     player?.setProgress(background.progress);if(bar)bar.style.transform=`scaleX(${background.progress})`;
   }}).scrollTrigger;
   const heroCopy=document.querySelector('.hero-copy');
-  // Entrance owns the child layers; native scroll owns only their parent.
-  const intro=gsap.timeline({defaults:{ease:'power3.out',duration:.85}});
-  intro.fromTo('.hero-title',{y:28,opacity:0},{y:0,opacity:1},0)
-    .fromTo('.hero-copy p',{y:18,opacity:0},{y:0,opacity:1},.12)
-    .fromTo('.hero-action',{y:14,opacity:0},{y:0,opacity:1},.24);
+  // Text is visible at rest; only native scroll moves the parent.
   gsap.to(heroCopy,{
     scrollTrigger:{id:'estate-hero-copy',trigger:'#hero',start:'top top',
       end:()=>`+=${Math.round(Math.min(innerHeight*.55,420))}`,
