@@ -1,5 +1,4 @@
 import { ScrollVideoPlayer } from './scroll-video.mjs';
-import { ScrollCinematicSequence } from './sequence-player.mjs';
 import { createContentMotion } from './content-motion.mjs';
 import './region-explorer.mjs';
 const {gsap,ScrollTrigger}=window;
@@ -11,12 +10,11 @@ if(gsap&&ScrollTrigger&&root){
  window.__estateMotionQA=Object.freeze(qa);
  mm.add({desktop:'(min-width:800px)',phone:'(max-width:799px)',reduce:'(prefers-reduced-motion:reduce)'},context=>{
   const {phone,reduce}=context.conditions;let player;let dead=false;const controller=new AbortController();
-  if(reduce){root.classList.remove('motion-enabled');return;}
+  if(reduce||location.pathname.startsWith('/thank-you')){root.classList.remove('motion-enabled');return;}
   root.classList.add('motion-enabled');
   const video=root.querySelector('video');const canvas=root.querySelector('canvas');const bar=root.querySelector('.cinema-progress-fill');
   let sceneActive=!document.hidden;
-  delete video.dataset.painted;
-  video.pause();video.removeAttribute('src');video.load();
+  video.pause();delete canvas.dataset.painted;
   const main=document.querySelector('#main')||document.body;
   const chapters=[...document.querySelectorAll('[data-pinned-chapter]')];
   if(!phone){
@@ -55,28 +53,17 @@ if(gsap&&ScrollTrigger&&root){
     y:phone?-36:-64,opacity:0,ease:'none'
   });
   contentScenes=createContentMotion(gsap,{phone});
-  const useVideo=()=>{
-    if(dead)return;
-    player?.dispose();
-    video.src=video.dataset.fallbackSrc;
-    player=new ScrollVideoPlayer(video);activePlayer=player;
-    player.setProgress(background.progress);player.setActive(sceneActive&&!document.hidden);
-  };
-  // The query option keeps a directly reviewable fallback without changing the source clip.
-  if(new URLSearchParams(location.search).get('background')==='video')useVideo();
-  else{
-    const q=new URLSearchParams(location.search);
-    const preferStandard=!phone&&q.get('quality')!=='4k';
-    const folder=phone?'mobile':(preferStandard?'desktop-standard':'desktop');
-    const base=`/assets/cinema-main/${folder}/`;
-    const loadManifest=(dir)=>fetch(dir+'manifest.json',{signal:controller.signal}).then(r=>{if(!r.ok)throw new Error('sequence_manifest');return r.json().then(m=>({manifest:m,dir}));});
-    (window.__cinemaBoot?.folder===folder ? window.__cinemaBoot.manifest.then(manifest=>({manifest,dir:base})) : loadManifest(base)).catch(()=>loadManifest('/assets/cinema-main/desktop/')).then(({manifest,dir})=>{
+  const loadVideo=async()=>{
+    try{
+      const clip=await window.__loadCinemaVideo(phone);
       if(dead)return;
-      if(!Array.isArray(manifest.frames)||manifest.frames.length!==manifest.count||manifest.count<2||manifest.width<1||manifest.height<1)throw new Error('sequence_manifest_shape');
-      player=new ScrollCinematicSequence(canvas,manifest,dir,{mobile:phone,onFatal:useVideo});activePlayer=player;
-      player.setProgress(background.progress);player.setActive(sceneActive&&!document.hidden);
-    }).catch(error=>{if(!dead&&error.name!=='AbortError')useVideo();});
-  }
+      if(video.src!==clip.url){delete video.dataset.painted;video.src=clip.url;video.load();}
+      player=new ScrollVideoPlayer(video,{progress:background.progress});activePlayer=player;
+      player.setActive(sceneActive&&!document.hidden);player.draw();
+    }catch(error){if(!dead)window.dispatchEvent(new Event('sp:cinema-unavailable'));}
+  };
+  if(window.__loadCinemaVideo)loadVideo();
+  else window.addEventListener('sp:cinema-loader',loadVideo,{once:true,signal:controller.signal});
   const tick=()=>player?.draw();gsap.ticker.add(tick);
   const observer=new IntersectionObserver(entries=>{sceneActive=entries[0].isIntersecting;if(player)player.setActive(sceneActive&&!document.hidden);},{rootMargin:'200px'});observer.observe(root);
   const resize=new ResizeObserver(()=>player?.resize());resize.observe(canvas);
