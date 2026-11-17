@@ -202,6 +202,7 @@ h2{font-size:clamp(40px,5.2vw,76px)}.page-frame{padding-left:var(--frame);paddin
  .city-prices{max-height:260px}
  .city-prices table{font-size:13px}
  .region-detail>.button{font-size:13px;gap:16px;padding:18px 20px}
+ .region-detail>.button{margin-top:42px}
  .price-disclaimer{font-size:11px;margin-top:20px}
  .request-action{padding:0 24px 36px}
  .approach-copy .button,.request-action .button{width:100%;padding:18px 20px;font-size:13px;gap:16px;white-space:normal}
@@ -293,3 +294,230 @@ h2{font-size:clamp(40px,5.2vw,76px)}.page-frame{padding-left:var(--frame);paddin
  .approach-selection .button{width:100%}
  .approach-selection .request-action p{max-width:none}
 }
+
+/* Desktop composition: hold the photograph still while the service copy travels over it. */
+@media(min-width:800px){
+ .approach-card{overflow:visible}
+ .approach-media{position:sticky;top:0;z-index:0;height:100svh;min-height:650px}
+ .approach-media::after{background:linear-gradient(180deg,rgba(11,19,32,.28),rgba(11,19,32,.4) 58%,rgba(11,19,32,.78))}
+ .approach-body{background:transparent}
+ .approach-copy{max-width:1240px}
+ .approach-copy>p+p{max-width:68ch}
+ .service-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:54px clamp(48px,8vw,140px);padding-top:76px;padding-bottom:72px}
+ .service-list>div{border-top:1px solid rgba(255,255,255,.28);padding-top:22px;display:flex;flex-direction:column;align-items:flex-start}
+ .service-list dt{min-height:2.6em;max-width:22ch;line-height:1.22}
+ .service-list dd{margin-top:16px;max-width:54ch;line-height:1.65}
+ .approach-selection{border-top:1px solid rgba(255,255,255,.18);background:rgba(11,19,32,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding-top:48px;padding-bottom:64px}
+ .destinations{padding-top:180px}
+ .section-heading{margin-bottom:56px}
+ .section-heading h2{white-space:nowrap}
+ .footer{background:rgba(11,19,32,.68);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+}
+
+/* A clean gradient has no backdrop filter or mask seam when direction changes. */
+.header{background:transparent}
+.header::before{display:block;content:'';inset:0 0 -64px;background:linear-gradient(180deg,rgba(7,13,23,.52),rgba(7,13,23,.3) 40%,rgba(7,13,23,.1) 74%,transparent);mask-image:none;-webkit-mask-image:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+.header::after{content:'';position:absolute;inset:0 0 -64px;z-index:-1;pointer-events:none;opacity:0;background:linear-gradient(180deg,rgba(7,13,23,.38),rgba(7,13,23,.3) 40%,rgba(7,13,23,.1) 74%,transparent);transition:opacity .3s ease}
+.header.is-scrolled::after{opacity:1}
+.header-action{background:rgba(11,19,32,.25)}
+.cinema-passage{height:calc(max(650px,100svh) + var(--passage-extra,1179px));pointer-events:none}
+@media(max-width:799px){
+ .cinema-passage{height:calc(max(560px,78svh) + var(--passage-extra,1572px))}
+}
+@media(prefers-reduced-motion:reduce){
+ .cinema-passage{display:none}
+ .header::after{transition:none}
+}
+
+/* Coast motion uses the original surfaces, type and rounded controls. */
+.coast-word-mask{display:inline-block;overflow:clip;vertical-align:bottom;padding-bottom:.18em;margin-bottom:-.18em;white-space:nowrap}
+.coast-word,.coast-letter{display:inline-block;transform-origin:left bottom}
+#regions-title{line-height:1.1}
+.price-emphasis .price-window{display:block;overflow:clip;font-size:inherit;letter-spacing:inherit}
+.price-window strong{display:block}
+.city-prices thead th{font-size:14px}
+.city-prices tbody th{font-size:17px}
+.city-prices tbody td{font-size:15px;font-weight:400;letter-spacing:normal}
+.region-action{margin-top:34px}
+#region-search{position:relative;width:100%;min-height:64px;padding:21px 52px;background:#2563eb;color:#fff;border:0;box-shadow:none;font-size:15px}
+#region-search .region-cta-label{flex:1;text-align:center;font:600 15px/1.4 var(--font-body);transform:none}
+#region-search .region-cta-icon{position:absolute;right:24px;font-size:24px;line-height:1;transition:transform .25s}
+#region-search:hover,#region-search:focus-visible{background:#fff;color:#15263d}
+#region-search:hover .region-cta-icon{transform:translate(3px,-3px)}
+
+/* At scroll, a full-width frosted surface replaces the feathered top gradient. */
+.header::before{transition:opacity .28s}
+.header::after{inset:0;background:rgba(9,17,29,.88);border-bottom:1px solid rgba(165,195,237,.1);backdrop-filter:blur(18px) saturate(115%);-webkit-backdrop-filter:blur(18px) saturate(115%)}
+.header.is-scrolled::before{opacity:0}
+.header-action{padding-inline:28px}
+@media(max-width:799px){
+ .header-action{padding-inline:16px}
+ .city-prices thead th{font-size:13px}
+ .city-prices tbody th{font-size:16px}
+ .city-prices tbody td{font-size:14px}
+ .region-action{margin-top:44px}
+ #region-search{padding:20px 40px;min-height:68px}
+ #region-search .region-cta-label{font-size:13px;white-space:normal}
+ #region-search .region-cta-icon{right:17px}
+}
+@media(max-width:370px){.header-action{padding-inline:12px}#region-search .region-cta-label{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.header::before,.header::after{transition:none}}
+
+/* Desktop: the coast explorer follows hero immediately, then holds for the camera. */
+@media(min-width:800px){
+ .cinema-passage{display:none}
+ .destinations.coast-pinned{height:100svh;padding-top:108px;padding-bottom:24px;display:flex;flex-direction:column}
+ .coast-pinned .destinations-card{flex:1;min-height:0;display:flex;flex-direction:column;padding:clamp(24px,3svh,40px) clamp(28px,3vw,54px);background:rgba(11,19,32,.86)}
+ .coast-pinned .section-heading{flex:none;margin-bottom:clamp(20px,3svh,36px)}
+ .coast-pinned #regions-title{font-size:clamp(36px,4vw,64px)}
+ .coast-pinned .region-explorer{flex:1;min-height:0;grid-template-rows:minmax(0,1fr)}
+ .coast-pinned .region-navigation{min-height:0;display:flex;flex-direction:column}
+ .coast-pinned .region-list{min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:#425b7d transparent;padding:3px 8px 4px 0}
+ .coast-pinned .region-tab{flex:none}
+ .coast-pinned .region-detail{display:flex;flex-direction:column;align-self:stretch;min-height:0}
+ .coast-pinned .region-detail-head{flex:none}
+ .coast-pinned .price-emphasis{flex:none;margin:clamp(14px,2.4svh,28px) 0 clamp(14px,2svh,24px)}
+ .coast-pinned .city-prices{flex:1;min-height:54px;max-height:none;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#425b7d transparent}
+ .coast-pinned .region-action{flex:none;margin-top:clamp(18px,2.8svh,30px)}
+ .coast-pinned #region-search{min-height:58px;padding-block:17px}
+}
+@media(min-width:800px) and (max-height:700px){
+ .destinations.coast-pinned{padding-top:100px;padding-bottom:16px}
+ .coast-pinned .destinations-card{padding:18px 28px}
+ .coast-pinned .section-heading{margin-bottom:16px}
+ .coast-pinned #regions-title{font-size:36px}
+ .coast-pinned .region-detail-head{flex-direction:row;align-items:center;gap:12px}
+ .coast-pinned .region-detail h3{font-size:21px}
+ .coast-pinned .price-emphasis{margin:10px 0;gap:0}
+ .coast-pinned .price-emphasis strong{font-size:40px}
+ .coast-pinned .region-action{margin-top:14px}
+ .coast-pinned #region-search{min-height:52px;padding-block:13px}
+ .coast-pinned #region-search .region-cta-label{font-size:13px}
+}
+
+/* Shared phone identity: site, quiz and footer use the same logo size. */
+@media(max-width:799px){
+ :root{
+  --mobile-brand-width:160px;
+  --brand-width:var(--mobile-brand-width);
+  --mobile-header-height:calc(76px + env(safe-area-inset-top));
+  --mobile-header-top:calc(16px + env(safe-area-inset-top));
+  --mobile-header-side:20px;
+  --mobile-header-background:#15263d;
+ }
+ .header{
+  height:var(--mobile-header-height);
+  padding:var(--mobile-header-top) var(--mobile-header-side) 16px;
+  align-items:center;justify-content:space-between;gap:12px;
+  background:var(--mobile-header-background);
+ }
+ .header::before,.header::after{display:none}
+ .brand-svg-logo,.footer-brand img{width:var(--mobile-brand-width);height:auto;aspect-ratio:236/52}
+ .header-action{height:44px;min-height:44px;min-width:0;flex-shrink:1;white-space:nowrap}
+}
+@media(max-width:370px){
+ .header-action{font-size:10px;padding-inline:8px;gap:0}
+}
+
+/* Prices form a self-contained table with an even surface, not a colored header bar. */
+#regions .destinations-card,#regions .region-tab,#regions .type-switch button,
+#regions .price-emphasis>span,#regions .city-prices table,
+#regions .city-prices th,#regions .city-prices td,#regions .city-prices small{color:#fff}
+#regions-title,#regions-title .coast-word,#regions-title .coast-letter{color:#fff}
+.city-table-card{min-width:0;min-height:0;border:1px solid rgba(255,255,255,.2);border-radius:18px;overflow:hidden;background:transparent}
+.city-table-card .city-prices{margin:0;padding:0;scrollbar-color:#657184 transparent}
+.city-table-card table{border-collapse:separate;border-spacing:0}
+.city-table-card .city-prices th,.city-table-card .city-prices td{padding:14px 18px}
+.city-table-card .city-prices thead{background:none}
+.city-table-card .city-prices thead th{position:sticky;top:0;z-index:1;background:#101a29;font-weight:500}
+.city-table-card .city-prices tbody tr:last-child th,.city-table-card .city-prices tbody tr:last-child td{border-bottom:0}
+@media(min-width:800px){
+ .coast-pinned .city-table-card{flex:1;min-height:72px;display:flex;flex-direction:column}
+ .coast-pinned .city-table-card .city-prices{min-height:0;flex:1;max-height:none}
+ .region-action,.coast-pinned .region-action{margin-top:clamp(32px,4.6svh,48px)}
+ /* Fixed solid paint avoids bright backdrop-filter seams during trackpad flings. */
+ .header{transition:background-color .2s ease;backdrop-filter:none;-webkit-backdrop-filter:none}
+ .header::after{display:none;backdrop-filter:none;-webkit-backdrop-filter:none;border:0}
+ .header.is-scrolled{background:#15263d}
+ .header.is-scrolled::before{opacity:0}
+}
+html{background:#0b1320}
+@media(max-width:799px){
+ .city-table-card{border-radius:16px}
+ .city-table-card .city-prices th,.city-table-card .city-prices td{padding:13px 14px}
+}
+@media(prefers-reduced-motion:reduce){.header{transition:none}}
+
+/* Keep the labels outside the scroll frame, aligned to the actual cell insets. */
+.city-table-group{min-width:0;min-height:0}
+.city-table-labels{display:grid;grid-template-columns:minmax(0,1fr) max-content;gap:20px;align-items:end;flex:none;padding:0 calc(19px + var(--city-scrollbar,0px)) 10px 19px;color:#fff;font-size:14px;line-height:1.35}
+.city-table-labels>span:last-child{text-align:right}
+.city-prices thead.city-semantic-head{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);clip-path:inset(50%);white-space:nowrap;border:0}
+#regions .destinations-card{
+ background:
+  radial-gradient(ellipse at left top,rgba(76,132,190,.17),transparent 56%),
+  radial-gradient(ellipse at right bottom,rgba(58,109,170,.16),transparent 54%),
+  rgba(11,19,32,.84);
+}
+@media(min-width:800px){
+ .coast-pinned .city-table-group{flex:1;min-height:0;display:flex;flex-direction:column}
+ .coast-pinned .city-table-card{min-height:54px}
+ /* Prevent root rubber-banding while keeping ordinary inner-list/page scrolling. */
+ html,body{overscroll-behavior-y:none}
+ /* Overscan paint above the viewport: no exposed light edge during momentum scroll. */
+ .header::after{display:block;inset:-80px 0 100%;opacity:1;background:#15263d;border:0;mask-image:none;-webkit-mask-image:none;backdrop-filter:none;-webkit-backdrop-filter:none;transition:none;pointer-events:none}
+}
+@media(max-width:799px){
+ .city-table-labels{font-size:13px;padding-left:15px;padding-right:calc(15px + var(--city-scrollbar,0px))}
+}
+
+/* A continuous, eased darkening replaces the first-pixel on/off switch. */
+@media(min-width:800px){
+ .header,.header.is-scrolled{background:transparent;transition:none}
+ .header::before,.header.is-scrolled::before{opacity:calc(1 - var(--header-shade,0));transition:none}
+ .header::after{inset:-80px 0 0;background:#0b1320;opacity:var(--header-shade,0);transition:none}
+}
+@media(max-width:799px){
+ :root{--mobile-header-background:#0b1320}
+}
+
+/* One opacity owner for both widths, including the legacy .is-scrolled state. */
+.header::after,.header.is-scrolled::after{
+ opacity:var(--header-shade,0);
+ border:0;mask-image:none;-webkit-mask-image:none;
+ backdrop-filter:none;-webkit-backdrop-filter:none;transition:none;
+}
+@media(max-width:799px){
+ .header,.header.is-scrolled{background:transparent;transition:none}
+ .header::before,.header.is-scrolled::before{display:none}
+ .header::after,.header.is-scrolled::after{display:block;inset:-80px 0 0;background:#0b1320}
+ html,body{overscroll-behavior-y:none}
+}
+
+@media(max-width:799px){
+ .footer{background:rgba(11,19,32,.68);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+}
+
+/* Breathing room around the sole remaining content chapter. */
+.cinema-interval{pointer-events:none}
+.cinema-interval--before{height:clamp(120px,18svh,200px)}
+.cinema-interval--after{height:clamp(144px,20svh,240px)}
+@media(max-width:799px){
+ .cinema-interval--before{height:96px}
+ .cinema-interval--after{height:128px}
+ .destinations{padding-top:0;padding-bottom:0}
+}
+@media(prefers-reduced-motion:reduce){
+ .cinema-interval--before{height:64px}
+ .cinema-interval--after{height:96px}
+}
+
+/* Match the footer's glass: fixed tint and blur, only opacity follows scrolling. */
+.header::after,.header.is-scrolled::after{
+ background:rgba(11,19,32,.68);
+ backdrop-filter:blur(12px);
+ -webkit-backdrop-filter:blur(12px);
+}
+
+/* New native Full HD sequence and its matching centered posters/fallback. */
+.cinema-poster,.cinema-video{object-position:50% 50%}

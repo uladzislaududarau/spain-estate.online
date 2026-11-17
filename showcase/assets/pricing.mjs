@@ -44,6 +44,15 @@ export function generateBudgetRanges(selection = {}, data = pricingData) {
   return { minimum, byType, ranges, customAllowed: true, missingData: Object.values(byType).some(value => value === null) };
 }
 
+/** Preserve exact generated choices, including disjoint ranges, in price order. */
+export function selectedBudgetRanges(selection, chosen, data = pricingData) {
+  if (!Array.isArray(chosen) || !chosen.length || chosen.length > 5) return [];
+  const available = generateBudgetRanges(selection, data).ranges;
+  if (chosen.some(item => !item || !available.some(range => range.min === item.min && range.max === item.max))) return [];
+  return available.filter(range => chosen.some(item => item.min === range.min && item.max === range.max))
+    .map(({ min, max }) => ({ min, max }));
+}
+
 export function formatMoney(amount, language = 'ru') {
   if (amount === null || amount === undefined || !Number.isFinite(amount)) return '—';
   return new Intl.NumberFormat(language === 'en' ? 'en-GB' : 'ru-RU', {
@@ -108,6 +117,33 @@ export function recommendAlternatives(selection = {}, budget, options = {}, data
  * For an open range, eligibility at its lower bound is conservative and honest.
  */
 export function createPricingSummary(selection = {}, budget = {}, options = {}, data = pricingData) {
+  if(budget.deferred===true){
+    const result=evaluateBudget(selection,NaN,data);
+    return {
+      version:1,regions:uniqueStrings(selection.regions),cities:uniqueStrings(selection.cities),
+      ...(selection.anyCityRegions?{anyCityRegions:uniqueStrings(selection.anyCityRegions)}:{}),
+      propertyType:selection.propertyType,budget:{deferred:true},minimum:result.minimum,byType:result.byType,
+      eligible:[],ineligible:[],missing:result.missing,alternatives:[],belowMinimum:false,missingData:result.missingData,
+      source:priceSource.id,canSubmit:result.minimum===null&&result.missingData&&getSelectionPrices(selection,data).length>0,
+      allowOtherRegions:options.allowOtherRegions===true
+    };
+  }
+  if (Array.isArray(budget.ranges)) {
+    const ranges = selectedBudgetRanges(selection, budget.ranges, data);
+    // Threshold affordability can use any selected range. Preferences retain every
+    // exact interval; the gaps between nonadjacent choices are never filled in.
+    const ceiling = ranges.length ? Math.max(...ranges.map(range => range.max === null ? range.min : range.max - 1)) : NaN;
+    const result = evaluateBudget(selection, ceiling, data);
+    return {
+      version: 1, regions: uniqueStrings(selection.regions), cities: uniqueStrings(selection.cities),
+      ...(selection.anyCityRegions ? { anyCityRegions: uniqueStrings(selection.anyCityRegions) } : {}),
+      propertyType: selection.propertyType, budget: { ranges }, minimum: result.minimum, byType: result.byType,
+      eligible: result.eligible, ineligible: result.ineligible, missing: result.missing,
+      alternatives: result.ineligible.length ? recommendAlternatives(selection, ceiling, options, data) : [],
+      belowMinimum: result.belowMinimum, missingData: result.missingData, source: priceSource.id,
+      canSubmit: result.canSubmit, allowOtherRegions: options.allowOtherRegions === true
+    };
+  }
   const min = typeof budget.min === 'number' && Number.isFinite(budget.min) && budget.min >= 0 ? budget.min : null;
   const maxValid = budget.max === null || (typeof budget.max === 'number' && Number.isFinite(budget.max) && budget.max >= 0);
   const max = budget.max === null ? null : maxValid ? budget.max : null;

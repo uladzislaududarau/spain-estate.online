@@ -7,6 +7,7 @@ import { createWorker } from '../cloudflare/worker.mjs';
 import { leadMessage } from '../cloudflare/notifications.mjs';
 import { sheetRow, sheetColumns } from '../cloudflare/google-sheets.mjs';
 import { policyVersion } from '../showcase/assets/quiz.config.mjs';
+import { generateBudgetRanges } from '../showcase/assets/pricing.mjs';
 
 function payload() {
   return {
@@ -18,6 +19,68 @@ function payload() {
     attribution: { source: 'cinematic-quiz', utm_source: 'test', utm_campaign: 'coastal', landing: 'https://spain-estate.online/?utm_source=test', referrer: 'https://example.com/' }
   };
 }
+
+test('Multiple nonadjacent budget choices survive validation, notifications and Sheets without filling gaps', () => {
+  const input = payload();
+  const { ranges } = generateBudgetRanges(input.pricing);
+  const chosen = [ranges[0], ranges[2], ranges[4]].map(({ min, max }) => ({ min, max }));
+  input.pricing.budget = { ranges: [...chosen].reverse() };
+  const result = validateLead(input);
+  assert.equal(result.error, undefined);
+  assert.deepEqual(result.data.pricing.budget, { ranges: chosen });
+  const lead = { ...result.data, leadId: randomUUID(), savedAt: '2026-11-17T12:00:00.000Z' };
+  const message = leadMessage(lead);
+  assert.match(message, /Бюджет покупателя: .*; .*; от /);
+  assert.ok(sheetRow(lead).some(value => value.includes('Бюджет покупателя:') && value.includes(';')));
+  assert.equal(result.data.pricing.canSubmit, true);
+});
+
+test('Empty, duplicate, invented and stale multi-range budgets are rejected', () => {
+  const input = payload();
+  const [first] = generateBudgetRanges(input.pricing).ranges;
+  const range = { min: first.min, max: first.max };
+  for (const ranges of [[], [range, range], [{ min: 123, max: 456 }]]) {
+    input.pricing.budget = { ranges };
+    assert.equal(validateLead(input).error, 'invalid_request');
+  }
+  input.pricing.budget = { ranges: [range] };
+  input.pricing.propertyType = input.answers.propertyType = 'apartment';
+  assert.equal(validateLead(input).error, 'invalid_request');
+});
+
+test('Online-viewing preference is independent of visit timing and retained in delivery', () => {
+  for (const onlineViewings of [false, true]) {
+    const input = payload();
+    input.answers.timeline = 'visit-next-month';
+    input.answers.onlineViewings = onlineViewings;
+    const result = validateLead(input);
+    assert.equal(result.error, undefined);
+    assert.equal(result.data.answers.onlineViewings, onlineViewings);
+    const lead = { ...result.data, leadId: randomUUID(), savedAt: '2026-11-17T12:00:00.000Z' };
+    assert.equal(leadMessage(lead).includes('Хочу смотреть объекты онлайн'), onlineViewings);
+    assert.equal(sheetRow(lead)[12].includes('Хочу смотреть объекты онлайн'), onlineViewings);
+  }
+});
+
+test('Viber and telephone leads validate phone/country and preserve the delivery method', () => {
+  for (const [messenger, label] of [['viber', 'Viber'], ['phone', 'Телефон']]) {
+    const input = payload();
+    input.messenger = messenger;
+    input.contact = '+34 612 345 678';
+    input.phoneCountry = 'ES';
+    const result = validateLead(input);
+    assert.equal(result.error, undefined);
+    assert.equal(result.data.contact, '+34612345678');
+    assert.equal(result.data.messenger, messenger);
+    const lead = { ...result.data, leadId: randomUUID(), savedAt: '2026-11-17T12:00:00.000Z' };
+    assert.ok(leadMessage(lead).includes(`Способ связи: ${label}`));
+    assert.equal(sheetRow(lead)[5], label);
+    input.contact = '@username';
+    assert.equal(validateLead(input).error, 'invalid_contact');
+    input.contact = '+34612345678'; input.phoneCountry = 'CY';
+    assert.equal(validateLead(input).error, 'invalid_contact');
+  }
+});
 
 test('New leads recompute price thresholds, preserve below-minimum enquiries and geographic notes', () => {
   const input = payload();

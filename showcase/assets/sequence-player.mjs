@@ -1,67 +1,113 @@
-/** Bounded photographic frame renderer. High-clarity bicubic rasterization. */
+/** Scroll position selects an exact frame; bounded nearby decode keeps reverse scrolling ready. */
 export class ScrollCinematicSequence {
-  constructor(canvas, manifest, base, {mobile=false,fit='cover',focalX=.5,focalY=.5,startIndex=48,onState=()=>{}}={}) {
-    this.canvas=canvas;this.ctx=canvas.getContext('2d',{alpha:false,desynchronized:true});this.manifest=manifest;this.base=base;
-    this.mobile=mobile;this.fit=fit;this.focalX=focalX;this.focalY=focalY;this.startIndex=Math.floor(startIndex/ (mobile?2:1));this.onState=onState;
-    this.cache=new Map();this.pending=new Map();this.failed=new Set();this.desired=0;this.rendered=-1;this.progress=0;this.active=true;this.disposed=false;this.dirty=true;
-    this.cap=mobile?16*1024**2:32*1024**2;this.maxEntries=Math.max(4,Math.floor(this.cap/(manifest.width*manifest.height*4)));this.drawTimes=[];this.maxObservedBytes=0;
-    this.resize();this.loadNearby();
+  constructor(canvas,manifest,base,{mobile=false,onFatal=()=>{}}={}){
+    this.canvas=canvas;this.ctx=canvas.getContext('2d',{alpha:false});
+    if(!this.ctx)throw new Error('canvas_unavailable');
+    this.manifest=manifest;this.base=base;this.mobile=mobile;this.onFatal=onFatal;
+    this.cache=new Map();this.blobs=new Map();this.pending=new Map();this.failed=new Set();
+    const is4K=manifest.width>=3840;
+    this.cap=(mobile?48:(is4K?224:96))*1024**2;this.blobCap=(mobile?16:(is4K?64:32))*1024**2;
+    this.frameBytes=manifest.width*manifest.height*4;
+    this.maxEntries=Math.max(2,Math.floor(this.cap/this.frameBytes));
+    this.parallel=mobile?2:4;this.blobBytes=0;this.maxObservedBytes=0;this.drawTimes=[];
+    this.progress=0;this.desired=0;this.rendered=-1;this.direction=1;this.active=true;this.disposed=false;this.dirty=true;this.fatal=false;
+    this.resize();this.pump();
   }
-  sourceIndex(i){return (this.startIndex+i)%this.manifest.count;}
+  targets(){
+    const result=[this.desired];
+    for(let distance=1;result.length<this.maxEntries&&distance<this.manifest.count;distance++){
+      for(const sign of [this.direction,-this.direction]){
+        const i=this.desired+distance*sign;
+        if(i>=0&&i<this.manifest.count)result.push(i);
+        if(result.length>=this.maxEntries)break;
+      }
+    }
+    return result;
+  }
+  setProgress(p){
+    this.progress=Math.min(1,Math.max(0,p));const next=Math.round(this.progress*(this.manifest.count-1));
+    if(next===this.desired)return;
+    this.direction=Math.sign(next-this.desired)||this.direction;this.desired=next;this.dirty=true;
+    for(const [i,controller] of this.pending)if(Math.abs(i-next)>this.maxEntries)controller.abort();
+    this.pump();
+  }
+  setActive(value){
+    if(this.disposed)return;this.active=value;
+    if(!value)for(const controller of this.pending.values())controller.abort();
+    else{this.dirty=true;this.pump();}
+  }
   resize(){
     if(this.disposed)return;
     const {width,height}=this.canvas.getBoundingClientRect();this.w=width;this.h=height;
-    const dpr=Math.min(devicePixelRatio||1,1.5,Math.sqrt((this.mobile?1200000:2000000)/Math.max(1,width*height)));
-    this.canvas.width=Math.max(1,Math.round(width*dpr));this.canvas.height=Math.max(1,Math.round(height*dpr));
-    this.ctx?.setTransform(dpr,0,0,dpr,0,0);
-    if(this.ctx){this.ctx.imageSmoothingEnabled=true;this.ctx.imageSmoothingQuality='high';}
-    this.dirty=true;
+    const budget=this.mobile?1200000:2000000;
+    this.dpr=Math.min(devicePixelRatio||1,2,Math.sqrt(budget/Math.max(1,width*height)));
+    const w=Math.max(1,Math.round(width*this.dpr)),h=Math.max(1,Math.round(height*this.dpr));
+    if(this.canvas.width!==w||this.canvas.height!==h){this.canvas.width=w;this.canvas.height=h;}
+    this.ctx.setTransform(this.dpr,0,0,this.dpr,0,0);this.ctx.imageSmoothingEnabled=true;this.ctx.imageSmoothingQuality='high';this.dirty=true;this.resized=true;
   }
-  setProgress(p){this.progress=Math.min(1,Math.max(0,p));const next=Math.round(this.progress*(this.manifest.count-1));if(next!==this.desired){this.desired=next;this.dirty=true;for(const [i,c] of this.pending)if(Math.abs(i-next)>12)c.abort();}this.loadNearby();}
-  setActive(value){if(this.disposed)return;this.active=value;if(!value)for(const c of this.pending.values())c.abort();else{this.dirty=true;this.loadNearby();}}
-  loadNearby(){
+  rememberBlob(i,blob){
+    if(this.blobs.has(i)){this.blobBytes-=this.blobs.get(i).size;this.blobs.delete(i);}
+    this.blobs.set(i,blob);this.blobBytes+=blob.size;
+    while(this.blobBytes>this.blobCap){const oldest=this.blobs.keys().next().value;this.blobBytes-=this.blobs.get(oldest).size;this.blobs.delete(oldest);}
+  }
+  pump(){
     if(this.disposed||!this.active||document.hidden)return;
-    const targets=[this.desired,this.desired+1,this.desired-1,this.desired+2,this.desired-2,this.desired+3,this.desired-3,this.desired+4,this.desired-4];
-    for(const i of targets.slice(0,this.maxEntries)){
-      if(this.pending.size>=4)break;
-      if(i<0||i>=this.manifest.count||this.cache.has(i)||this.pending.has(i)||this.failed.has(i))continue;
+    for(const i of this.targets()){
+      if(this.pending.size>=this.parallel)break;
+      if(this.cache.has(i)||this.pending.has(i)||this.failed.has(i))continue;
       this.load(i);
     }
   }
   async load(i){
     const controller=new AbortController();this.pending.set(i,controller);let bitmap;
     try{
-      const response=await fetch(this.base+this.manifest.frames[this.sourceIndex(i)],{signal:controller.signal});if(!response.ok)throw new Error('frame_http');
-      const blob=await response.blob();
-      if(typeof createImageBitmap==='function') bitmap=await createImageBitmap(blob);
-      else {const url=URL.createObjectURL(blob);try{bitmap=new Image();bitmap.src=url;await bitmap.decode();}finally{URL.revokeObjectURL(url);}}
-      if(this.disposed||controller.signal.aborted||!this.active){this.release(bitmap);return;}
-      if(bitmap.width!==this.manifest.width||bitmap.height!==this.manifest.height)throw new Error('dimensions');
-      // Evict before admission; retain current target preferentially.
-      while(this.cache.size>=this.maxEntries){const farthest=[...this.cache.keys()].sort((a,b)=>Math.abs(b-this.desired)-Math.abs(a-this.desired))[0];this.release(this.cache.get(farthest));this.cache.delete(farthest);}
-      this.cache.set(i,bitmap);bitmap=undefined;this.maxObservedBytes=Math.max(this.maxObservedBytes,this.cache.size*this.manifest.width*this.manifest.height*4);this.dirty=true;
-    }catch(error){if(error.name!=='AbortError'&&!controller.signal.aborted&&!this.disposed)this.failed.add(i);this.release(bitmap);}
-    finally{this.pending.delete(i);if(!this.disposed)this.loadNearby();}
+      let blob=this.blobs.get(i);
+      if(!blob){
+        const response=await fetch(this.base+this.manifest.frames[i],{signal:controller.signal});
+        if(!response.ok)throw new Error(`frame_http_${response.status}`);
+        blob=await response.blob();
+      }
+      if(this.disposed||controller.signal.aborted||!this.active)return;
+      this.rememberBlob(i,blob);
+      // A rapid jump may make this compressed frame useful later, but not worth decoding now.
+      if(!this.targets().includes(i))return;
+      if(typeof createImageBitmap==='function')bitmap=await createImageBitmap(blob);
+      else{
+        const url=URL.createObjectURL(blob);try{bitmap=new Image();bitmap.src=url;await bitmap.decode();}finally{URL.revokeObjectURL(url);}
+      }
+      if(this.disposed||controller.signal.aborted||!this.active||!this.targets().includes(i)){this.release(bitmap);return;}
+      if(bitmap.width!==this.manifest.width||bitmap.height!==this.manifest.height)throw new Error('frame_dimensions');
+      while(this.cache.size>=this.maxEntries){
+        const farthest=[...this.cache.keys()].sort((a,b)=>Math.abs(b-this.desired)-Math.abs(a-this.desired))[0];
+        this.release(this.cache.get(farthest));this.cache.delete(farthest);
+      }
+      this.cache.set(i,bitmap);bitmap=undefined;this.dirty=true;
+      this.maxObservedBytes=Math.max(this.maxObservedBytes,this.cache.size*this.frameBytes);
+    }catch(error){
+      this.release(bitmap);
+      if(!controller.signal.aborted&&!this.disposed){
+        this.failed.add(i);
+        if(this.rendered<0&&i===this.desired&&!this.fatal){this.fatal=true;this.onFatal(error);}
+      }
+    }finally{this.pending.delete(i);if(!this.disposed)this.pump();}
   }
-  release(bitmap){if(!bitmap)return;if(typeof bitmap.close==='function')bitmap.close();else bitmap.src='';}
+  release(bitmap){if(bitmap?.close)bitmap.close();else if(bitmap)bitmap.src='';}
   draw(){
-    if(this.disposed||!this.active||document.hidden||!this.ctx||!this.dirty)return;
-    let i=this.cache.has(this.desired)?this.desired:[...this.cache.keys()].sort((a,b)=>Math.abs(a-this.desired)-Math.abs(b-this.desired))[0];
-    if(i===undefined)return;
-    if(i===this.rendered&&!this.dirty)return;
-    const bitmap=this.cache.get(i);const start=performance.now();
-    const scale=this.fit==='contain'?Math.min(this.w/bitmap.width,this.h/bitmap.height):Math.max(this.w/bitmap.width,this.h/bitmap.height);
-    const width=bitmap.width*scale,height=bitmap.height*scale;
-    const dx=Math.round((this.w-width)*this.focalX);
-    const dy=Math.round((this.h-height)*this.focalY);
-    const dw=Math.round(width);
-    const dh=Math.round(height);
-    if(this.fit==='contain'){this.ctx.fillStyle='#0b1320';this.ctx.fillRect(0,0,this.w,this.h);}
-    this.ctx.imageSmoothingEnabled=true;
-    this.ctx.imageSmoothingQuality='high';
-    this.ctx.drawImage(bitmap,dx,dy,dw,dh);
-    this.canvas.dataset.painted='true';this.rendered=i;this.dirty=false;this.drawTimes.push(performance.now()-start);if(this.drawTimes.length>600)this.drawTimes.shift();this.onState(this.state());
+    if(this.disposed||!this.active||document.hidden||!this.dirty)return;
+    let index=this.cache.has(this.desired)?this.desired:undefined;
+    if(index===undefined){
+      // Keep the last valid image; never paint an obsolete frame on the wrong side of motion.
+      const candidates=[...this.cache.keys()].filter(i=>this.rendered<0||(i-this.rendered)*(this.desired-this.rendered)>=0&&Math.abs(i-this.rendered)<=Math.abs(this.desired-this.rendered));
+      index=candidates.sort((a,b)=>Math.abs(a-this.desired)-Math.abs(b-this.desired))[0];
+    }
+    if(index===undefined)return;
+    if(index===this.rendered&&!this.resized){this.dirty=false;return;}
+    const bitmap=this.cache.get(index);const start=performance.now();
+    const scale=Math.max(this.w/bitmap.width,this.h/bitmap.height),w=bitmap.width*scale,h=bitmap.height*scale;
+    this.ctx.drawImage(bitmap,(this.w-w)/2,(this.h-h)/2,w,h);
+    this.canvas.dataset.painted='true';this.rendered=index;this.dirty=false;this.resized=false;
+    this.drawTimes.push(performance.now()-start);if(this.drawTimes.length>500)this.drawTimes.shift();
   }
-  state(){return {renderer:'canvas-avif',progress:this.progress,count:this.manifest.count,requested:this.desired,rendered:this.rendered,sourceFrame:this.rendered<0?null:this.sourceIndex(this.rendered),residentBytes:this.cache.size*this.manifest.width*this.manifest.height*4,maxResidentBytes:this.maxObservedBytes,cacheCap:this.cap,backingBytes:this.canvas.width*this.canvas.height*4,pending:this.pending.size,failures:[...this.failed],active:this.active,disposed:this.disposed,drawP95:this.drawTimes.length?[...this.drawTimes].sort((a,b)=>a-b)[Math.floor((this.drawTimes.length-1)*.95)]:null};}
-  dispose(){if(this.disposed)return;this.disposed=true;for(const c of this.pending.values())c.abort();for(const bitmap of this.cache.values())this.release(bitmap);this.cache.clear();this.canvas.width=1;this.canvas.height=1;delete this.canvas.dataset.painted;}
+  state(){return {renderer:'canvas-avif-fullhd',progress:this.progress,count:this.manifest.count,requested:this.desired,rendered:this.rendered,width:this.manifest.width,height:this.manifest.height,residentBytes:this.cache.size*this.frameBytes,maxResidentBytes:this.maxObservedBytes,cacheCap:this.cap,compressedBytes:this.blobBytes,compressedCap:this.blobCap,backingBytes:this.canvas.width*this.canvas.height*4,pending:this.pending.size,failures:[...this.failed],active:this.active,disposed:this.disposed};}
+  dispose(){this.disposed=true;for(const controller of this.pending.values())controller.abort();for(const bitmap of this.cache.values())this.release(bitmap);this.cache.clear();this.blobs.clear();this.blobBytes=0;this.canvas.width=1;this.canvas.height=1;delete this.canvas.dataset.painted;}
 }

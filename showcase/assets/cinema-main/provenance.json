@@ -1,0 +1,52 @@
+{
+  "source": "main.MP4",
+  "sourceSha256": "000a4555a791e3c0b377f7edfd1baac1fbe3fa7ea58fa904e44a5c9b8801f76f",
+  "sourceWidth": 1920,
+  "sourceHeight": 1080,
+  "sourceFps": 24,
+  "sourceFrameCount": 287,
+  "interpolation": {
+    "algorithm": "FFmpeg minterpolate (MCI / AOBMC / Bidirectional Motion Estimation)",
+    "scenePartitioning": "4 isolated segments across hard cuts (frames 0-73, 74-143, 144-215, 216-286)",
+    "crossCutMorphing": "Strictly zero; no interpolation across scene cut boundaries",
+    "targetFps": 60,
+    "totalMasterFrames": 701
+  },
+  "architecturalSharpening": {
+    "desktopUltra4K": "scale=3840:2160:flags=lanczos+accurate_rnd,unsharp=5:5:0.6:3:3:0.25,cas=0.45",
+    "desktopStandard1080p": "unsharp=3:3:0.4:3:3:0.15,cas=0.35",
+    "mobilePortrait": "crop=720:1080:600:0,unsharp=3:3:0.4:3:3:0.15,cas=0.35",
+    "geometryPreservation": "Straight lines preserved mathematically; no generative hallucination or texture distortion"
+  },
+  "encoding": {
+    "container": "AVIF (ISO BMFF with ftyp avif, av01)",
+    "sequenceHeader": "libsvtav1 with -flags +global_header (12-byte av1C box for 100% Chrome & Safari decode)",
+    "pixelFormat": "yuv420p",
+    "desktopUltraCRF": 34,
+    "desktopStandardCRF": 30,
+    "mobileCRF": 30,
+    "preset": 6
+  },
+  "tiers": {
+    "desktop": {
+      "width": 3840,
+      "height": 2160,
+      "count": 701,
+      "fps": 60
+    },
+    "desktop-standard": {
+      "width": 1920,
+      "height": 1080,
+      "count": 701,
+      "fps": 60
+    },
+    "mobile": {
+      "width": 720,
+      "height": 1080,
+      "count": 701,
+      "fps": 60
+    }
+  },
+  "generationTimestamp": "2026-11-17 12:28:09 UTC",
+  "rightsBasis": "User-supplied architectural visualization for this local site."
+}

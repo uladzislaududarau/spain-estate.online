@@ -1,4 +1,4 @@
-/** Paused, all-intra video: native decoding, one seek in flight, latest scroll target wins. */
+/** Native video fallback: one seek in flight, latest scroll target wins. */
 export class ScrollVideoPlayer {
   constructor(video) {
     this.video=video;this.progress=0;this.active=true;this.disposed=false;
@@ -16,6 +16,6 @@ export class ScrollVideoPlayer {
     const target=this.progress*Math.max(0,v.duration-1/24);
     if(Math.abs(v.currentTime-target)>1/48)v.currentTime=target;
   }
-  state(){const v=this.video;return {renderer:'native-intra-video',progress:this.progress,currentTime:v.currentTime,targetTime:this.progress*Math.max(0,(v.duration||0)-1/24),duration:v.duration,width:v.videoWidth,height:v.videoHeight,seeking:v.seeking,active:this.active,disposed:this.disposed};}
+  state(){const v=this.video;return {renderer:'native-scroll-video',progress:this.progress,currentTime:v.currentTime,targetTime:this.progress*Math.max(0,(v.duration||0)-1/24),duration:v.duration,width:v.videoWidth,height:v.videoHeight,seeking:v.seeking,active:this.active,disposed:this.disposed};}
   dispose(){this.disposed=true;this.video.pause();this.video.preload='none';this.video.removeEventListener('loadeddata',this.present);this.video.removeEventListener('seeked',this.present);}
 }

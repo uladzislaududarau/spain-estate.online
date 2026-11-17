@@ -18,10 +18,12 @@
  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
  <link rel="preload" href="/assets/onest-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
- <link rel="preload" href="/assets/sequence/poster.jpg" as="image" fetchpriority="high">
+ <link rel="preload" href="/assets/cinema-main/poster.jpg" as="image" media="(min-width:800px)" fetchpriority="high">
+ <link rel="preload" href="/assets/cinema-main/poster-mobile.jpg" as="image" media="(max-width:799px)" fetchpriority="high">
  <link rel="stylesheet" href="/assets/estate.css">
  <link rel="stylesheet" href="/assets/ads-consent.css">
  <script type="module" src="/assets/ads-consent.mjs"></script>
+ <script type="module" src="/assets/page-layout.mjs"></script>
  <script src="/assets/vendor/gsap.min.js" defer></script>
  <script src="/assets/vendor/ScrollTrigger.min.js" defer></script>
  <script type="module" src="/assets/estate-motion.mjs"></script>
@@ -32,12 +34,10 @@
  <!-- LAYER 1: FIXED CINEMATIC BACKGROUND -->
  <div class="cinema motion-enabled" id="cinema" aria-hidden="true" data-motion-scene="hero">
   <div class="cinema-stage">
-   <img class="cinema-poster" src="/assets/sequence/poster.jpg" width="1280" height="720" alt="Архитектурная иллюстрация: современная вилла с бассейном и открытой террасой" fetchpriority="high">
-   <video class="cinema-video" src="/assets/cinema/architecture-scroll.mp4" muted playsinline preload="none" disablepictureinpicture aria-hidden="true"></video>
+   <picture><source media="(max-width:799px)" srcset="/assets/cinema-main/poster-mobile.jpg"><img class="cinema-poster" src="/assets/cinema-main/poster.jpg" width="1920" height="1080" alt="Архитектурная визуализация: вечерняя вилла с бассейном" fetchpriority="high"></picture>
+   <video class="cinema-video" data-fallback-src="/assets/cinema-main/main-fallback.mp4" muted playsinline preload="none" disablepictureinpicture aria-hidden="true"></video>
+   <canvas class="cinema-canvas" width="1920" height="1080" aria-hidden="true"></canvas>
    <div class="cinema-scrim" aria-hidden="true"></div>
-   <div class="cinema-foot">
-    <span class="cinema-chapter" data-chapter>Архитектура света</span>
-   </div>
    <div class="cinema-progress" aria-hidden="true"><div class="cinema-progress-fill"></div></div>
   </div>
  </div>
@@ -45,7 +45,6 @@
  <!-- LAYER 4: FIXED HEADER NAVIGATION -->
  <header class="header">
   <a href="/" class="brand-link" aria-label="Spain Property for Sale — главная"><img class="brand-svg-logo" src="/assets/logo-white.svg" width="236" height="52" alt="Spain Property for Sale"></a>
-  <nav class="desktop-nav" aria-label="Основная навигация"><a href="#approach">Наш подход</a><a href="#regions">Направления</a></nav>
   <button type="button" class="header-action" data-open-quiz>БЫСТРЫЙ ПОИСК <span aria-hidden="true">↗</span></button>
  </header>
 
@@ -54,60 +53,33 @@
   <!-- Section 1: Hero Screen -->
   <section class="hero-screen page-frame" id="hero" aria-labelledby="hero-title">
    <div class="hero-content">
-    <div class="hero-copy"><h1 class="hero-title" id="hero-title">Недвижимость в Испании для комфортного проживания и выгодных инвестиций.</h1><p>Более 3000 объектов с актуальными ценами и условиями. Крупнейший закрытый каталог недвижимости в Испании.</p></div>
+    <div class="hero-copy"><h1 class="hero-title" id="hero-title">Недвижимость в Испании для комфортного проживания и выгодных инвестиций</h1><p>Мы собрали более 3000 объектов с актуальными ценами, условиями и планировками. Это крупнейший реестр недвижимости в Испании.</p></div>
     <div class="hero-action"><button type="button" class="button button-light" data-open-quiz>ВЫБРАТЬ РЕГИОН <span aria-hidden="true">↗</span></button><noscript><a class="button button-light" href="mailto:phewcy.dev@gmail.com?subject=Spain%20property%20enquiry">Написать запрос ↗</a></noscript></div>
    </div>
   </section>
 
-  <!-- Section 2: Approach -->
-  <section class="approach page-frame" id="approach" aria-labelledby="approach-title">
-   <div class="content-panel approach-card" data-content-scene="approach">
-    <div class="editorial-media approach-media" data-scroll-photo="approach">
-     <picture><img src="/assets/slides/01-marbella-modern-infinity-villa.webp" width="1920" height="1200" alt="Современная вилла с бассейном и открытой террасой" loading="lazy" decoding="async"></picture>
-    </div>
-    <div class="approach-body">
-    <div class="approach-copy">
-     <h2 id="approach-title" data-kinetic-heading><span class="kinetic-line"><span>Большой выбор.</span></span> <span class="kinetic-line"><span>Точный подбор.</span></span></h2>
-     <p class="lead">Более 3000 объектов в Испании: от квартир для первого переезда до вилл и коммерческой недвижимости.</p>
-     <p>Вместо десятков случайных объявлений — подборка под вашу задачу. Учитываем бюджет, регион, тип недвижимости и цель покупки: для себя, отдыха или инвестиций.</p>
-    </div>
-    <dl class="service-list">
-     <div><dt>Новостройки и вторичное жильё</dt><dd>Сравните разные форматы покупки: квартиры и апартаменты, дома и виллы, пентхаусы и коммерческие объекты.</dd></div>
-     <div><dt>Персональный подбор</dt><dd>Отбираем варианты по вашим критериям, чтобы вы сравнивали подходящие объекты, их стоимость и условия покупки.</dd></div>
-     <div><dt>Помощь с ипотекой в Испании</dt><dd>Если планируете покупку с финансированием, обсудим этот запрос при подборе. Условия и решение по заявке определяет банк.</dd></div>
-     <div><dt>Индивидуальные туры по объектам</dt><dd>Сначала определим список интересующих вариантов, затем согласуем просмотры — с фокусом на вашу задачу и бюджет.</dd></div>
-    </dl>
-    <div class="approach-selection" id="search">
-     <div class="selection-copy"><p>Укажите регион, тип недвижимости и сумму покупки. Отберём подходящие варианты и отправим подборку в WhatsApp или Telegram.</p><ul class="selection-includes"><li>Объекты по вашим критериям</li><li>Стоимость и условия для сравнения</li><li>Варианты для индивидуального просмотра</li></ul></div>
-     <div class="request-action"><button type="button" class="button button-light" data-open-quiz>ПОЛУЧИТЬ ПОДБОРКУ <span aria-hidden="true">↗</span></button><p>Можно указать свой бюджет, даже если он ниже ориентира в выбранном регионе.</p></div>
-     <noscript><p>Для интерактивного подбора включите JavaScript. Также можно <a href="mailto:phewcy.dev@gmail.com?subject=Запрос%20на%20недвижимость%20в%20Испании">написать ваш запрос по email</a>.</p></noscript>
-    </div>
-    </div>
-   </div>
-  </section>
+  <div class="cinema-interval cinema-interval--before" aria-hidden="true"></div>
 
-  <!-- Section 3: Regions & Pricing Explorer -->
-  <section class="destinations page-frame" id="regions" aria-labelledby="regions-title">
+  <!-- Regions & Pricing Explorer -->
+  <section class="destinations page-frame" id="regions" data-pinned-chapter aria-labelledby="regions-title">
    <div class="content-panel destinations-card">
-    <div class="section-heading"><h2 id="regions-title" data-kinetic-heading><span class="kinetic-line"><span>Выберите</span></span> <span class="kinetic-line"><span>побережье.</span></span></h2><p>Выберите регион и тип недвижимости. Сравните ценовые ориентиры по городам и перейдите к персональному подбору.</p></div>
+    <div class="section-heading"><h2 id="regions-title" aria-label="Выберите побережье"><span class="coast-word-mask"><span class="coast-word" aria-hidden="true"><span class="coast-letter">В</span><span class="coast-letter">ы</span><span class="coast-letter">б</span><span class="coast-letter">е</span><span class="coast-letter">р</span><span class="coast-letter">и</span><span class="coast-letter">т</span><span class="coast-letter">е</span></span></span> <span class="coast-word-mask"><span class="coast-word" aria-hidden="true"><span class="coast-letter">п</span><span class="coast-letter">о</span><span class="coast-letter">б</span><span class="coast-letter">е</span><span class="coast-letter">р</span><span class="coast-letter">е</span><span class="coast-letter">ж</span><span class="coast-letter">ь</span><span class="coast-letter">е</span></span></span></h2></div>
     <div class="region-explorer" data-ui>
-     <div class="region-navigation"><div class="region-list" aria-label="Выберите направление" id="region-tabs">
+     <div class="region-navigation"><div class="region-list" role="region" tabindex="0" aria-label="Выберите направление" id="region-tabs">
       <button type="button" class="region-tab is-selected" data-region="costa-blanca" aria-pressed="true">Costa Blanca <span aria-hidden="true">↗</span></button>
       <button type="button" class="region-tab" data-region="costa-del-sol" aria-pressed="false">Costa del Sol <span aria-hidden="true">↗</span></button>
       <button type="button" class="region-tab" data-region="mallorca" aria-pressed="false">Balearic Coast <span aria-hidden="true">↗</span></button>
-     </div><p class="region-note">Порог зависит от конкретного города и типа недвижимости.</p></div>
+     </div></div>
      <div class="region-detail"><div class="region-detail-head"><h3 id="region-name">Costa Blanca</h3><div class="type-switch" role="group" aria-label="Тип недвижимости"><button type="button" data-explorer-type="apartment" aria-pressed="true">Квартиры</button><button type="button" data-explorer-type="villa" aria-pressed="false">Виллы</button></div></div>
-      <div class="price-emphasis"><span>Ориентир от</span><strong id="region-minimum">120 000 €</strong><span>в отдельных городах региона</span></div>
-      <div class="city-prices" role="region" tabindex="0" aria-label="Ценовые ориентиры по городам"><table><thead><tr><th scope="col">Город</th><th scope="col" id="region-price-label">Квартиры от</th></tr></thead><tbody id="region-cities" aria-live="polite"><tr><th scope="row">Elda</th><td>120 000 €</td></tr><tr><th scope="row">Torrevieja</th><td>150 000 €</td></tr><tr><th scope="row">Alicante</th><td>250 000 €</td></tr></tbody></table></div>
-      <button type="button" class="button button-light" data-open-quiz data-preset-region="costa-blanca" data-preset-property-type="apartment" id="region-search">ПОДОБРАТЬ В ЭТОМ РЕГИОНЕ <span aria-hidden="true">↗</span></button>
+      <div class="price-emphasis"><span>Ориентир от</span><span class="price-window"><strong id="region-minimum">120 000 €</strong></span></div>
+      <div class="city-table-group"><div class="city-table-labels" aria-hidden="true"><span>Город</span><span id="region-price-label">Квартиры от</span></div><div class="city-table-card"><div class="city-prices" role="region" tabindex="0" aria-label="Ценовые ориентиры по городам"><table><thead class="city-semantic-head"><tr><th scope="col">Город</th><th scope="col" id="region-price-semantic">Квартиры от</th></tr></thead><tbody id="region-cities" aria-live="polite"><tr><th scope="row">Elda</th><td>120 000 €</td></tr><tr><th scope="row">Torrevieja</th><td>150 000 €</td></tr><tr><th scope="row">Alicante</th><td>250 000 €</td></tr></tbody></table></div></div></div>
+      <div class="region-action"><button type="button" class="button button-light" data-open-quiz data-preset-region="costa-blanca" data-preset-property-type="apartment" id="region-search"><span class="region-cta-label">ОБЪЕКТЫ В ЭТОМ РЕГИОНЕ</span><span class="region-cta-icon" aria-hidden="true">↗</span></button></div>
      </div>
     </div>
-    <p class="price-disclaimer">Минимальные ориентиры из предоставленной таблицы. Это не каталог объектов и не гарантия наличия. Актуальную стоимость уточняем при подборе.</p>
    </div>
   </section>
 
-
-
+  <div class="cinema-interval cinema-interval--after" aria-hidden="true"></div>
  </main>
  <footer class="footer page-frame">
   <a href="/" class="footer-brand"><img src="/assets/logo-white.svg" width="236" height="52" alt="Spain Property for Sale"></a>

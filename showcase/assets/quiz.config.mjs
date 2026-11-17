@@ -151,6 +151,11 @@ export const steps = [
         "holiday-home",
         "Для отдыха — второй дом",
         "For holidays — a second home"
+      ],
+      [
+        "other-purpose",
+        "Другая цель",
+        "Another purpose"
       ]
     ]
   },
@@ -183,8 +188,8 @@ export const steps = [
       ],
       [
         "online-viewings",
-        "Пока не планирую приезжать — готов смотреть онлайн",
-        "No visit planned yet — happy to view online"
+        "Пока не планирую приезжать",
+        "No visit planned yet"
       ]
     ]
   }
@@ -209,7 +214,7 @@ export const copy = {
     "phone": "Ваш номер WhatsApp",
     "telegram": "Телефон Telegram или username",
     "telegramHint": "Например @username или номер телефона с кодом страны.",
-    "phoneHint": "Выберите страну и введите ваш номер телефона без кода страны.",
+    "phoneHint": "Выберите страну и укажите номер телефона.",
     "consentBefore": "Я соглашаюсь с ",
     "consentLink": "условиями обработки персональных данных",
     "consentAfter": " для получения подборки и связи по моему запросу.",
@@ -225,7 +230,7 @@ export const copy = {
     "networkError": "Не удалось сохранить заявку. Проверьте соединение и попробуйте ещё раз. Ваши ответы сохранены.",
     "rateError": "Слишком много попыток. Попробуйте отправить заявку немного позже.",
     "successTitle": "Благодарим за ваш запрос.",
-    "successText": "В ближайшее время мы вышлем вам подборку объектов недвижимости в Испании по вашим критериям выбранным вами способом получения."
+    "successText": "Ваш запрос получен. Свяжемся с вами указанным способом при необходимости, чтобы уточнить критерии и выслать подборку."
   },
   "en": {
     "close": "Close",
@@ -246,7 +251,7 @@ export const copy = {
     "phone": "Your WhatsApp number",
     "telegram": "Telegram phone number or username",
     "telegramHint": "For example @username or a phone number with country code.",
-    "phoneHint": "Choose your country and enter your phone number without the country code.",
+    "phoneHint": "Choose your country and enter your phone number.",
     "consentBefore": "I agree to the ",
     "consentLink": "personal data processing terms",
     "consentAfter": " to receive a property selection and be contacted about my enquiry.",
@@ -262,7 +267,7 @@ export const copy = {
     "networkError": "We could not save your request. Check your connection and try again. Your answers are saved.",
     "rateError": "Too many attempts. Please try again a little later.",
     "successTitle": "Thank you for your request.",
-    "successText": "We will send your selection shortly using your chosen method."
+    "successText": "Your request has been received. We will contact you via your chosen method if needed to clarify your criteria and send your property selection."
   }
 };
 

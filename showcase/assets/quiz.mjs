@@ -1,15 +1,15 @@
+import { messengerIcon } from './messenger-icons.mjs';
 import { THANK_YOU_PATH, isThankYouPath, receiptFromSession, rememberSavedLead } from './lead-receipt.mjs';
 import { steps as originalQuestions, copy, policyVersion } from './quiz.config.mjs';
-import { telegramUsername, normalizeName } from './contact.mjs';
+import { telegramUsername, normalizeName, contactMethodLabel } from './contact.mjs';
 import { createPhoneField } from './phone-field.mjs';
-import { regions, pricingData, priceSource, generateBudgetRanges, createPricingSummary, formatMoney } from './pricing.mjs';
+import { regions, pricingData, priceSource, generateBudgetRanges, selectedBudgetRanges, formatMoney } from './pricing.mjs';
 
 const storageKey = 'spain-property-cinematic-quiz-v1';
 const titles = {
-  ru: ['Какое побережье вам ближе?', 'Какие города рассмотрим?', 'Что вы ищете?', 'Ваш бюджет на недвижимость', 'Для чего вы выбираете дом?', 'Когда планируете приехать?', 'Обсудим вашу подборку'],
+  ru: ['Какое побережье вы рассматриваете?', 'Какие выберем города?', 'Укажите тип объекта', 'Выберите бюджет', 'Какая ваша основная цель?', 'Когда планируете приехать в Испанию?', 'Ваша подборка готова!'],
   en: ['Which coast feels like home?', 'Which cities shall we consider?', 'What are you looking for?', 'Your property budget', 'What is your reason for buying?', 'When are you planning to visit?', 'Let’s discuss your selection']
 };
-const stageNames = { ru: ['Побережье', 'Города', 'Тип объекта', 'Бюджет', 'Цель', 'Приезд', 'Контакт'], en: ['Coast', 'Cities', 'Property', 'Budget', 'Purpose', 'Visit', 'Contact'] };
 let lang = document.documentElement.lang === 'en' ? 'en' : 'ru';
 const text = (ru, en) => lang === 'en' ? en : ru;
 const money = value => formatMoney(value, lang);
@@ -19,11 +19,12 @@ let budget = null;
 let budgetMode = '';
 let purpose = '';
 let timeline = '';
+let onlineViewings = false;
 let crossRegionOptIn = false;
 let contactName = '';
-let contactValues = { whatsapp: '', telegram: '' };
+let contactValues = { whatsapp: '', telegram: '', viber: '', phone: '' };
 let messenger = 'whatsapp';
-let consent = false;
+let consent = true;
 let submitting = false;
 let complete = false;
 let requestId = crypto.randomUUID();
@@ -31,7 +32,7 @@ let focusBefore;
 let phoneField;
 let scrollY = 0;
 let viewportFrame;
-const phoneState = { country: 'ES', source: 'fallback', hasInput: false };
+const phoneStates = Object.fromEntries(['whatsapp', 'viber', 'phone'].map(method => [method, { country: 'ES', source: 'fallback', hasInput: false }]));
 const propertyTypes = [
   ['apartment', 'Квартира / апартаменты', 'Apartment'], ['villa', 'Дом / вилла', 'House / villa'], ['both', 'Рассматриваю оба варианта', 'Considering both'],
   ['penthouse', 'Пентхаус', 'Penthouse'], ['townhouse', 'Таунхаус / бунгало', 'Townhouse / bungalow'], ['commercial', 'Коммерческая недвижимость', 'Commercial property']
@@ -50,24 +51,25 @@ try {
     selection.propertyType = propertyTypes.some(row => row[0] === saved.selection?.propertyType) ? saved.selection.propertyType : '';
     purpose = validValue('purpose', saved.purpose) ? saved.purpose : '';
     timeline = validValue('timeline', saved.timeline) ? saved.timeline : '';
+    onlineViewings = saved.onlineViewings === true;
     crossRegionOptIn = saved.crossRegionOptIn === true;
-    const ranges = generateBudgetRanges(selection).ranges;
-    if (saved.budget?.custom === true && Number.isFinite(saved.budget.min) && saved.budget.min >= 0 && saved.budget.min === saved.budget.max) {
-      budget = saved.budget; budgetMode = 'custom';
-    } else if (ranges.some(range => range.min === saved.budget?.min && range.max === saved.budget?.max)) {
-      budget = saved.budget; budgetMode = 'range';
+    if (saved.budget?.deferred===true&&generateBudgetRanges(selection).minimum===null) {
+      budget={deferred:true};budgetMode='deferred';
+    } else {
+      const restored = selectedBudgetRanges(selection, saved.budget?.ranges || (saved.budget?.custom === false ? [saved.budget] : []));
+      if (restored.length) { budget = { ranges: restored }; budgetMode = 'range'; }
     }
     if (/^[a-f\d]{8}-(?:[a-f\d]{4}-){3}[a-f\d]{12}$/i.test(saved.requestId)) requestId = saved.requestId;
     step = Math.min(6, Math.max(0, Number.isInteger(saved.step) ? saved.step : 0));
   }
 } catch { /* Selection restoration is optional; contacts are never stored. */ }
 function persist() {
-  try { sessionStorage.setItem(storageKey, JSON.stringify({ policyVersion, selection, budget, budgetMode, purpose, timeline, crossRegionOptIn, step, requestId })); } catch {}
+  try { sessionStorage.setItem(storageKey, JSON.stringify({ policyVersion, selection, budget, budgetMode, purpose, timeline, onlineViewings, crossRegionOptIn, step, requestId })); } catch {}
 }
 function invalidateBudget() { budget = null; budgetMode = ''; crossRegionOptIn = false; }
 function validCities() { return selection.regions.length > 0 && selection.regions.every(id => selection.anyCityRegions.includes(id) || selection.cities.some(city => pricingData.some(row => row.cityId === city && row.regionId === id))); }
 function hasAnswer(index = step) {
-  return [selection.regions.length > 0, validCities(), Boolean(selection.propertyType), Boolean(budget && Number.isFinite(budget.min) && budget.min >= 0), Boolean(purpose), Boolean(timeline), true][index];
+  return [selection.regions.length > 0, validCities(), Boolean(selection.propertyType), Boolean(budget&&(budget.deferred===true?generateBudgetRanges(selection).minimum===null:budgetMode==='range'&&selectedBudgetRanges(selection,budget.ranges).length>0)), Boolean(purpose), Boolean(timeline), true][index];
 }
 // Never resume beyond an unanswered selection, even if sessionStorage was edited.
 for (let i = 0; i < step; i++) if (!hasAnswer(i)) { step = i; break; }
@@ -102,8 +104,8 @@ dialog.addEventListener('close', () => {
   focusBefore?.focus({ preventScroll: true });
   if (complete) {
     if (isThankYouPath(location.pathname)) { location.replace('/'); return; }
-    selection = { regions: [], cities: [], anyCityRegions: [], propertyType: '' }; budget = null; budgetMode = ''; purpose = ''; timeline = ''; step = 0;
-    contactName = ''; contactValues = { whatsapp: '', telegram: '' }; consent = false; complete = false; crossRegionOptIn = false; requestId = crypto.randomUUID();
+    selection = { regions: [], cities: [], anyCityRegions: [], propertyType: '' }; budget = null; budgetMode = ''; purpose = ''; timeline = ''; onlineViewings = false; step = 0;
+    contactName = ''; contactValues = { whatsapp: '', telegram: '', viber: '', phone: '' }; consent = true; complete = false; crossRegionOptIn = false; requestId = crypto.randomUUID();
     try { sessionStorage.removeItem(storageKey); } catch {}
   }
 });
@@ -112,30 +114,39 @@ function choice({ value, label, checked, multiple = false, name, note, onChange 
   const input = node('input', { type: multiple ? 'checkbox' : 'radio', name, value }); input.checked = checked;
   const words = node('span', { class: 'quiz-choice-words' }); words.append(node('span', {}, label));
   if (note) words.append(node('small', {}, note));
-  wrapper.append(input, words, node('span', { class: 'quiz-choice-mark', 'aria-hidden': 'true' }, multiple ? '✓' : ''));
+  wrapper.append(input, words, node('span', { class: 'quiz-choice-mark', 'aria-hidden': 'true' }));
   input.addEventListener('change', () => { onChange(input.checked); persist(); updateNext(); });
   return wrapper;
 }
 function updateNext() { const next = dialog.querySelector('[data-next]'); if (next) next.disabled = !hasAnswer(); }
 function edit(index) { step = index; persist(); render(); }
-function render({ focusChoice } = {}) {
+function render() {
   phoneField?.cancel(); phoneField = undefined;
   dialog.lang = lang; dialog.dataset.stage = complete ? 'success' : step === 6 ? 'contact' : `question-${step}`;
   const shell = node('div', { class: 'quiz-shell' });
   const header = node('div', { class: 'quiz-top' });
   const identity = node('div', { class: 'quiz-brand' });
-  identity.append(node('img', { src: '/assets/logo-white.svg', width: 205, height: 46, alt: 'Spain Property for Sale' }));
-  const closeButton = button('×', 'quiz-close', close); closeButton.setAttribute('aria-label', copy[lang].close);
-  header.append(identity, node('p', { class: 'quiz-top-note' }, text('Ваше место в Испании', 'Your place in Spain')), closeButton);
+  identity.append(node('img', { src: '/assets/logo-white.svg', width: 236, height: 52, alt: 'Spain Property for Sale' }));
+  const closeButton = button('', 'quiz-close', close); closeButton.setAttribute('aria-label', copy[lang].close);
+  const closeIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  closeIcon.setAttribute('viewBox', '0 0 24 24');
+  closeIcon.setAttribute('width', '22'); closeIcon.setAttribute('height', '22');
+  closeIcon.setAttribute('aria-hidden', 'true'); closeIcon.setAttribute('focusable', 'false');
+  const cross = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  cross.setAttribute('d', 'M6 6 18 18M18 6 6 18');
+  cross.setAttribute('fill', 'none'); cross.setAttribute('stroke', 'currentColor');
+  cross.setAttribute('stroke-width', '1.7'); cross.setAttribute('stroke-linecap', 'round');
+  closeIcon.append(cross); closeButton.append(closeIcon);
+  header.append(identity, closeButton);
   const progressWrap = node('div', { class: 'quiz-progress-wrap' });
   const progress = node('progress', { class: 'quiz-progress', max: 7, value: complete ? 7 : step + 1, 'aria-label': text('Прогресс подбора', 'Selection progress') });
-  progressWrap.append(progress, node('span', {}, complete ? text('Заявка сохранена', 'Request saved') : `${stageNames[lang][step]} · ${step + 1} / 7`));
+  progressWrap.append(progress);
   const content = node('div', { class: 'quiz-content' });
   const heading = node('h2', { class: 'quiz-title', id: 'quiz-title', tabindex: '-1' }, complete ? copy[lang].successTitle : titles[lang][step]);
   content.append(heading);
   shell.append(header, progressWrap, content);
   if (complete) {
-    content.append(node('p', { class: 'quiz-intro' }, text('Ваш запрос сохранён. Свяжемся с вами выбранным способом, чтобы уточнить критерии и подготовить подборку.', 'Your request has been saved. We will contact you using your chosen method to refine your criteria and prepare a selection.')));
+    content.append(node('p', { class: 'quiz-intro' }, copy[lang].successText));
     const actions = node('div', { class: 'quiz-actions' }); actions.append(button(text('Вернуться на сайт', 'Return to website'), 'quiz-primary', close)); shell.append(actions);
   } else if (step === 6) renderContact(content, shell);
   else {
@@ -146,14 +157,12 @@ function render({ focusChoice } = {}) {
     if (step === 4 || step === 5) renderOriginalQuestion(content, step === 4 ? 'purpose' : 'timeline');
     const actions = node('div', { class: 'quiz-actions' });
     if (step > 0) actions.append(button(copy[lang].back, 'quiz-secondary', () => edit(step - 1)));
-    else actions.append(node('span', { class: 'quiz-action-note' }, text('Можно выбрать несколько', 'Multiple choices welcome')));
     const next = button(copy[lang].next + ' →', 'quiz-primary', () => { if (hasAnswer()) edit(step + 1); }); next.dataset.next = ''; next.disabled = !hasAnswer();
     actions.append(next); shell.append(actions);
   }
   dialog.replaceChildren(shell);
   if (dialog.open) {
-    const choice = focusChoice && [...dialog.querySelectorAll('.quiz-choice input')].find(input => input.name === focusChoice.name && input.value === focusChoice.value);
-    (choice || heading).focus({ preventScroll: true });
+    heading.focus({ preventScroll: true });
   }
 }
 function intro(content, ru, en) { content.append(node('p', { class: 'quiz-intro' }, text(ru, en))); }
@@ -174,15 +183,22 @@ function renderCities(content) {
   for (const regionId of selection.regions) {
     const group = node('fieldset', { class: 'quiz-city-group' }); group.append(node('legend', {}, regionName(regionId)));
     const choices = node('div', { class: 'quiz-options' });
+    const syncChoices=()=>{
+      for(const input of choices.querySelectorAll('input')){
+        input.checked=input.name===`any-${regionId}`
+          ?selection.anyCityRegions.includes(regionId)
+          :selection.cities.includes(input.value);
+      }
+    };
     const any = choice({ value: regionId, name: `any-${regionId}`, multiple: true, label: text('Любой город в регионе', 'Any city in this region'), checked: selection.anyCityRegions.includes(regionId), onChange(checked) {
       selection.anyCityRegions = checked ? [...new Set([...selection.anyCityRegions, regionId])] : selection.anyCityRegions.filter(id => id !== regionId);
       if (checked) selection.cities = selection.cities.filter(id => !pricingData.some(row => row.cityId === id && row.regionId === regionId));
-      invalidateBudget(); persist(); render({ focusChoice: { name: `any-${regionId}`, value: regionId } });
+      invalidateBudget(); syncChoices();
     } }); choices.append(any);
     for (const city of pricingData.filter(row => row.regionId === regionId)) choices.append(choice({ value: city.cityId, name: `cities-${regionId}`, multiple: true, label: city.city, checked: selection.cities.includes(city.cityId), onChange(checked) {
       selection.anyCityRegions = selection.anyCityRegions.filter(id => id !== regionId);
       selection.cities = checked ? [...new Set([...selection.cities, city.cityId])] : selection.cities.filter(id => id !== city.cityId);
-      invalidateBudget(); persist(); render({ focusChoice: { name: `cities-${regionId}`, value: city.cityId } });
+      invalidateBudget(); syncChoices();
     } }));
     group.append(choices); content.append(group);
   }
@@ -196,59 +212,44 @@ function renderPropertyType(content) {
 function rangeLabel(range) { return range.max === null ? text(`От ${money(range.min)}`, `${money(range.min)} and above`) : `${money(range.min)} – ${money(range.max)}`; }
 function renderBudget(content) {
   const generated = generateBudgetRanges(selection);
-  intro(content, generated.minimum === null ? 'В таблице нет цен для этого типа недвижимости. Укажите свой бюджет, и мы уточним критерии индивидуально.' : `Ориентир начинается от ${money(generated.minimum)}. Для региона без выбранного города это порог в отдельных городах, а не на всём побережье.`, generated.minimum === null ? 'The table has no thresholds for this property type. Enter your budget and we will refine your criteria individually.' : `Indicative thresholds start at ${money(generated.minimum)}. For an entire region, this applies to individual listed cities, not every location.`);
-  const edits = node('div', { class: 'quiz-edit-links' }); edits.append(button(text('Изменить географию', 'Change locations'), 'quiz-text-button', () => edit(0)), button(text('Изменить тип', 'Change property type'), 'quiz-text-button', () => edit(2))); content.append(edits);
+  intro(content, generated.minimum === null ? 'Для этого типа недвижимости бюджет уточним при персональном подборе.' : `Ориентир начинается от ${money(generated.minimum)}. Можно выбрать один или несколько вариантов.`, generated.minimum === null ? 'We will clarify the budget for this property type during your personal selection.' : `Indicative thresholds start at ${money(generated.minimum)}. Choose one or more options.`);
+  const edits = node('div', { class: 'quiz-edit-links' }); edits.append(button(text('Изменить побережье', 'Change coast'), 'quiz-text-button', () => edit(0)), button(text('Изменить тип', 'Change property type'), 'quiz-text-button', () => edit(2))); content.append(edits);
   const fieldset = node('fieldset', { class: 'quiz-options', 'aria-labelledby': 'quiz-title' });
-  const feedback = node('div', { class: 'quiz-budget-feedback', 'aria-live': 'polite', 'aria-atomic': 'false' });
-  for (const range of generated.ranges) fieldset.append(choice({ value: range.id, name: 'budget', label: rangeLabel(range), checked: budgetMode === 'range' && budget?.min === range.min && budget?.max === range.max, onChange() { budgetMode = 'range'; budget = { min: range.min, max: range.max, custom: false }; customInput.disabled = true; customInput.value = ''; updateFeedback(feedback); } }));
-  fieldset.append(choice({ value: 'custom', name: 'budget', label: text('Укажу свой бюджет', 'Enter my own budget'), note: text('Можно указать сумму ниже ориентира', 'Amounts below the threshold are welcome'), checked: budgetMode === 'custom', onChange() { budgetMode = 'custom'; budget = null; customInput.disabled = false; customInput.focus(); updateFeedback(feedback); } }));
-  const customLabel = node('label', { class: 'quiz-custom-budget' }, text('Сумма в евро', 'Amount in euros'));
-  const customInput = node('input', { type: 'text', inputmode: 'numeric', id: 'quiz-custom-budget', name: 'customBudget', placeholder: '200 000', autocomplete: 'off', 'aria-describedby': 'quiz-budget-source' });
-  customInput.disabled = budgetMode !== 'custom'; customInput.value = budgetMode === 'custom' && budget ? String(budget.min) : '';
-  customInput.addEventListener('input', () => {
-    const value = customInput.value.replace(/[\s\u00a0]/g, '').replace(',', '.');
-    const amount = /^\d+(?:\.\d{1,2})?$/.test(value) ? Number(value) : NaN;
-    budget = Number.isFinite(amount) && amount >= 0 && amount <= 100000000000 ? { min: amount, max: amount, custom: true } : null;
-    customInput.setAttribute('aria-invalid', String(Boolean(value) && !budget)); persist(); updateNext(); updateFeedback(feedback);
-  }); customLabel.append(customInput); content.append(fieldset, customLabel, feedback);
-  content.append(node('p', { class: 'quiz-source-note', id: 'quiz-budget-source' }, text(`Пороговые цены из таблицы заказчика от ${priceSource.date}. Диапазоны созданы для выбора бюджета. Это не наличие объектов и не обещание предложения по указанной цене.`, `Indicative thresholds from the supplied table dated ${priceSource.date}. Ranges are budget categories, not available listings or an offer at these prices.`)));
-  updateFeedback(feedback);
-}
-function updateFeedback(container) {
-  container.replaceChildren();
-  if (!budget) return;
-  const summary = createPricingSummary(selection, budget, { allowOtherRegions: crossRegionOptIn });
-  const title = summary.belowMinimum ? text('Бюджет ниже ориентира. Заявку можно отправить.', 'Below the threshold. You can still send your request.') : summary.ineligible.length ? text('Бюджет подходит не для всех выбранных направлений.', 'This budget does not reach every selected threshold.') : summary.missingData ? text('Уточним стоимость индивидуально.', 'We will clarify pricing individually.') : text('Сохраним этот бюджет для подбора.', 'We will use this budget for your selection.');
-  container.append(node('p', { class: `quiz-budget-status${summary.belowMinimum ? ' is-low' : ''}` }, title));
-  if (summary.belowMinimum) container.append(node('p', {}, text(`Для выбранной локации и типа ориентир начинается от ${money(summary.minimum)}. Можем рассмотреть другие направления или уточнить критерии на консультации.`, `For your location and property type, indicative prices start at ${money(summary.minimum)}. We can discuss other locations or refine your criteria in a consultation.`)));
-  if (summary.eligible.length || summary.ineligible.length) {
-    const details = node('details', { class: 'quiz-price-details' });
-    details.append(node('summary', {}, text('Пороги по городам и типам', 'City and property thresholds')));
-    const list = node('ul', { class: 'quiz-threshold-list' });
-    for (const entry of [...summary.eligible, ...summary.ineligible]) {
-      const item = node('li');
-      const note = lang === 'en' ? entry.noteEn : entry.note;
-      item.append(node('span', {}, `${entry.city} · ${typeName(entry.type)}${note ? ` (${note})` : ''}`), node('strong', {}, `${money(entry.minimum)} · ${summary.eligible.includes(entry) ? text('порог достигнут', 'threshold reached') : text('выше бюджета', 'above budget')}`)); list.append(item);
+  for (const range of generated.ranges) fieldset.append(choice({
+    value: range.id, name: 'budget', multiple: true, label: rangeLabel(range),
+    checked: budget?.ranges?.some(item => item.min === range.min && item.max === range.max),
+    onChange(checked) {
+      const current = budget?.ranges || [];
+      const chosen = checked ? [...current, range] : current.filter(item => item.min !== range.min || item.max !== range.max);
+      const ranges = selectedBudgetRanges(selection, chosen);
+      budget = ranges.length ? { ranges } : null;
+      budgetMode = ranges.length ? 'range' : '';
     }
-    details.append(list, node('p', { class: 'quiz-hint' }, budget.custom ? text('Сравнение с вашей суммой. Наличие объектов не подтверждено.', 'Compared with your amount. Listing availability is not confirmed.') : text('Для диапазона учитывается верхняя граница без включения. Для открытого диапазона используется нижняя. Наличие объектов не подтверждено.', 'For a range, the exclusive upper boundary is used; for an open range, its lower boundary. Availability is not confirmed.'))); container.append(details);
-  }
-  if (summary.ineligible.length) {
-    if (summary.alternatives.length) {
-      container.append(node('h3', { class: 'quiz-alternatives-title' }, text('Альтернативы по ценовому порогу', 'Alternatives by price threshold')));
-      const list = node('ul', { class: 'quiz-alternative-list' });
-      for (const item of summary.alternatives) list.append(node('li', {}, `${item.city} · ${typeName(item.type)} · ${text('от', 'from')} ${money(item.minimum)}${item.note ? ` (${lang === 'en' ? item.noteEn : item.note})` : ''}`));
-      container.append(list);
-    } else container.append(node('p', { class: 'quiz-hint' }, text('В выбранных регионах других подходящих порогов в таблице нет.', 'The table has no other matching thresholds in the selected regions.')));
-    const label = node('label', { class: 'quiz-expand-geography' }); const input = node('input', { type: 'checkbox' }); input.checked = crossRegionOptIn;
-    input.addEventListener('change', () => { crossRegionOptIn = input.checked; persist(); updateFeedback(container); container.querySelector('.quiz-expand-geography input')?.focus({ preventScroll: true }); });
-    label.append(input, node('span', {}, text('Показать альтернативы в других регионах', 'Show alternatives in other regions'))); container.append(label);
-  }
+  }));
+  if(!generated.ranges.length)fieldset.append(choice({value:'deferred',name:'budget',label:text('Уточнить бюджет при подборе','Clarify budget during selection'),checked:budgetMode==='deferred',onChange(){budgetMode='deferred';budget={deferred:true};}}));
+  content.append(fieldset);
+  const source = node('div', { class: 'quiz-source-note', id: 'quiz-budget-source', 'data-source-date': priceSource.date });
+  source.append(node('p', { class: 'quiz-source-title' }, text('Пороговые цены из нашей базы:', 'Price thresholds from our database:')));
+  const updated = node('p', { class: 'quiz-source-updated' });
+  const date = new Intl.DateTimeFormat(lang === 'en' ? 'en-GB' : 'ru-RU', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${priceSource.date}T12:00:00Z`));
+  updated.append(node('span', {}, text('База обновлена:', 'Database updated:')), node('time', { id: 'quiz-price-stamp', datetime: priceSource.date }, date));
+  source.append(updated);
+  content.append(source);
 }
 function renderOriginalQuestion(content, id) {
   intro(content, id === 'purpose' ? 'Это поможет понять, на что обратить внимание при подборе.' : 'Можно начать с онлайн-просмотров, если поездка пока не запланирована.', id === 'purpose' ? 'This helps us understand what matters most for your selection.' : 'You can start with online viewings if a visit is not planned yet.');
   const group = node('fieldset', { class: 'quiz-options quiz-options-single', 'aria-labelledby': 'quiz-title' });
   for (const [value, ru, en] of questionFor(id).options) group.append(choice({ value, name: id, label: text(ru, en), checked: (id === 'purpose' ? purpose : timeline) === value, onChange() { if (id === 'purpose') purpose = value; else timeline = value; } }));
   content.append(group);
+  if (id === 'timeline') {
+    const online = node('label', { class: 'quiz-expand-geography quiz-online-viewings' });
+    const input = node('input', { type: 'checkbox', name: 'onlineViewings', id: 'quiz-online-viewings' });
+    input.checked = onlineViewings;
+    input.addEventListener('change', () => { onlineViewings = input.checked; persist(); });
+    online.append(input, node('span', {}, text('Хочу смотреть объекты онлайн', 'I want to view properties online')),
+      node('span', { class: 'quiz-popular', 'aria-hidden': 'true' }, text('Популярно', 'Popular')));
+    content.append(online);
+  }
 }
 function attribution() {
   const result = { source: 'cinematic-quiz' };
@@ -262,22 +263,28 @@ function attribution() {
 const initialAttribution = attribution();
 function renderContact(content, shell) {
   const t = copy[lang];
-  intro(content, 'Оставьте контакт. Подготовим подборку по вашим ответам и уточним детали поиска.', 'Leave a contact. We will prepare a selection using your answers and refine the details.');
-  const summary = node('details', { class: 'quiz-selection-summary' }); summary.append(node('summary', {}, text('Ваши критерии', 'Your criteria')));
-  summary.append(node('p', {}, `${selection.regions.map(regionName).join(', ')} · ${typeName(selection.propertyType)} · ${budget ? budget.custom ? money(budget.min) : rangeLabel(budget) : ''}`));
-  summary.append(node('p', {}, `${labelFor('purpose', purpose)}. ${labelFor('timeline', timeline)}.`)); content.append(summary);
+  intro(content, 'Укажите удобный способ получения — готовая подборка по вашим критериям будет отправлена в течение нескольких минут.', 'Choose how you would like to receive it — your selection matching your criteria will be sent within a few minutes.');
   const form = node('form', { id: 'quiz-lead-form', novalidate: '', 'aria-labelledby': 'quiz-title' });
   const methods = node('fieldset', { class: 'quiz-options quiz-messengers', 'aria-label': t.messenger });
-  for (const method of ['whatsapp', 'telegram']) methods.append(choice({ value: method, name: 'messenger', label: method === 'whatsapp' ? 'WhatsApp' : 'Telegram', checked: messenger === method, onChange() { messenger = method; render(); } }));
+  for (const method of ['whatsapp', 'telegram', 'viber', 'phone']) {
+    const option = choice({ value: method, name: 'messenger', label: contactMethodLabel(method, lang), checked: messenger === method, onChange() { messenger = method; render(); } });
+    option.querySelector('.quiz-choice-mark').remove();
+    option.insertBefore(messengerIcon(method), option.querySelector('.quiz-choice-words'));
+    methods.append(option);
+  }
   const nameLabel = node('label', { class: 'quiz-field' }, t.name);
   const nameInput = node('input', { id: 'quiz-name', name: 'name', type: 'text', placeholder: t.namePlaceholder, autocomplete: 'given-name', maxlength: 80, required: '', 'aria-describedby': 'quiz-error' }); nameInput.value = contactName;
   nameInput.addEventListener('input', () => { contactName = nameInput.value; nameInput.removeAttribute('aria-invalid'); error.textContent = ''; }); nameLabel.append(nameInput);
-  const contactLabel = node('label', { class: 'quiz-field', for: 'quiz-contact' }, messenger === 'whatsapp' ? t.phone : t.telegram);
-  const input = node('input', { id: 'quiz-contact', name: 'contact', type: messenger === 'whatsapp' ? 'tel' : 'text', autocomplete: messenger === 'whatsapp' ? 'tel' : 'off', maxlength: 64, required: '', placeholder: messenger === 'whatsapp' ? t.nationalPlaceholder : '@username', 'aria-describedby': 'quiz-error' }); input.value = contactValues[messenger];
+  const usesPhone = messenger !== 'telegram';
+  const phoneState = phoneStates[messenger];
+  const phoneLabel = messenger === 'whatsapp' ? t.phone : messenger === 'viber' ? text('Ваш номер Viber', 'Your Viber number') : text('Ваш номер телефона', 'Your phone number');
+  const phonePlaceholder = messenger === 'whatsapp' ? t.nationalPlaceholder : messenger === 'viber' ? text('Номер Viber', 'Viber number') : text('Номер телефона', 'Phone number');
+  const contactLabel = node('label', { class: 'quiz-field', for: 'quiz-contact' }, usesPhone ? phoneLabel : t.telegram);
+  const input = node('input', { id: 'quiz-contact', name: 'contact', type: usesPhone ? 'tel' : 'text', autocomplete: usesPhone ? 'tel' : 'off', maxlength: 64, required: '', placeholder: usesPhone ? phonePlaceholder : '@username', 'aria-describedby': 'quiz-error' }); input.value = contactValues[messenger];
   input.addEventListener('input', () => { contactValues[messenger] = input.value; input.removeAttribute('aria-invalid'); error.textContent = ''; });
-  if (messenger === 'whatsapp') {
+  if (usesPhone) {
     phoneState.hasInput = Boolean(input.value.trim());
-    phoneField = createPhoneField({ input, lang, text: t, state: phoneState, onCountry() {}, onInput: value => { contactValues.whatsapp = value; }, onError: message => { error.textContent = message; input.setAttribute('aria-invalid', String(Boolean(message))); } });
+    phoneField = createPhoneField({ input, lang, text: { ...t, nationalPlaceholder: phonePlaceholder }, state: phoneState, onCountry() {}, onInput: value => { contactValues[messenger] = value; }, onError: message => { error.textContent = message; input.setAttribute('aria-invalid', String(Boolean(message))); } });
     contactLabel.append(phoneField.row, phoneField.hint);
   } else { contactLabel.append(input, node('small', { class: 'quiz-hint' }, t.telegramHint)); }
   const consentLabel = node('label', { class: 'quiz-consent' });
@@ -295,21 +302,21 @@ function renderContact(content, shell) {
     event.preventDefault(); if (submitting) return;
     const name = normalizeName(nameInput.value);
     if (!name) { error.textContent = t.invalidName; nameInput.setAttribute('aria-invalid', 'true'); nameInput.focus(); return; }
-    const raw = messenger === 'whatsapp' ? await phoneField.value() : input.value.trim();
+    const raw = usesPhone ? await phoneField.value() : input.value.trim();
     if (!dialog.open || !form.isConnected || submitting) return;
     const phoneLike = typeof raw === 'string' && /^\+[\d\s()-]+$/.test(raw) && raw.replace(/\D/g, '').length >= 7 && raw.replace(/\D/g, '').length <= 15;
-    if (!(phoneLike || messenger === 'telegram' && telegramUsername(raw || ''))) { error.textContent = messenger === 'whatsapp' ? t.invalidPhone : t.invalidTelegram; input.setAttribute('aria-invalid', 'true'); input.focus(); return; }
+    if (!(phoneLike || messenger === 'telegram' && telegramUsername(raw || ''))) { error.textContent = usesPhone ? t.invalidPhone : t.invalidTelegram; input.setAttribute('aria-invalid', 'true'); input.focus(); return; }
     if (!checkbox.checked) { error.textContent = t.consentError; checkbox.focus(); return; }
     for (let index = 0; index < 6; index++) if (!hasAnswer(index)) { edit(index); return; }
     submitting = true; error.textContent = ''; submit.textContent = text('Сохраняем заявку…', 'Saving your request…'); submit.setAttribute('aria-busy', 'true');
     const controls = [...dialog.querySelectorAll('input,select,button')]; for (const control of controls) control.disabled = true;
     const controller = new AbortController(); const timeout = setTimeout(() => controller.abort(), 15000);
     try {
-      const response = await fetch('/api/lead', { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: controller.signal, body: JSON.stringify({ requestId, name, language: lang, answers: { regions: selection.regions, propertyType: selection.propertyType, budgets: ['dynamic'], purpose, timeline }, region: 'unspecified', messenger, contact: raw, ...(messenger === 'whatsapp' ? { phoneCountry: phoneState.country } : {}), consent: { accepted: true, policyVersion }, website: trap.querySelector('input').value, pricing: { version: 1, ...selection, budget, crossRegionOptIn }, attribution: initialAttribution }) });
+      const response = await fetch('/api/lead', { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: controller.signal, body: JSON.stringify({ requestId, name, language: lang, answers: { regions: selection.regions, propertyType: selection.propertyType, budgets: ['dynamic'], purpose, timeline, onlineViewings }, region: 'unspecified', messenger, contact: raw, ...(usesPhone ? { phoneCountry: phoneState.country } : {}), consent: { accepted: true, policyVersion }, website: trap.querySelector('input').value, pricing: { version: 1, ...selection, budget, crossRegionOptIn }, attribution: initialAttribution }) });
       const result = await response.json().catch(() => ({}));
-      if (!response.ok) { error.textContent = response.status === 429 ? t.rateError : result.code === 'invalid_name' ? t.invalidName : result.code === 'invalid_contact' ? messenger === 'whatsapp' ? t.invalidPhone : t.invalidTelegram : t.networkError; return; }
+      if (!response.ok) { error.textContent = response.status === 429 ? t.rateError : result.code === 'invalid_name' ? t.invalidName : result.code === 'invalid_contact' ? usesPhone ? t.invalidPhone : t.invalidTelegram : t.networkError; return; }
       if (result.success !== true || !result.leadId) throw new Error('unconfirmed');
-      complete = true; contactName = ''; contactValues = { whatsapp: '', telegram: '' }; consent = false;
+      complete = true; contactName = ''; contactValues = { whatsapp: '', telegram: '', viber: '', phone: '' }; consent = true;
       try { sessionStorage.removeItem(storageKey); } catch {}
       window.dispatchEvent(new CustomEvent('lead_saved', { detail: { source: 'cinematic-quiz' } }));
       window.dataLayer?.push({ event: 'lead_saved', lead_source: 'cinematic-quiz' });

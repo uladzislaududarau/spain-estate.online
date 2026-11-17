@@ -50,6 +50,7 @@ for (const file of await readdir(path.join(source, 'assets'))) {
 }
 // Manifest-driven sequence requests are dynamic and must be emitted in full.
 await cp(path.join(source, 'assets/sequence'), path.join(output, 'assets/sequence'), { recursive: true });
+await cp(path.join(source, 'assets/cinema-main'), path.join(output, 'assets/cinema-main'), { recursive: true });
 await cp(path.join(source, 'assets/vendor'), path.join(output, 'assets/vendor'), { recursive: true });
 await copyFile(path.join(source, 'favicon.ico'), path.join(output, 'favicon.ico'));
 await emit('robots.txt', robots(origin));

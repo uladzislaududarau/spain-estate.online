@@ -1,3 +1,4 @@
+import { contactMethodLabel } from '../showcase/assets/contact.mjs';
 import { steps, legacyAnswerLabels } from '../showcase/assets/quiz.config.mjs';
 import { pricingLines, attributionLines, regionLabel } from './pricing-labels.mjs';
 import { z } from 'zod';
@@ -48,8 +49,9 @@ export function leadMessage(lead, timeZone = 'Asia/Nicosia', format = 'text') {
     'Заявка с сайта Spain Property for Sale',
     dateAndTime(lead.savedAt),
     'Имя: ' + value(lead.name) + '\nЯзык: ' + value(lead.language === 'ru' ? 'Русский' : 'Английский'),
-    'Способ связи: ' + value(lead.messenger === 'whatsapp' ? 'WhatsApp' : 'Telegram') + '\nКонтакт: ' + value(lead.contact),
+    'Способ связи: ' + value(contactMethodLabel(lead.messenger)) + '\nКонтакт: ' + value(lead.contact),
     'Критерии подбора:', ...answers,
+    ...(lead.answers.onlineViewings === true ? ['Онлайн-просмотры: Хочу смотреть объекты онлайн'] : []),
     ...pricingLines(lead.pricing).map(line => value(line)),
     ...attributionLines(lead.attribution).map(line => value(line))
   ];

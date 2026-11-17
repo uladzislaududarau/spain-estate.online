@@ -16,7 +16,8 @@ function matchLabel(match) {
 export function pricingLines(pricing) {
   if (!pricing) return [];
   const budget = pricing.budget;
-  const range = budget.max === null ? `от ${euro(budget.min)}` : budget.max === budget.min ? euro(budget.min) : `${euro(budget.min)} — ${euro(budget.max)}`;
+  const formatRange = range => range.max === null ? `от ${euro(range.min)}` : range.max === range.min ? euro(range.min) : `${euro(range.min)} — ${euro(range.max)}`;
+  const range = budget.deferred ? 'Уточнить при подборе' : budget.ranges ? budget.ranges.map(formatRange).join('; ') : formatRange(budget);
   return [
     `Города: ${pricing.cities.length ? pricing.cities.map(cityLabel).join(', ') + (pricing.anyCityRegions?.length ? '; любой город: ' + pricing.anyCityRegions.map(regionLabel).join(', ') : '') : 'Любой город в выбранных регионах'}`,
     `Тип для расчёта: ${typeLabel(pricing.propertyType)}`,

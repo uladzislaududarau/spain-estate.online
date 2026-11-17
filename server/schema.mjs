@@ -3,6 +3,7 @@ import { parsePhoneNumberFromString, isSupportedCountry, getCountryCallingCode }
 import { steps, policyVersion } from '../showcase/assets/quiz.config.mjs';
 import { normalizeContact, normalizeName } from '../showcase/assets/contact.mjs';
 import { normalizePricing, pricingRegionIds, pricingCityIds, pricingDataForRegion } from './pricing-lead.mjs';
+import { getMinimumPrice, selectedBudgetRanges } from '../showcase/assets/pricing.mjs';
 const values = id => steps.find(step => step.id === id).options.map(option => option[0]);
 const propertyTypes = [...new Set([...values('propertyType'), 'both'])];
 const regionIds = [...new Set([...values('regions'), ...pricingRegionIds])];
@@ -14,14 +15,19 @@ export const pricingSchema = z.object({
   cities: z.array(z.enum(pricingCityIds)).max(21).transform(items => [...new Set(items)]),
   anyCityRegions: z.array(z.enum(pricingRegionIds)).max(10).transform(items => [...new Set(items)]).optional(),
   propertyType: z.enum(propertyTypes),
-  budget: z.object({ min: nonNegativeEuro, max: nonNegativeEuro.nullable(), custom: z.boolean() }).strict().refine(budget => budget.custom ? budget.max === budget.min : budget.max === null || budget.max > budget.min),
+  budget: z.union([
+    z.object({ ranges: z.array(z.object({ min: nonNegativeEuro, max: nonNegativeEuro.nullable() }).strict()).min(1).max(5) }).strict(),
+    z.object({ min: nonNegativeEuro, max: nonNegativeEuro.nullable(), custom: z.boolean() }).strict().refine(budget => budget.custom ? budget.max === budget.min : budget.max === null || budget.max > budget.min),
+    z.object({ deferred: z.literal(true) }).strict()
+  ]),
   crossRegionOptIn: z.boolean().default(false),
   minimum: nonNegativeEuro.nullable().optional(),
   eligible: z.array(derivedMatch).max(42).optional(),
   alternatives: z.array(derivedMatch).max(12).optional(),
   belowMinimum: z.boolean().optional(),
   source: z.string().max(100).optional()
-}).strict();
+}).strict().refine(pricing=>pricing.budget.deferred!==true||getMinimumPrice(pricing)===null)
+  .refine(pricing=>!pricing.budget.ranges||selectedBudgetRanges(pricing,pricing.budget.ranges).length===pricing.budget.ranges.length);
 const attributionSchema = z.object({
   source: z.string().max(100).optional(),
   utm_source: z.string().max(200).optional(), utm_medium: z.string().max(200).optional(),
@@ -37,10 +43,11 @@ export const leadSchema = z.object({
     propertyType: z.enum(propertyTypes),
     regions: z.array(z.enum(regionIds)).min(1).max(regionIds.length).transform(items => [...new Set(items)].sort()).refine(items => !items.includes('undecided') || items.length === 1),
     budgets: z.array(z.enum([...values('budgets'), 'dynamic'])).min(1).max(6).transform(items => [...new Set(items)].sort()),
-    timeline: z.enum(values('timeline'))
+    timeline: z.enum(values('timeline')),
+    onlineViewings: z.boolean().optional()
   }).strict(),
   region: z.enum(['costa-blanca', 'marbella', 'mallorca', 'barcelona', 'unspecified']),
-  messenger: z.enum(['whatsapp', 'telegram']),
+  messenger: z.enum(['whatsapp', 'telegram', 'viber', 'phone']),
   phoneCountry: z.string().length(2).refine(isSupportedCountry).optional(),
   contact: z.string().trim().min(5).max(64),
   consent: z.object({ accepted: z.literal(true), policyVersion: z.literal(policyVersion) }).strict(),
@@ -63,7 +70,7 @@ export function validateLead(body) {
   }
   const contact = normalizeContact(result.data.messenger, result.data.contact, parsePhoneNumberFromString);
   if (!contact) return { error: 'invalid_contact' };
-  if (result.data.messenger === 'whatsapp' && result.data.phoneCountry) {
+  if (result.data.messenger !== 'telegram' && result.data.phoneCountry) {
     const phone = parsePhoneNumberFromString(contact);
     if (phone.countryCallingCode !== getCountryCallingCode(result.data.phoneCountry) || (phone.country && phone.country !== result.data.phoneCountry)) return { error: 'invalid_contact' };
   }

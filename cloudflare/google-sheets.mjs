@@ -1,3 +1,4 @@
+import { contactMethodLabel } from '../showcase/assets/contact.mjs';
 import { steps, legacyAnswerLabels } from '../showcase/assets/quiz.config.mjs';
 
 import { pricingLines, attributionLines, regionLabel } from './pricing-labels.mjs';
@@ -18,9 +19,9 @@ export function sheetRow(lead, timeZone = 'Asia/Nicosia') {
     lead.leadId,
     new Intl.DateTimeFormat('ru-RU', { timeZone, day: '2-digit', month: '2-digit', year: 'numeric' }).format(date),
     new Intl.DateTimeFormat('ru-RU', { timeZone, hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' }).format(date),
-    timeZone, lead.name, lead.messenger === 'whatsapp' ? 'WhatsApp' : 'Telegram', lead.contact,
+    timeZone, lead.name, contactMethodLabel(lead.messenger), lead.contact,
     lead.language === 'ru' ? 'Русский' : 'Английский', answer('regions'), answer('purpose'),
-    answer('propertyType'), lead.pricing ? pricingLines(lead.pricing).join('\n') : answer('budgets'), (Object.hasOwn(legacyAnswerLabels, lead.answers.timeline) ? '' : 'Приезд в Испанию: ') + answer('timeline'),
+    answer('propertyType'), lead.pricing ? pricingLines(lead.pricing).join('\n') : answer('budgets'), (Object.hasOwn(legacyAnswerLabels, lead.answers.timeline) ? '' : 'Приезд в Испанию: ') + answer('timeline') + (lead.answers.onlineViewings === true ? '\nХочу смотреть объекты онлайн' : ''),
     lead.consent.accepted ? 'Да' : 'Нет', lead.consent.timestamp, lead.consent.policyVersion,
     lead.savedAt, ['https://spain-estate.online', ...attributionLines(lead.attribution)].join('\n')
   ].map(value => String(value ?? ''));

@@ -17,3 +17,7 @@ export function normalizeName(value) {
   const name = value.trim().replace(/\s+/g, ' ');
   return name.length >= 1 && name.length <= 80 && /^[\p{L}\p{M}][\p{L}\p{M} .’ʼ'\-]*$/u.test(name) ? name : null;
 }
+
+export function contactMethodLabel(method, language = 'ru') {
+  return ({whatsapp:'WhatsApp',telegram:'Telegram',viber:'Viber',phone:language === 'en' ? 'Phone' : 'Телефон'})[method] || method;
+}
