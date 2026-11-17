@@ -122,13 +122,6 @@ h2{font-size:clamp(40px,5.2vw,76px)}.page-frame{padding-left:var(--frame);paddin
 .price-disclaimer{font-size:13px!important;line-height:1.6;color:#8ea3bf;margin-top:32px;max-width:760px}
 
 /* THRESHOLD SECTION */
-.threshold{position:relative;isolation:isolate;height:80svh;min-height:560px;margin:50px 0;overflow:clip;border-radius:28px}
-.threshold-frame{position:relative;width:100%;height:100%}
-.threshold-copy{position:absolute;bottom:56px;left:clamp(24px,4vw,56px);right:clamp(24px,4vw,56px);z-index:3;display:flex;justify-content:space-between;align-items:flex-end;gap:40px;color:#ffffff}
-.threshold h2{font-size:clamp(42px,5.2vw,76px);color:#ffffff;font-weight:500;text-shadow:0 2px 16px #0008}
-.threshold-copy>div{max-width:390px}
-.threshold p{font-size:17px;line-height:1.6;color:#eaf0ed}
-.threshold .button{margin-top:28px;font-size:14px;gap:24px}
 
 /* SEARCH SECTION */
 .selection-includes{padding-left:20px;margin:26px 0 0;color:#e2eaf4;font-size:16px;line-height:1.6}
@@ -167,8 +160,6 @@ h2{font-size:clamp(40px,5.2vw,76px)}.page-frame{padding-left:var(--frame);paddin
  .region-detail{padding:0}
  .region-detail-head{align-items:start;flex-direction:column;gap:16px}
  .section-heading>p{max-width:280px}
- .threshold-copy{bottom:44px}
- .threshold p{font-size:16px}
 }
 @media(max-width:799px){
  :root{--brand-width:140px}
@@ -212,10 +203,6 @@ h2{font-size:clamp(40px,5.2vw,76px)}.page-frame{padding-left:var(--frame);paddin
  .city-prices table{font-size:13px}
  .region-detail>.button{font-size:13px;gap:16px;padding:18px 20px}
  .price-disclaimer{font-size:11px;margin-top:20px}
- .threshold{height:78svh;min-height:600px;margin:32px 0}
- .threshold-copy{display:block;bottom:36px}
- .threshold h2{font-size:38px}
- .threshold p{font-size:15px;margin-top:20px}
  .request-action{padding:0 24px 36px}
  .approach-copy .button,.request-action .button{width:100%;padding:18px 20px;font-size:13px;gap:16px;white-space:normal}
  .request-action p{max-width:none}
@@ -232,7 +219,6 @@ h2{font-size:clamp(40px,5.2vw,76px)}.page-frame{padding-left:var(--frame);paddin
  .header-action{font-size:10px;padding:2px 8px}
  .header-action span{display:none}
  .region-detail-head{align-items:start;flex-direction:column}
- .threshold h2{font-size:32px}
  .approach h2,.section-heading h2{font-size:34px}
  .footer{grid-template-columns:1fr}
  .footer-links{grid-template-columns:1fr}
@@ -267,10 +253,6 @@ h2{font-size:clamp(40px,5.2vw,76px)}.page-frame{padding-left:var(--frame);paddin
 .service-list{padding:80px var(--frame) 100px;grid-template-columns:repeat(2,minmax(0,1fr));gap:60px 9vw;max-width:1600px}
 .service-list dt{font-size:clamp(24px,2.4vw,36px)}
 .service-list dd{font-size:17px;max-width:55ch;color:#c8cfd9}
-.threshold{height:100svh;min-height:760px;margin:40px 0 80px;border-radius:0;padding:0}
-.threshold-copy{left:var(--frame);right:var(--frame);bottom:80px;gap:6vw}
-.threshold h2{font-size:clamp(64px,7.8vw,124px);line-height:1;letter-spacing:-.065em}
-.threshold-copy>div{max-width:390px}
 .selection-includes{display:flex;flex-wrap:wrap;gap:10px 32px;max-width:800px;margin-top:24px;color:#fff}
 .selection-includes li+li{margin-top:0}
 .request-action{padding:28px var(--frame) 60px}
@@ -286,11 +268,6 @@ h2{font-size:clamp(40px,5.2vw,76px)}.page-frame{padding-left:var(--frame);paddin
  .service-list{grid-template-columns:1fr;padding:56px var(--frame) 64px;gap:36px}
  .service-list dt{font-size:26px}
  .service-list dd{font-size:16px}
- .threshold{height:92svh;min-height:780px;margin:32px 0 64px}
- .threshold-copy{bottom:48px}
- .threshold h2{font-size:clamp(42px,11.8vw,76px)}
- .threshold-copy>div{max-width:440px}
- .threshold p{font-size:16px}
  .selection-includes{display:block;line-height:1.6;font-size:16px}
  .selection-includes li+li{margin-top:12px}
  .request-action{padding:0 var(--frame) 64px}
@@ -316,4 +293,25 @@ h2{font-size:clamp(40px,5.2vw,76px)}.page-frame{padding-left:var(--frame);paddin
  .approach-selection .button{width:100%}
  .approach-selection .request-action p{max-width:none}
 }
-.threshold,.threshold-frame,.threshold-copy{background:transparent}
+
+/* A fixed reading grid, with illumination instead of masked travelling text. */
+.threshold{position:relative;isolation:isolate;display:grid;align-items:center;height:auto;min-height:78svh;margin:40px 0 64px;padding:110px var(--frame);overflow:visible;background:transparent}
+.threshold-frame{width:100%;height:auto;background:transparent}
+.threshold-copy{position:relative;display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);align-items:center;gap:clamp(32px,6vw,100px);color:#fff;background:transparent}
+.threshold h2{margin:0;min-width:0;font-size:clamp(52px,6.3vw,104px);font-weight:500;line-height:1.08;letter-spacing:-.055em;text-shadow:0 2px 20px #0009}
+.viewing-phrase{position:relative;display:block}
+.viewing-base,.viewing-ink{display:block}
+.viewing-ink{position:absolute;inset:0;clip-path:inset(0% 100% 0% 0%);color:#fff;pointer-events:none}
+.viewing-details{min-width:0;max-width:420px}
+.viewing-description{font-size:18px;line-height:1.7;color:#fff;text-shadow:0 2px 12px #0009}
+.viewing-action{margin-top:32px}
+.viewing-action .button{font-size:14px;gap:28px}
+@media(max-width:799px){
+ .threshold{min-height:70svh;margin:24px 0 48px;padding:96px var(--frame)}
+ .threshold-copy{grid-template-columns:1fr;gap:32px}
+ .threshold h2{font-size:clamp(38px,10.5vw,72px);line-height:1.12}
+ .viewing-details{max-width:480px}
+ .viewing-description{font-size:17px;line-height:1.7}
+ .viewing-action{margin-top:28px}
+ .viewing-action .button{max-width:100%;padding:18px 24px;font-size:13px;white-space:normal}
+}
