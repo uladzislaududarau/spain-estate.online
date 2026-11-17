@@ -1,5 +1,5 @@
 // Called synchronously inside the page's GSAP matchMedia context: it owns teardown.
-export function createContentMotion(gsap, {phone}) {
+export function createContentMotion(gsap, {phone,portrait}) {
   const scenes = [];
   const timeline = (id, trigger, start = 'clamp(top 94%)', end = 'clamp(bottom 12%)') => {
     const motion = gsap.timeline({defaults:{ease:'none'}, scrollTrigger:{
@@ -24,9 +24,40 @@ export function createContentMotion(gsap, {phone}) {
       .to(element, {y:phone?-12:-30, duration:.14}, .86);
   });
 
-  // A single typographic push-in; no line masks, rotations or independent word travel.
+  // Phone portrait gets an authored native-sticky scene, not a scaled desktop reveal.
   const viewing = document.querySelector('.threshold-copy');
-  if (viewing) {
+  if (viewing && phone && portrait) {
+    const section=viewing.closest('.threshold');
+    const stage=section.querySelector('.threshold-frame');
+    const words=viewing.querySelectorAll('.viewing-word');
+    const sentences=viewing.querySelectorAll('.viewing-sentence');
+    const route=viewing.querySelector('.viewing-route-progress');
+    const point=viewing.querySelector('.viewing-route-point');
+    // Native sticky releases after 1.1 screens; matchMedia owns all inline geometry.
+    gsap.set(section,{height:'210svh',minHeight:0,padding:0,display:'block'});
+    gsap.set(stage,{position:'sticky',top:0,height:'100svh',display:'grid',alignItems:'center',padding:'96px var(--frame) 40px'});
+    gsap.set(words,{transformPerspective:850,transformOrigin:'50% 65%',force3D:true});
+    gsap.set([words[0],words[1]],{rotationX:65,z:-160,y:26,opacity:.35});
+    gsap.set([words[2],words[3]],{rotationX:-60,z:-240,y:38,opacity:.25});
+    gsap.set(route,{strokeDasharray:1,strokeDashoffset:1});
+    gsap.set(point,{attr:{cx:8}});
+    const motion=gsap.timeline({defaults:{ease:'power2.out'},scrollTrigger:{
+      id:'estate-content-viewing',trigger:section,start:'top 60%',end:'bottom bottom',
+      scrub:.28,invalidateOnRefresh:true
+    }});
+    motion.addLabel('unfold-heading',0)
+      .to([words[0],words[1]],{rotationX:0,z:0,y:0,opacity:1,duration:.34,stagger:.055},'unfold-heading')
+      .to([words[2],words[3]],{rotationX:0,z:0,y:0,opacity:1,duration:.36,stagger:.055},.15)
+      .addLabel('connect',.27)
+      .to(route,{strokeDashoffset:0,duration:.42,ease:'none'},'connect')
+      .to(point,{attr:{cx:312},duration:.42,ease:'none'},'connect')
+      .fromTo(sentences[0],{opacity:.65,scale:.96},{opacity:1,scale:1,duration:.25},.34)
+      .fromTo(sentences[1],{opacity:.6,scale:.96},{opacity:1,scale:1,duration:.25},.48)
+      .fromTo(viewing.querySelector('.viewing-action'),{opacity:.75},{opacity:1,duration:.2},.61)
+      .addLabel('readable-hold',.81)
+      .to({},{duration:.19},'readable-hold');
+    scenes.push({id:'viewing',motion});
+  } else if (viewing) {
     const motion = gsap.timeline({defaults:{ease:'none'}, scrollTrigger:{
       id:'estate-content-viewing', trigger:viewing, start:'clamp(top 88%)',
       end:'clamp(bottom 24%)', scrub:.75, invalidateOnRefresh:true

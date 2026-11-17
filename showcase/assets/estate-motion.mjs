@@ -7,8 +7,8 @@ if(gsap&&ScrollTrigger&&root){
  const mm=gsap.matchMedia();let disposed=false;let activePlayer;let heroTrigger;let contentScenes=[];
  const qa={hero:()=>({range:heroTrigger?{start:heroTrigger.start,end:heroTrigger.end}:null,...(activePlayer?.state()||{renderer:'poster',reduced:true})}),content:()=>contentScenes.map(({id,motion})=>({id,range:{start:motion.scrollTrigger.start,end:motion.scrollTrigger.end},progress:motion.progress()}))};
  window.__estateMotionQA=Object.freeze(qa);
- mm.add({desktop:'(min-width:800px)',phone:'(max-width:799px)',reduce:'(prefers-reduced-motion:reduce)'},context=>{
-  const {phone,reduce}=context.conditions;let player;let dead=false;const controller=new AbortController();
+ mm.add({desktop:'(min-width:800px)',phone:'(max-width:799px)',portrait:'(orientation:portrait)',reduce:'(prefers-reduced-motion:reduce)'},context=>{
+  const {phone,portrait,reduce}=context.conditions;let player;let dead=false;const controller=new AbortController();
   if(reduce){root.classList.remove('motion-enabled');return;}
   root.classList.add('motion-enabled');
   const video=root.querySelector('video');const bar=root.querySelector('.cinema-progress-fill');const chapter=root.querySelector('[data-chapter]');
@@ -30,7 +30,7 @@ if(gsap&&ScrollTrigger&&root){
       scrub:.25,invalidateOnRefresh:true},
     y:phone?-36:-64,opacity:0,ease:'none'
   });
-  contentScenes=createContentMotion(gsap,{phone});
+  contentScenes=createContentMotion(gsap,{phone,portrait});
   player=new ScrollVideoPlayer(video);activePlayer=player;player.setProgress(background.progress);
   const tick=()=>player?.draw();gsap.ticker.add(tick);
   const observer=new IntersectionObserver(entries=>{if(player)player.setActive(entries[0].isIntersecting&&!document.hidden);},{rootMargin:'200px'});observer.observe(root);
