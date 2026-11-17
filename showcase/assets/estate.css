@@ -90,7 +90,7 @@ h2{font-size:clamp(40px,5.2vw,76px)}.page-frame{padding-left:var(--frame);paddin
 .text-link-accent:hover{color:#ffffff}
 
 /* DESTINATIONS SECTION */
-.destinations{padding-top:60px;padding-bottom:60px}
+.destinations{padding-top:60px;padding-bottom:clamp(128px,16svh,192px)}
 .destinations-card{padding:clamp(36px,4.5vw,64px)}
 .section-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:48px;margin-bottom:56px}
 .section-heading h2{color:#ffffff}
@@ -183,7 +183,7 @@ h2{font-size:clamp(40px,5.2vw,76px)}.page-frame{padding-left:var(--frame);paddin
  .approach h2{font-size:38px}
  .approach .lead{font-size:20px}
  .approach-copy>p+p{font-size:15px}
- .destinations{padding-top:32px;padding-bottom:32px}
+ .destinations{padding-top:32px;padding-bottom:112px}
  .destinations-card{padding:32px 24px}
  .section-heading{display:block;margin-bottom:36px}
  .section-heading h2{font-size:40px}
@@ -292,47 +292,4 @@ h2{font-size:clamp(40px,5.2vw,76px)}.page-frame{padding-left:var(--frame);paddin
  .approach-selection .request-action{grid-column:1;grid-row:auto}
  .approach-selection .button{width:100%}
  .approach-selection .request-action p{max-width:none}
-}
-
-/* A stable reading grid for the single typographic push-in. */
-.threshold{position:relative;isolation:isolate;display:grid;align-items:center;height:auto;min-height:78svh;margin:40px 0 64px;padding:110px var(--frame);overflow:visible;background:transparent}
-.threshold-frame{width:100%;height:auto;background:transparent}
-.threshold-copy{position:relative;display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);align-items:center;gap:clamp(32px,6vw,100px);color:#fff;background:transparent}
-.threshold h2{margin:0;min-width:0;font-size:clamp(52px,6.3vw,104px);font-weight:500;line-height:1.08;letter-spacing:-.055em;text-shadow:0 2px 20px #0009}
-.viewing-phrase{position:relative;display:block}
-.viewing-details{min-width:0;max-width:420px}
-.viewing-description{font-size:18px;line-height:1.7;color:#fff;text-shadow:0 2px 12px #0009}
-.viewing-action{margin-top:32px}
-.viewing-action .button{font-size:14px;gap:28px}
-@media(max-width:799px){
- .threshold{min-height:70svh;margin:24px 0 48px;padding:96px var(--frame)}
- .threshold-copy{grid-template-columns:1fr;gap:32px}
- .threshold h2{font-size:clamp(38px,10.5vw,72px);line-height:1.12}
- .viewing-details{max-width:480px}
- .viewing-description{font-size:17px;line-height:1.7}
- .viewing-action{margin-top:28px}
- .viewing-action .button{max-width:100%;padding:18px 24px;font-size:13px;white-space:normal}
-}
-
-.viewing-word{display:inline-block;backface-visibility:hidden}
-.viewing-route{display:none;width:min(100%,320px);height:24px;overflow:visible;pointer-events:none}
-.viewing-route-track{fill:none;stroke:#ffffff42;stroke-width:1.5}
-.viewing-route-progress{fill:none;stroke:#93c5fd;stroke-width:2;stroke-linecap:round}
-.viewing-route-end{fill:#fff8}
-.viewing-route-point{fill:#93c5fd}
-@media(max-width:799px){
- .threshold-copy{gap:24px}
- .threshold h2{font-size:clamp(42px,14.1vw,78px);font-weight:600;line-height:1.04;letter-spacing:-.06em}
- .viewing-phrase{white-space:nowrap}
- .viewing-route{display:block}
- .viewing-sentence{display:block;transform-origin:left center}
- .viewing-sentence+.viewing-sentence{margin-top:12px}
- .viewing-description{font-size:17px;line-height:1.55;text-shadow:0 1px 3px #000d,0 3px 16px #000b}
- .viewing-action{margin-top:26px}
-}
-@media(max-width:370px){
- .threshold h2{font-size:12.9vw}
- .threshold-copy{gap:18px}
- .viewing-description{font-size:16px;line-height:1.5}
- .viewing-action{margin-top:20px}
 }
