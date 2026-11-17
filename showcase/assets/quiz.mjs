@@ -338,8 +338,19 @@ window.visualViewport?.addEventListener('resize', updateViewport);
 window.visualViewport?.addEventListener('scroll', updateViewport);
 window.addEventListener('resize', updateViewport);
 dialog.addEventListener('focusin', updateViewport);
-function openQuiz() {
+function openQuiz(event) {
   if (dialog.open) return;
+  const presetRegion = event?.currentTarget?.dataset.presetRegion;
+  if (regions.some(region => region.id === presetRegion)) {
+    const presetType = event.currentTarget.dataset.presetPropertyType === 'villa' ? 'villa' : 'apartment';
+    if (selection.regions.length !== 1 || selection.regions[0] !== presetRegion || selection.propertyType !== presetType) invalidateBudget();
+    selection.regions = [presetRegion];
+    selection.cities = selection.cities.filter(id => pricingData.some(row => row.cityId === id && row.regionId === presetRegion));
+    selection.anyCityRegions = selection.anyCityRegions.filter(id => id === presetRegion);
+    selection.propertyType = presetType;
+    step = 1;
+    persist();
+  }
   focusBefore = document.activeElement; scrollY = window.scrollY;
   document.body.style.setProperty('--quiz-page-scroll-offset', `${-scrollY}px`);
   document.documentElement.classList.add('quiz-open'); document.body.classList.add('quiz-open');

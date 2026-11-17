@@ -61,16 +61,26 @@
 
   <!-- Section 2: Approach -->
   <section class="approach page-frame" id="approach" aria-labelledby="approach-title">
-   <div class="glass-panel approach-card">
-    <h2 id="approach-title">Место, где<br>вы будете собой.</h2>
-    <div class="approach-copy"><p class="lead">Городской ритм, тихая терраса или дом у моря. Начнём с того, что важно вам.</p><p>Помогаем сформулировать запрос на недвижимость в Испании: выбрать направление, определить бюджет и подготовить персональный поиск.</p><a class="text-link text-link-accent" href="#regions">Найти своё побережье <span aria-hidden="true">↗</span></a></div>
+   <div class="content-panel approach-card">
+    <div class="approach-copy">
+     <h2 id="approach-title">Большой выбор.<br>Точный подбор.</h2>
+     <p class="lead">Более 3000 объектов в Испании: от квартир для первого переезда до вилл и коммерческой недвижимости.</p>
+     <p>Вместо десятков случайных объявлений — подборка под вашу задачу. Учитываем бюджет, регион, тип недвижимости и цель покупки: для себя, отдыха или инвестиций.</p>
+     <button type="button" class="button button-light" data-open-quiz>ПОДОБРАТЬ ОБЪЕКТЫ <span aria-hidden="true">↗</span></button>
+    </div>
+    <dl class="service-list">
+     <div><dt>Новостройки и вторичное жильё</dt><dd>Сравните разные форматы покупки: квартиры и апартаменты, дома и виллы, пентхаусы и коммерческие объекты.</dd></div>
+     <div><dt>Персональный подбор</dt><dd>Отбираем варианты по вашим критериям, чтобы вы сравнивали подходящие объекты, их стоимость и условия покупки.</dd></div>
+     <div><dt>Помощь с ипотекой в Испании</dt><dd>Если планируете покупку с финансированием, обсудим этот запрос при подборе. Условия и решение по заявке определяет банк.</dd></div>
+     <div><dt>Индивидуальные туры по объектам</dt><dd>Сначала определим список интересующих вариантов, затем согласуем просмотры — с фокусом на вашу задачу и бюджет.</dd></div>
+    </dl>
    </div>
   </section>
 
   <!-- Section 3: Regions & Pricing Explorer -->
   <section class="destinations page-frame" id="regions" aria-labelledby="regions-title">
-   <div class="glass-panel destinations-card">
-    <div class="section-heading"><h2 id="regions-title">Побережья<br>и ориентиры.</h2><p>Сравните исходные ценовые ориентиры.<br>Начните с места, которое вам ближе.</p></div>
+   <div class="content-panel destinations-card">
+    <div class="section-heading"><h2 id="regions-title">Выберите<br>побережье.</h2><p>Выберите регион и тип недвижимости. Сравните ценовые ориентиры по городам и перейдите к персональному подбору.</p></div>
     <div class="region-explorer" data-ui>
      <div class="region-navigation"><div class="region-list" aria-label="Выберите направление" id="region-tabs">
       <button type="button" class="region-tab is-selected" data-region="costa-blanca" aria-pressed="true">Costa Blanca <span aria-hidden="true">↗</span></button>
@@ -79,8 +89,8 @@
      </div><p class="region-note">Порог зависит от конкретного города и типа недвижимости.</p></div>
      <div class="region-detail"><div class="region-detail-head"><h3 id="region-name">Costa Blanca</h3><div class="type-switch" role="group" aria-label="Тип недвижимости"><button type="button" data-explorer-type="apartment" aria-pressed="true">Квартиры</button><button type="button" data-explorer-type="villa" aria-pressed="false">Виллы</button></div></div>
       <div class="price-emphasis"><span>Ориентир от</span><strong id="region-minimum">120 000 €</strong><span>в отдельных городах региона</span></div>
-      <div id="region-cities" class="city-prices" role="region" tabindex="0" aria-label="Ценовые ориентиры по городам" aria-live="polite"><p><span>Elda</span><span>от 120 000 €</span></p><p><span>Torrevieja</span><span>от 150 000 €</span></p><p><span>Alicante</span><span>от 250 000 €</span></p></div>
-      <button type="button" class="text-link text-link-accent" data-open-quiz data-preset-region="costa-blanca" id="region-search">Подобрать в этом регионе <span aria-hidden="true">↗</span></button>
+      <div class="city-prices" role="region" tabindex="0" aria-label="Ценовые ориентиры по городам"><table><thead><tr><th scope="col">Город</th><th scope="col" id="region-price-label">Квартиры от</th></tr></thead><tbody id="region-cities" aria-live="polite"><tr><th scope="row">Elda</th><td>120 000 €</td></tr><tr><th scope="row">Torrevieja</th><td>150 000 €</td></tr><tr><th scope="row">Alicante</th><td>250 000 €</td></tr></tbody></table></div>
+      <button type="button" class="button button-light" data-open-quiz data-preset-region="costa-blanca" data-preset-property-type="apartment" id="region-search">ПОДОБРАТЬ В ЭТОМ РЕГИОНЕ <span aria-hidden="true">↗</span></button>
      </div>
     </div>
     <p class="price-disclaimer">Минимальные ориентиры из предоставленной таблицы. Это не каталог объектов и не гарантия наличия. Актуальную стоимость уточняем при подборе.</p>
@@ -92,20 +102,20 @@
    <div class="threshold-frame">
     <div class="threshold-image"><img src="/assets/sequence/terrace.jpg" width="1280" height="720" alt="Архитектурная иллюстрация: открытая терраса с видом на море" loading="lazy"></div>
     <div class="threshold-scrim" aria-hidden="true"></div>
-    <div class="threshold-copy"><h2 id="threshold-title">Место<br>для жизни.</h2><p>Важен не только адрес.<br>Важно, как вы будете здесь жить.</p></div>
+    <div class="threshold-copy"><h2 id="threshold-title">От подбора<br>до просмотра.</h2><div><p>Сначала уточним вашу задачу и отберём объекты. Затем согласуем индивидуальный тур по вариантам, которые вас заинтересовали.</p><button type="button" class="button button-light" data-open-quiz>ВЫБРАТЬ ОБЪЕКТЫ <span aria-hidden="true">↗</span></button></div></div>
    </div>
   </section>
 
   <!-- Section 5: Search & CTA -->
   <section class="search page-frame" id="search" aria-labelledby="search-title">
-   <div class="glass-panel search-card">
-    <div class="search-copy"><h2 id="search-title">Начнём с вас.</h2><p class="lead">Несколько вопросов о месте, доме и бюджете.<br class="desktop-break"> Один понятный запрос для персонального подбора.</p><p class="search-next">Уточним ваши критерии и свяжемся через выбранный WhatsApp или Telegram. Регионы и бюджет из квиза сохранятся в вашем запросе.</p></div>
-    <button type="button" class="button button-light" data-open-quiz>Создать мой запрос <span aria-hidden="true">↗</span></button>
+   <div class="content-panel search-card">
+    <div class="search-copy"><h2 id="search-title">Подборка<br>под ваш бюджет.</h2><p class="lead">Укажите регион, тип недвижимости и сумму покупки. Отберём подходящие варианты и отправим подборку в WhatsApp или Telegram.</p><ul class="selection-includes"><li>Объекты по вашим критериям</li><li>Стоимость и условия для сравнения</li><li>Варианты для индивидуального просмотра</li></ul></div>
+    <div class="request-action"><button type="button" class="button button-light" data-open-quiz>ПОЛУЧИТЬ ПОДБОРКУ <span aria-hidden="true">↗</span></button><p>Можно указать свой бюджет, даже если он ниже ориентира в выбранном регионе.</p></div>
     <noscript><p>Для интерактивного подбора включите JavaScript. Также можно <a href="mailto:phewcy.dev@gmail.com?subject=Запрос%20на%20недвижимость%20в%20Испании">написать ваш запрос по email</a>.</p></noscript>
    </div>
   </section>
  </main>
- <footer class="footer page-frame"><a href="/" class="footer-brand"><img src="/assets/logo-white.svg" width="236" height="52" alt="Spain Property for Sale"></a><div class="footer-links"><a href="mailto:phewcy.dev@gmail.com">Написать нам</a><a href="/privacy">Обработка данных</a><a href="/legal">Контакты и реквизиты</a></div><p class="footer-caption">© 2026 Spain Property for Sale · Изображения носят иллюстративный характер.</p></footer>
+ <footer class="footer page-frame"><a href="/" class="footer-brand"><img src="/assets/logo-white.svg" width="236" height="52" alt="Spain Property for Sale"></a><div class="footer-links"><a href="mailto:phewcy.dev@gmail.com">Написать нам</a><a href="/privacy">Обработка данных</a><a href="/legal">Контакты и реквизиты</a></div><div class="footer-details"><p class="footer-copyright">© 2026 Dennis Estate. Все права защищены.</p><p>Dennis Estate — проект по персональному подбору недвижимости в Испании для проживания, отдыха и инвестиций. Новостройки, вторичное жильё, виллы и коммерческая недвижимость.</p><p>Наличие объектов, цены и условия покупки уточняются перед сделкой. Отправка запроса не является бронированием недвижимости. Порядок обработки данных описан в <a href="/privacy">политике конфиденциальности</a>.</p></div></footer>
  <link rel="stylesheet" href="/assets/quiz.css">
  <script type="module" src="/assets/quiz.mjs"></script>
  <script type="module" src="/assets/region-explorer.mjs"></script>

@@ -3,9 +3,16 @@ const list=document.querySelector('#region-tabs');let selected='costa-blanca';le
 const label=document.querySelector('#region-name');const cities=document.querySelector('#region-cities');const cta=document.querySelector('#region-search');
 function render(){
  label.textContent=regions.find(r=>r.id===selected).name;
+ document.querySelector('#region-price-label').textContent=type==='villa'?'Виллы / дома от':'Квартиры от';
  document.querySelector('#region-minimum').textContent=formatMoney(getMinimumPrice({regions:[selected],cities:[],propertyType:type}));
- cities.replaceChildren(...pricingData.filter(row=>row.regionId===selected).sort((a,b)=>a[`${type}Min`]-b[`${type}Min`]).map(row=>{const p=document.createElement('p');const name=document.createElement('span');name.textContent=row.city;const money=document.createElement('span');money.textContent=`от ${formatMoney(row[`${type}Min`])}`;if(type==='villa'&&row.villaLocationNote){const note=document.createElement('small');note.textContent=row.villaLocationNote;name.append(note);}p.append(name,money);return p;}));
- cta.dataset.presetRegion=selected;
+ const rows=pricingData.filter(row=>row.regionId===selected).sort((a,b)=>a[`${type}Min`]-b[`${type}Min`]);
+ cities.replaceChildren(...rows.map(row=>{
+   const tr=document.createElement('tr');const name=document.createElement('th');name.scope='row';name.textContent=row.city;
+   const money=document.createElement('td');money.textContent=formatMoney(row[`${type}Min`]);
+   if(type==='villa'&&row.villaLocationNote){const note=document.createElement('small');note.textContent=row.villaLocationNote;name.append(note);}
+   tr.append(name,money);return tr;
+ }));
+ cta.dataset.presetRegion=selected;cta.dataset.presetPropertyType=type;
  for(const button of list.children){const active=button.dataset.region===selected;button.classList.toggle('is-selected',active);button.setAttribute('aria-pressed',String(active));}
 }
 list.replaceChildren(...regions.map(region=>{const b=document.createElement('button');b.type='button';b.className='region-tab';b.dataset.region=region.id;b.textContent=region.name;const arrow=document.createElement('span');arrow.textContent='↗';arrow.setAttribute('aria-hidden','true');b.append(arrow);b.addEventListener('click',()=>{selected=region.id;render();});return b;}));

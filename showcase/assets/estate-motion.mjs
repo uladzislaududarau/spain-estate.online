@@ -43,8 +43,19 @@ if(gsap&&ScrollTrigger&&root){
   const tick=()=>player?.draw();gsap.ticker.add(tick);
   const observer=new IntersectionObserver(entries=>{if(player)player.setActive(entries[0].isIntersecting&&!document.hidden);},{rootMargin:'200px'});observer.observe(root);
   const resize=new ResizeObserver(()=>player?.resize());resize.observe(canvas);
+  // A shorter city table changes both the full-page sequence and mask bounds.
+  let layoutFrame;let layoutWidth=0;let layoutHeight=0;
+  const layoutObserver=new ResizeObserver(([entry])=>{
+    if(document.documentElement.classList.contains('quiz-open'))return;
+    const {width,height}=entry.contentRect;
+    if(Math.abs(width-layoutWidth)<.5&&Math.abs(height-layoutHeight)<.5)return;
+    layoutWidth=width;layoutHeight=height;cancelAnimationFrame(layoutFrame);
+    layoutFrame=requestAnimationFrame(()=>{
+      if(!dead&&!document.documentElement.classList.contains('quiz-open'))ScrollTrigger.refresh();
+    });
+  });layoutObserver.observe(main);
   const visibility=()=>player?.setActive(!document.hidden);document.addEventListener('visibilitychange',visibility);
-  return()=>{dead=true;controller.abort();gsap.ticker.remove(tick);observer.disconnect();resize.disconnect();document.removeEventListener('visibilitychange',visibility);player?.dispose();if(activePlayer===player)activePlayer=undefined;root.classList.remove('motion-enabled');heroTrigger=undefined;immersiveTrigger=undefined;if(bar)bar.style.transform='';};
+  return()=>{dead=true;controller.abort();cancelAnimationFrame(layoutFrame);layoutObserver.disconnect();gsap.ticker.remove(tick);observer.disconnect();resize.disconnect();document.removeEventListener('visibilitychange',visibility);player?.dispose();if(activePlayer===player)activePlayer=undefined;root.classList.remove('motion-enabled');heroTrigger=undefined;immersiveTrigger=undefined;if(bar)bar.style.transform='';};
  });
  document.fonts.ready.then(()=>{if(!disposed)ScrollTrigger.refresh();});
  window.addEventListener('pagehide',()=>{disposed=true;mm.revert();},{once:true});

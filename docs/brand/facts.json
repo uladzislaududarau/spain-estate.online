@@ -1,5 +1,5 @@
 {
-  "checkedDate": "2026-11-16",
+  "checkedDate": "2026-11-17",
   "sourceCommit": "97b8a62a72de3b4477bd085a41f3e54ad664d11a",
   "scope": "Local rebuild; evidence is original source and user brief. No live operator or availability verification claimed.",
   "facts": [
@@ -74,8 +74,8 @@
         "Individual property tours"
       ],
       "source": "https://github.com/uladzislaududarau/spain-estate.online/tree/97b8a62a72de3b4477bd085a41f3e54ad664d11a/showcase/index.html",
-      "status": "source-retained-unverified",
-      "publicationDecision": "preserve source audit; do not add guarantees or imply current operational capacity without confirmation"
+      "status": "source-retained-user-requested",
+      "publicationDecision": "Republish and explain these original service advantages at the explicit user request on2026-11-17. No mortgage-approval, availability or return guarantee added."
     },
     {
       "id": "pricing-ledger",
@@ -123,6 +123,13 @@
       "source": "User-requested hero copy in conversation, 2026-11-16",
       "status": "user-provided-not-independently-verified",
       "publicationDecision": "Exact local-preview wording requested by user, including the largest/private-catalogue description; no independent market ranking or inventory verification claimed."
+    },
+    {
+      "id": "footer-project-name-user-copy",
+      "value": "Dennis Estate",
+      "source": "User-requested footer wording,2026-11-17",
+      "status": "user-provided",
+      "publicationDecision": "Footer project identity only; does not replace the existing legal operator or assert registered company status."
     }
   ]
 }
