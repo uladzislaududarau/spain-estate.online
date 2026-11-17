@@ -294,14 +294,12 @@ h2{font-size:clamp(40px,5.2vw,76px)}.page-frame{padding-left:var(--frame);paddin
  .approach-selection .request-action p{max-width:none}
 }
 
-/* A fixed reading grid, with illumination instead of masked travelling text. */
+/* A stable reading grid for the single typographic push-in. */
 .threshold{position:relative;isolation:isolate;display:grid;align-items:center;height:auto;min-height:78svh;margin:40px 0 64px;padding:110px var(--frame);overflow:visible;background:transparent}
 .threshold-frame{width:100%;height:auto;background:transparent}
 .threshold-copy{position:relative;display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);align-items:center;gap:clamp(32px,6vw,100px);color:#fff;background:transparent}
 .threshold h2{margin:0;min-width:0;font-size:clamp(52px,6.3vw,104px);font-weight:500;line-height:1.08;letter-spacing:-.055em;text-shadow:0 2px 20px #0009}
 .viewing-phrase{position:relative;display:block}
-.viewing-base,.viewing-ink{display:block}
-.viewing-ink{position:absolute;inset:0;clip-path:inset(0% 100% 0% 0%);color:#fff;pointer-events:none}
 .viewing-details{min-width:0;max-width:420px}
 .viewing-description{font-size:18px;line-height:1.7;color:#fff;text-shadow:0 2px 12px #0009}
 .viewing-action{margin-top:32px}

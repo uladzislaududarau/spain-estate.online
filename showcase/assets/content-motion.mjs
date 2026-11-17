@@ -24,25 +24,21 @@ export function createContentMotion(gsap, {phone}) {
       .to(element, {y:phone?-12:-30, duration:.14}, .86);
   });
 
-  // One reading sequence owns this whole composition. Text never leaves its layout box.
+  // A single typographic push-in; no line masks, rotations or independent word travel.
   const viewing = document.querySelector('.threshold-copy');
   if (viewing) {
-    const bases = viewing.querySelectorAll('.viewing-base');
-    const ink = viewing.querySelectorAll('.viewing-ink');
-    gsap.set(bases, {opacity:.32});
-    gsap.set(ink, {clipPath:'inset(0% 100% 0% 0%)'});
     const motion = gsap.timeline({defaults:{ease:'none'}, scrollTrigger:{
       id:'estate-content-viewing', trigger:viewing, start:'clamp(top 88%)',
-      end:'clamp(bottom 24%)', scrub:.65, invalidateOnRefresh:true
+      end:'clamp(bottom 24%)', scrub:.75, invalidateOnRefresh:true
     }});
-    motion.addLabel('first-phrase', .02)
-      .to(ink[0], {clipPath:'inset(0% 0% 0% 0%)', duration:.3}, 'first-phrase')
-      .addLabel('second-phrase', .22)
-      .to(ink[1], {clipPath:'inset(0% 0% 0% 0%)', duration:.32}, 'second-phrase')
-      .fromTo(viewing.querySelector('.viewing-description'), {opacity:.5},
-        {opacity:1, duration:.28, ease:'power2.out'}, .24)
-      .fromTo(viewing.querySelector('.viewing-action'), {opacity:.75},
-        {opacity:1, duration:.2, ease:'power2.out'}, .44)
+    motion.addLabel('push-in', 0)
+      .fromTo(viewing.querySelector('.viewing-title'),
+        {scale:phone?.88:.8, opacity:.55, transformOrigin:'left center'},
+        {scale:1, opacity:1, duration:.55, ease:'power2.out'}, 'push-in')
+      .fromTo(viewing.querySelector('.viewing-description'), {opacity:.6},
+        {opacity:1, duration:.3, ease:'power2.out'}, .25)
+      .fromTo(viewing.querySelector('.viewing-action'), {opacity:.8},
+        {opacity:1, duration:.2, ease:'power2.out'}, .45)
       .addLabel('readable-hold', .65)
       .to({}, {duration:.35}, 'readable-hold');
     scenes.push({id:'viewing', motion});
