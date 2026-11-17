@@ -17,7 +17,7 @@ export function createContentMotion(gsap, {phone}) {
       .to(lines, {yPercent:-35, x:phone?-12:-65, rotation:-1, duration:.14, stagger:.025}, .86);
   });
 
-  const copy = '.approach-copy > p, .service-list > div, .section-heading > p, .selection-copy > p, .selection-includes > li, .request-action > p, .footer-details > p';
+  const copy = '.approach-copy > p, .service-list > div, .section-heading > p, .selection-copy > p, .selection-includes > li, .request-action > p';
   document.querySelectorAll(copy).forEach((element, index) => {
     timeline(`copy-${index}`, element)
       .fromTo(element, {y:phone?45:85, opacity:.55}, {y:0, opacity:1, duration:.4}, 0)

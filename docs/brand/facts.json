@@ -126,10 +126,10 @@
     },
     {
       "id": "footer-project-name-user-copy",
-      "value": "Dennis Estate",
-      "source": "User-requested footer wording,2026-11-17",
+      "value": "Spain Property for Sale",
+      "source": "User-corrected footer name in conversation,2026-11-17",
       "status": "user-provided",
-      "publicationDecision": "Footer project identity only; does not replace the existing legal operator or assert registered company status."
+      "publicationDecision": "Requested footer copyright identity; removed the superseded Dennis Estate wording. Existing legal operator unchanged."
     }
   ]
 }
