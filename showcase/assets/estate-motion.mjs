@@ -1,10 +1,11 @@
 import { ScrollCinematicSequence } from './sequence-player.mjs';
+import { createContentMotion } from './content-motion.mjs';
 const {gsap,ScrollTrigger}=window;
 const root=document.querySelector('#cinema');
 if(gsap&&ScrollTrigger&&root){
  gsap.registerPlugin(ScrollTrigger);
- const mm=gsap.matchMedia();let disposed=false;let activePlayer;let heroTrigger;let immersiveTrigger;
- const qa={hero:()=>({range:heroTrigger?{start:heroTrigger.start,end:heroTrigger.end}:null,...(activePlayer?.state()||{renderer:'poster',reduced:true})}),immersive:()=>({range:immersiveTrigger?{start:immersiveTrigger.start,end:immersiveTrigger.end}:null,clipPath:getComputedStyle(document.querySelector('.threshold-image')).clipPath})};
+ const mm=gsap.matchMedia();let disposed=false;let activePlayer;let heroTrigger;let immersiveTrigger;let contentScenes=[];
+ const qa={hero:()=>({range:heroTrigger?{start:heroTrigger.start,end:heroTrigger.end}:null,...(activePlayer?.state()||{renderer:'poster',reduced:true})}),immersive:()=>({range:immersiveTrigger?{start:immersiveTrigger.start,end:immersiveTrigger.end}:null,clipPath:getComputedStyle(document.querySelector('.threshold-image')).clipPath}),content:()=>contentScenes.map(({id,motion})=>({id,range:{start:motion.scrollTrigger.start,end:motion.scrollTrigger.end},progress:motion.progress()}))};
  window.__estateMotionQA=Object.freeze(qa);
  mm.add({desktop:'(min-width:800px)',phone:'(max-width:799px)',reduce:'(prefers-reduced-motion:reduce)'},context=>{
   const {phone,reduce}=context.conditions;let player;let dead=false;const controller=new AbortController();
@@ -28,11 +29,12 @@ if(gsap&&ScrollTrigger&&root){
       scrub:.25,invalidateOnRefresh:true},
     y:phone?-36:-64,opacity:0,ease:'none'
   });
+  contentScenes=createContentMotion(gsap,{phone});
   const threshold=document.querySelector('#threshold');
   if(threshold){
     const tl=gsap.timeline({scrollTrigger:{id:'estate-threshold',trigger:threshold,start:'top bottom',end:'top top',scrub:true,invalidateOnRefresh:true}});
     tl.fromTo('.threshold-image',{clipPath:phone?'inset(8% 6% 8% 6% round 24px)':'inset(12% 18% 12% 18% round 32px)'},{clipPath:'inset(0% 0% 0% 0% round 0px)',duration:1,ease:'none'},0)
-      .fromTo('.threshold-image img',{scale:1.08},{scale:1,duration:1,ease:'none'},0);
+      .fromTo('.threshold-image img',{scale:1.14,yPercent:-2},{scale:1.06,yPercent:2,duration:1,ease:'none'},0);
     immersiveTrigger=tl.scrollTrigger;
   }
   const tier=phone?'mobile':'desktop';
@@ -45,17 +47,24 @@ if(gsap&&ScrollTrigger&&root){
   const resize=new ResizeObserver(()=>player?.resize());resize.observe(canvas);
   // A shorter city table changes both the full-page sequence and mask bounds.
   let layoutFrame;let layoutWidth=0;let layoutHeight=0;
+  const refreshLayout=()=>{
+    cancelAnimationFrame(layoutFrame);
+    layoutFrame=requestAnimationFrame(()=>{
+      if(!dead&&!document.documentElement.classList.contains('quiz-open'))ScrollTrigger.refresh();
+    });
+  };
   const layoutObserver=new ResizeObserver(([entry])=>{
     if(document.documentElement.classList.contains('quiz-open'))return;
     const {width,height}=entry.contentRect;
     if(Math.abs(width-layoutWidth)<.5&&Math.abs(height-layoutHeight)<.5)return;
-    layoutWidth=width;layoutHeight=height;cancelAnimationFrame(layoutFrame);
-    layoutFrame=requestAnimationFrame(()=>{
-      if(!dead&&!document.documentElement.classList.contains('quiz-open'))ScrollTrigger.refresh();
-    });
+    layoutWidth=width;layoutHeight=height;refreshLayout();
   });layoutObserver.observe(main);
+  // Preference/orientation changes can rebuild triggers while the modal locks body position.
+  // Capture close, then measure next frame after the quiz restores ordinary document scrolling.
+  const dialogClosed=event=>{if(event.target.matches?.('dialog.quiz-dialog'))refreshLayout();};
+  document.addEventListener('close',dialogClosed,true);
   const visibility=()=>player?.setActive(!document.hidden);document.addEventListener('visibilitychange',visibility);
-  return()=>{dead=true;controller.abort();cancelAnimationFrame(layoutFrame);layoutObserver.disconnect();gsap.ticker.remove(tick);observer.disconnect();resize.disconnect();document.removeEventListener('visibilitychange',visibility);player?.dispose();if(activePlayer===player)activePlayer=undefined;root.classList.remove('motion-enabled');heroTrigger=undefined;immersiveTrigger=undefined;if(bar)bar.style.transform='';};
+  return()=>{dead=true;controller.abort();cancelAnimationFrame(layoutFrame);layoutObserver.disconnect();document.removeEventListener('close',dialogClosed,true);gsap.ticker.remove(tick);observer.disconnect();resize.disconnect();document.removeEventListener('visibilitychange',visibility);player?.dispose();if(activePlayer===player)activePlayer=undefined;root.classList.remove('motion-enabled');heroTrigger=undefined;immersiveTrigger=undefined;contentScenes=[];if(bar)bar.style.transform='';};
  });
  document.fonts.ready.then(()=>{if(!disposed)ScrollTrigger.refresh();});
  window.addEventListener('pagehide',()=>{disposed=true;mm.revert();},{once:true});

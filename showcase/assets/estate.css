@@ -62,16 +62,24 @@ h2{font-size:clamp(40px,5.2vw,76px)}.page-frame{padding-left:var(--frame);paddin
 
 /* One continuous navy surface keeps the content and controls together. */
 .content-panel{background:rgba(11,19,32,.94);border:1px solid rgba(147,197,253,.14);border-radius:28px;color:#f3f3ed}
+.kinetic-line{display:block;overflow:clip;padding:0 .04em .14em 0;margin-bottom:-.14em}
+.kinetic-line>span{display:block;transform-origin:left bottom}
+.editorial-media{position:relative;min-width:0;overflow:hidden;background:#182029}
+.editorial-media picture{display:block;position:absolute;inset:0;overflow:hidden}
+.editorial-media img{width:100%;height:100%;object-fit:cover}
 
 /* APPROACH SECTION */
 .approach{padding-top:100px;padding-bottom:60px}
-.approach-card{width:100%;padding:clamp(36px,4.5vw,64px);display:grid;grid-template-columns:1fr 1.1fr;gap:6vw}
+.approach-card{width:100%;padding:0;display:grid;grid-template-columns:1.05fr 1fr;gap:0;overflow:clip}
+.approach-media{min-height:610px}
+.approach-media img{object-position:52% 50%}
+.approach-copy{padding:clamp(32px,4vw,58px);align-self:center;min-width:0}
 .approach h2{color:#ffffff;font-size:clamp(38px,4.4vw,64px)}
 .approach .lead{margin-top:28px;font-size:clamp(18px,1.5vw,22px);color:#e2eaf4;line-height:1.6}
 .approach-copy>p+p{margin-top:20px;color:#b4c5db;font-size:16px;line-height:1.6}
 .approach-copy .button{margin-top:32px;font-size:14px;gap:24px}
-.service-list{margin:0;display:grid;gap:26px;align-content:start}
-.service-list>div+div{padding-top:24px;border-top:1px solid rgba(147,197,253,.14)}
+.service-list{grid-column:1/-1;margin:0;padding:44px clamp(32px,4vw,58px) 48px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:32px;align-content:start}
+.service-list>div{min-width:0}
 .service-list dt{font:500 clamp(20px,1.7vw,25px)/1.3 var(--font-display);letter-spacing:-.025em;color:#ffffff}
 .service-list dd{margin:10px 0 0;color:#b4c5db;font-size:16px;line-height:1.65}
 .text-link{display:inline-flex;justify-content:space-between;align-items:center;gap:28px;font-size:15px;font-weight:600;border:0;background:transparent;text-decoration:none;padding:12px 0;min-height:44px}
@@ -117,22 +125,27 @@ h2{font-size:clamp(40px,5.2vw,76px)}.page-frame{padding-left:var(--frame);paddin
 .threshold{position:relative;isolation:isolate;height:80svh;min-height:560px;margin:50px 0;overflow:clip;border-radius:28px}
 .threshold-frame{position:relative;width:100%;height:100%}
 .threshold-image{position:absolute;inset:0;z-index:1;border-radius:28px;overflow:hidden}
+.threshold-image picture{display:block;height:100%;width:100%}
 .threshold-image img{height:100%;width:100%;object-fit:cover}
-.threshold-scrim{position:absolute;inset:0;z-index:2;background:linear-gradient(180deg,rgba(11,19,32,.15) 0%,rgba(11,19,32,.78) 100%);border-radius:28px}
+.threshold-scrim{position:absolute;inset:0;z-index:2;background:linear-gradient(180deg,rgba(0,0,0,.03) 20%,rgba(0,0,0,.18) 42%,rgba(0,0,0,.84) 100%);border-radius:28px;pointer-events:none}
 .threshold-copy{position:absolute;bottom:56px;left:clamp(24px,4vw,56px);right:clamp(24px,4vw,56px);z-index:3;display:flex;justify-content:space-between;align-items:flex-end;gap:40px;color:#ffffff}
-.threshold h2{font-size:clamp(42px,5.2vw,76px);color:#ffffff}
+.threshold h2{font-size:clamp(42px,5.2vw,76px);color:#ffffff;font-weight:500;text-shadow:0 2px 16px #0008}
 .threshold-copy>div{max-width:390px}
 .threshold p{font-size:17px;line-height:1.6;color:#eaf0ed}
 .threshold .button{margin-top:28px;font-size:14px;gap:24px}
 
 /* SEARCH SECTION */
 .search{padding-top:60px;padding-bottom:100px}
-.search-card{padding:clamp(36px,4.5vw,64px);display:grid;grid-template-columns:1.4fr 1fr;align-items:center;gap:6vw}
+.search-card{padding:0;display:grid;grid-template-columns:1.1fr 1fr;align-items:start;gap:0;overflow:clip}
+.search-media{grid-column:2;grid-row:1/span 3;height:100%;min-height:680px}
+.search-media img{object-position:48% 50%}
+.search-copy{grid-column:1;grid-row:1;padding:clamp(32px,4vw,58px) clamp(32px,4vw,58px) 0;min-width:0}
 .search-copy h2{font-size:clamp(36px,4.4vw,64px);color:#ffffff}
 .search-copy .lead{margin-top:24px;font-size:18px;color:#c1d2e9;max-width:52ch;line-height:1.65}
 .selection-includes{padding-left:20px;margin:26px 0 0;color:#e2eaf4;font-size:16px;line-height:1.6}
 .selection-includes li+li{margin-top:10px}
-.request-action{align-self:center}
+.request-action{grid-column:1;grid-row:2;padding:32px clamp(32px,4vw,58px) clamp(32px,4vw,58px)}
+.search-card>noscript{grid-column:1;padding:0 32px 32px}
 .request-action .button{font-size:14px;gap:24px}
 .request-action p{margin:20px 0 0;color:#9db1cb;font-size:14px;line-height:1.65;max-width:30ch}
 .search-next{max-width:54ch;margin-top:16px;font-size:16px;color:#b4c5db}
@@ -160,6 +173,7 @@ h2{font-size:clamp(40px,5.2vw,76px)}.page-frame{padding-left:var(--frame);paddin
 
 /* RESPONSIVE */
 @media(max-width:1000px){
+ .service-list{grid-template-columns:repeat(2,minmax(0,1fr))}
  :root{--brand-width:160px}
  .desktop-nav{gap:20px}
  .header-action{font-size:12px;gap:16px}
@@ -185,7 +199,10 @@ h2{font-size:clamp(40px,5.2vw,76px)}.page-frame{padding-left:var(--frame);paddin
  .cinema-scrim{background:linear-gradient(180deg,rgba(11,19,32,.82) 0%,rgba(11,19,32,.2) 20%,rgba(11,19,32,.1) 40%,rgba(11,19,32,.42) 70%,rgba(11,19,32,.88) 100%)}
  .cinema-poster{object-position:55% 50%}
  .approach{padding-top:64px;padding-bottom:32px}
- .approach-card{grid-template-columns:1fr;gap:40px;padding:32px 24px}
+ .approach-card{grid-template-columns:1fr;gap:0;padding:0}
+ .approach-media{min-height:0;height:340px}
+ .approach-copy{padding:32px 24px}
+ .service-list{grid-template-columns:1fr;gap:28px;padding:8px 24px 36px}
  .approach h2{font-size:38px}
  .approach .lead{font-size:20px}
  .approach-copy>p+p{font-size:15px}
@@ -215,7 +232,10 @@ h2{font-size:clamp(40px,5.2vw,76px)}.page-frame{padding-left:var(--frame);paddin
  .threshold p{font-size:15px;margin-top:20px}
  .threshold-image img{object-position:60% 50%}
  .search{display:block;padding-top:32px;padding-bottom:64px}
- .search-card{display:block;padding:32px 24px}
+ .search-card{display:flex;flex-direction:column;padding:0;align-items:stretch}
+ .search-media{height:300px;min-height:0}
+ .search-copy{padding:32px 24px 0}
+ .request-action{padding:0 24px 36px}
  .search h2{font-size:36px}
  .search .lead{font-size:17px;margin-top:20px}
  .search-next{font-size:15px}

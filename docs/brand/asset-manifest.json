@@ -1,5 +1,5 @@
 {
-  "checkedDate": "2026-11-16",
+  "checkedDate": "2026-11-17",
   "sourceCommit": "97b8a62a72de3b4477bd085a41f3e54ad664d11a",
   "assets": [
     {
@@ -730,7 +730,90 @@
       "desktopManifest": "showcase/assets/sequence/desktop/manifest.json",
       "mobileManifest": "showcase/assets/sequence/mobile/manifest.json",
       "transforms": "ActualAVIF encoding,desktop native1280x720,mobile authored480x720crop;runtime editorial order starts2s and wraps",
-      "intendedUse": "Canvas scroll sequence and still posters; on-page illustrative label"
+      "intendedUse": "Canvas scroll sequence and photographic section compositions; not represented as identified available listings"
+    },
+    {
+      "id": "section-photo-cuts",
+      "source": "User-supplied videoesp.mp4, existing AVIF derivatives",
+      "sourceSha256": "5a539d5d6038d41dd7c7f97fa244a0c882d26509d831e44bb8d6296685fe18ec",
+      "rightsStatus": "User explicitly requested reuse for local preview on2026-11-17; public rights not independently established",
+      "subjectStatus": "Architectural visualizations, not identified live listings",
+      "useDecision": "Native responsive picture elements; no new encoding; exterior / terrace / living-room composition",
+      "cropIntent": "Desktop cover crop; authored portrait source at widths below600px; landscape frame on tablets; bounded inner scale1.14to1.06",
+      "sources": [
+        {
+          "section": "approach",
+          "tier": "desktop",
+          "frame": 49,
+          "path": "showcase/assets/sequence/desktop/frame_00049.avif",
+          "bytes": 71475,
+          "sha256": "42a75519131c5cf047df5403196a826b0b105244a50940d62e247067828d001f",
+          "dimensions": [
+            1280,
+            720
+          ]
+        },
+        {
+          "section": "approach",
+          "tier": "mobile",
+          "frame": 25,
+          "path": "showcase/assets/sequence/mobile/frame_00025.avif",
+          "bytes": 22638,
+          "sha256": "eb9e558ef5d2c2017154f5bb2d911cfabac3dbc59e88693f933ae5e4144e694d",
+          "dimensions": [
+            480,
+            720
+          ]
+        },
+        {
+          "section": "threshold",
+          "tier": "desktop",
+          "frame": 145,
+          "path": "showcase/assets/sequence/desktop/frame_00145.avif",
+          "bytes": 47238,
+          "sha256": "71ac4c4402543c4c8d1d4054a207fb9d2bb2035775959b370c0cadef25d2bb46",
+          "dimensions": [
+            1280,
+            720
+          ]
+        },
+        {
+          "section": "threshold",
+          "tier": "mobile",
+          "frame": 73,
+          "path": "showcase/assets/sequence/mobile/frame_00073.avif",
+          "bytes": 18078,
+          "sha256": "db7790014acf236237d0fa57db65ae887163432b4101a17bfe5a9b30d3dbf7cb",
+          "dimensions": [
+            480,
+            720
+          ]
+        },
+        {
+          "section": "search",
+          "tier": "desktop",
+          "frame": 1,
+          "path": "showcase/assets/sequence/desktop/frame_00001.avif",
+          "bytes": 32039,
+          "sha256": "8022f26f6c0330a9bf1cdb9e9b89a75e52afd771460c8186cd3dce0a1ac22ca1",
+          "dimensions": [
+            1280,
+            720
+          ]
+        },
+        {
+          "section": "search",
+          "tier": "mobile",
+          "frame": 1,
+          "path": "showcase/assets/sequence/mobile/frame_00001.avif",
+          "bytes": 11742,
+          "sha256": "940efba4b16b237360133226b5d1b7d07599637b4a5acc33ebf193573f4f210d",
+          "dimensions": [
+            480,
+            720
+          ]
+        }
+      ]
     }
   ]
 }
