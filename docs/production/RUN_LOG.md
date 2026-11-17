@@ -106,3 +106,5 @@ Art/motion states: photo aperture starts as narrow rounded center window with1.5
 ## 2026-11-17: transparent benefits image and merged request content
 
 Latest user correction: benefits photo now reveals over transparent card/media surfaces, with navy only in the lower reading area. Added a separate lower body wrapper to preserve the large photographic overlap and full-width navy beneath it. Removed the entire final request/photo/sticky section; moved its selection description, three deliverables, WhatsApp/Telegram delivery, custom-budget note, CTA and no-JS email fallback into the benefits section. The existing search hash now lands on that integrated request row. Removed obsolete search CSS and motion branches. Production build passed; no additional tests/browser QA per the user's standing instruction. No push/deploy.
+
+2026-11-17: removed the viewing section's photo and scrim entirely at the user's request. Removed its dedicated mask timeline and unused image styles; text/button and their scroll motion remain on transparent surfaces over the shared background. Production build only; no test/browser run per standing instruction.

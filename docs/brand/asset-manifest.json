@@ -835,8 +835,7 @@
       "useDecision": "Paused native video driven by scroll, replaces runtime AVIF decoder and modulo source wrap",
       "rightsStatus": "User-authorized local use; public rights not newly verified",
       "photoScenes": [
-        "showcase/assets/slides/01-marbella-modern-infinity-villa.webp",
-        "showcase/assets/slides/penthouse-fuengirola-sea.webp"
+        "showcase/assets/slides/01-marbella-modern-infinity-villa.webp"
       ],
       "photoSource": "Previously inventoried original-repository1920pxassets; descriptive scenes only, no location/listing attribution"
     }
