@@ -691,6 +691,3 @@ html{background:#0b1320}
   }
 }
 
-.preloader-status{position:absolute;bottom:100px;left:20px;right:20px;text-align:center;font:400 14px/1.5 'Manrope',sans-serif;color:#f7f4ec}
-.preloader-skip{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);min-height:44px;padding:10px 22px;border:1px solid #ffffff66;border-radius:24px;background:transparent;color:#fff;font:inherit;cursor:pointer}
-.preloader-skip:focus-visible{outline:3px solid #93c5fd;outline-offset:4px}
