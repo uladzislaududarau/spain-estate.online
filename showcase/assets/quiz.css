@@ -192,3 +192,7 @@ body.quiz-open { position: fixed; inset-inline: 0; top: var(--quiz-page-scroll-o
 .quiz-dialog .quiz-choice,.quiz-dialog .quiz-choice *{-webkit-tap-highlight-color:transparent}
 .quiz-dialog .quiz-choice input{appearance:none;-webkit-appearance:none;border:0;border-radius:inherit;background:transparent;box-shadow:none;outline:none}
 .quiz-dialog .quiz-choice .quiz-choice-mark{transition:background-color 220ms ease,border-color 220ms ease}
+
+@media(min-width:800px){
+ .quiz-dialog .quiz-online-viewings{grid-template-columns:18px auto auto;justify-content:start}
+}

@@ -339,3 +339,5 @@ Build complete. Chrome390touch-context actualtap tests apartment/villa/penthouse
 2026-11-17: unified Hero/coast primary actions under sharedsearch-ctaclass. Hero now sameblue#2563eb/whiteinkascoast;both leftalignedtext,sameManrope600font16pxdesktop/14pxphone,line1.4,padding20×28desktop/18×24phone,minheight64/58,and24pxSVGarrow. Removed absolute CTAarrowplacement so text/arrow share normal flexspacing,coastlabelinheritsfontandalignleftinstead of centered13/15pxlegacyvariants. Fine-pointerhoverbothwhitenavy;touchremainsbluewithoutparenttranslation. Original widths/names/quizpresets retained.
 
 Buildcomplete. Chrome320/390/1440computed styles match bothactions for colour/font/weight/lineheight/padding/minheight/alignment;labelinheritsrightsizeandnohorizontaloverflow. No real formsubmission or backendchange.
+
+2026-11-18: desktop-only online-viewing preference grid now uses content-sized text/badge columns with start alignment, keeping «Популярно» immediately beside the label with10pxgap. Phone grid unchanged. Production build completed; no form logic or data change.
