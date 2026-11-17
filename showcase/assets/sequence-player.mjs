@@ -44,8 +44,19 @@ export class ScrollCinematicSequence {
     const budget=this.mobile?1200000:2000000;
     this.dpr=Math.min(devicePixelRatio||1,2,Math.sqrt(budget/Math.max(1,width*height)));
     const w=Math.max(1,Math.round(width*this.dpr)),h=Math.max(1,Math.round(height*this.dpr));
-    if(this.canvas.width!==w||this.canvas.height!==h){this.canvas.width=w;this.canvas.height=h;}
-    this.ctx.setTransform(this.dpr,0,0,this.dpr,0,0);this.ctx.imageSmoothingEnabled=true;this.ctx.imageSmoothingQuality='high';this.dirty=true;this.resized=true;
+    const backingChanged=this.canvas.width!==w||this.canvas.height!==h;
+    let snapshot;
+    if(backingChanged&&this.canvas.dataset.painted==='true'){
+      snapshot=this.resizeSnapshot||(this.resizeSnapshot=document.createElement('canvas'));
+      if(snapshot.width!==this.canvas.width)snapshot.width=this.canvas.width;
+      if(snapshot.height!==this.canvas.height)snapshot.height=this.canvas.height;
+      snapshot.getContext('2d',{alpha:false}).drawImage(this.canvas,0,0);
+    }
+    if(backingChanged){this.canvas.width=w;this.canvas.height=h;}
+    this.ctx.setTransform(this.dpr,0,0,this.dpr,0,0);this.ctx.imageSmoothingEnabled=true;this.ctx.imageSmoothingQuality='high';
+    // Resizing clears the backing store. Restore synchronously, before paint.
+    if(snapshot)this.ctx.drawImage(snapshot,0,0,snapshot.width,snapshot.height,0,0,this.w,this.h);
+    this.dirty=true;this.resized=true;
   }
   rememberBlob(i,blob){
     if(this.blobs.has(i)){this.blobBytes-=this.blobs.get(i).size;this.blobs.delete(i);}
@@ -125,5 +136,5 @@ export class ScrollCinematicSequence {
     this.drawTimes.push(performance.now()-start);if(this.drawTimes.length>500)this.drawTimes.shift();
   }
   state(){return {renderer:'canvas-avif-fullhd',quality:this.renderedQuality,previewLoaded:window.__cinemaBoot?.loaded||0,progress:this.progress,count:this.manifest.count,requested:this.desired,rendered:this.rendered,width:this.manifest.width,height:this.manifest.height,residentBytes:this.cache.size*this.frameBytes,maxResidentBytes:this.maxObservedBytes,cacheCap:this.cap,compressedBytes:this.blobBytes,compressedCap:this.blobCap,backingBytes:this.canvas.width*this.canvas.height*4,pending:this.pending.size,failures:[...this.failed],active:this.active,disposed:this.disposed};}
-  dispose(){this.disposed=true;clearTimeout(this.seekTimer);window.removeEventListener('sp:cinema-progress',this.previewChanged);for(const bitmap of this.previewCache.values())this.release(bitmap);this.previewCache.clear();for(const controller of this.pending.values())controller.abort();for(const bitmap of this.cache.values())this.release(bitmap);this.cache.clear();this.blobs.clear();this.blobBytes=0;this.canvas.width=1;this.canvas.height=1;delete this.canvas.dataset.painted;}
+  dispose(){this.disposed=true;if(this.resizeSnapshot){this.resizeSnapshot.width=1;this.resizeSnapshot.height=1;}clearTimeout(this.seekTimer);window.removeEventListener('sp:cinema-progress',this.previewChanged);for(const bitmap of this.previewCache.values())this.release(bitmap);this.previewCache.clear();for(const controller of this.pending.values())controller.abort();for(const bitmap of this.cache.values())this.release(bitmap);this.cache.clear();this.blobs.clear();this.blobBytes=0;this.canvas.width=1;this.canvas.height=1;delete this.canvas.dataset.painted;}
 }

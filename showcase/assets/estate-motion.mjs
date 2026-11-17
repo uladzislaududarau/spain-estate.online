@@ -31,9 +31,21 @@ if(gsap&&ScrollTrigger&&root){
   }
   const background={progress:0};
   // Fit every frame of the new Full HD source to the page, including the footer.
-  heroTrigger=gsap.to(background,{progress:1,ease:'none',scrollTrigger:{id:'estate-cinema',trigger:main,start:'top top',end:()=>Math.max(1,ScrollTrigger.maxScroll(window)),scrub:.3,invalidateOnRefresh:true},onUpdate:()=>{
+  let backgroundRefreshFrame;
+  const paintBackground=progress=>{
+    background.progress=Math.max(0,Math.min(1,progress));
     player?.setProgress(background.progress);if(bar)bar.style.transform=`scaleX(${background.progress})`;
-  }}).scrollTrigger;
+  };
+  // Read the native trigger position directly. Refreshing a scrubbed value tween
+  // can reset its value to zero while Safari still sits at the page bottom.
+  heroTrigger=ScrollTrigger.create({id:'estate-cinema',trigger:main,start:'top top',
+    end:()=>Math.max(1,ScrollTrigger.maxScroll(window)),invalidateOnRefresh:true,
+    onUpdate:self=>{if(!ScrollTrigger.isRefreshing)paintBackground(self.progress);},
+    onRefresh:self=>{
+      cancelAnimationFrame(backgroundRefreshFrame);
+      backgroundRefreshFrame=requestAnimationFrame(()=>{if(!dead)paintBackground((self.scroll()-self.start)/Math.max(1,self.end-self.start));});
+    }
+  });
   const heroCopy=document.querySelector('.hero-copy');
   // Text is visible at rest; only native scroll moves the parent.
   gsap.to(heroCopy,{
@@ -87,7 +99,7 @@ if(gsap&&ScrollTrigger&&root){
   const dialogClosed=event=>{if(event.target.matches?.('dialog.quiz-dialog'))refreshLayout();};
   document.addEventListener('close',dialogClosed,true);
   const visibility=()=>player?.setActive(sceneActive&&!document.hidden);document.addEventListener('visibilitychange',visibility);
-  return()=>{dead=true;controller.abort();cancelAnimationFrame(layoutFrame);layoutObserver.disconnect();document.removeEventListener('close',dialogClosed,true);gsap.ticker.remove(tick);observer.disconnect();resize.disconnect();document.removeEventListener('visibilitychange',visibility);player?.dispose();if(activePlayer===player)activePlayer=undefined;chapters.forEach(chapter=>chapter.classList.remove('coast-pinned'));chapterPins=[];root.classList.remove('motion-enabled');heroTrigger=undefined;contentScenes=[];if(bar)bar.style.transform='';};
+  return()=>{dead=true;cancelAnimationFrame(backgroundRefreshFrame);controller.abort();cancelAnimationFrame(layoutFrame);layoutObserver.disconnect();document.removeEventListener('close',dialogClosed,true);gsap.ticker.remove(tick);observer.disconnect();resize.disconnect();document.removeEventListener('visibilitychange',visibility);player?.dispose();if(activePlayer===player)activePlayer=undefined;chapters.forEach(chapter=>chapter.classList.remove('coast-pinned'));chapterPins=[];root.classList.remove('motion-enabled');heroTrigger=undefined;contentScenes=[];if(bar)bar.style.transform='';};
  });
  document.fonts.ready.then(()=>{if(!disposed)ScrollTrigger.refresh();});
  window.addEventListener('pagehide',()=>{disposed=true;mm.revert();},{once:true});

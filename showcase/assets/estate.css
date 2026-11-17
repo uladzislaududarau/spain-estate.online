@@ -693,3 +693,6 @@ html{background:#0b1320}
 
 
 .icon-arrow{display:inline-block;width:1em;height:1em;vertical-align:-.12em;flex-shrink:0}
+
+/* Safari toolbar changes must not repeatedly clear/resize the background. */
+@media(max-width:799px){.cinema{height:100lvh}}
