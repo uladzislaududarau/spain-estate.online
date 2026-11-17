@@ -33,9 +33,9 @@ body.quiz-open { position: fixed; inset-inline: 0; top: var(--quiz-page-scroll-o
 .quiz-intro { color:var(--quiz-muted); max-width:640px; margin:0 0 24px; font-size:14px; line-height:1.6; }
 .quiz-options { border:0; padding:0; margin:0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; min-inline-size:0; }
 .quiz-region-options { grid-template-columns:repeat(3,minmax(0,1fr)); }
-.quiz-choice { display:flex; align-items:center; position:relative; gap:12px; min-height:62px; padding:15px 17px; margin:0; border:1px solid var(--quiz-line); border-radius:13px; background:#fafaf6; color:var(--quiz-ink); cursor:pointer; transition:background 160ms,border-color 160ms,transform 160ms; font-size:14px; line-height:1.35; }
-.quiz-choice:hover { background:#eff6ff; border-color:#93c5fd; transform:translateY(-1px); }
-.quiz-choice:active { transform:translateY(0) scale(.99); }
+.quiz-choice { display:flex; align-items:center; position:relative; gap:12px; min-height:62px; padding:15px 17px; margin:0; border:1px solid var(--quiz-line); border-radius:13px; background:#fafaf6; color:var(--quiz-ink); cursor:pointer; transition:background-color 220ms ease,border-color 220ms ease; font-size:14px; line-height:1.35; }
+@media(hover:hover) and (pointer:fine){.quiz-choice:hover{background:#eff6ff;border-color:#93c5fd}}
+.quiz-choice:active{transform:none}
 .quiz-choice:has(input:checked) { background:var(--quiz-glass); border-color:#3b82f6; }
 .quiz-choice:has(input:focus-visible) { outline:3px solid #2563eb; outline-offset:3px; }
 .quiz-choice input { position:absolute; width:1px; height:1px; margin:0; opacity:0; }
@@ -187,3 +187,8 @@ body.quiz-open { position: fixed; inset-inline: 0; top: var(--quiz-page-scroll-o
 .quiz-source-title{margin:0 0 9px;color:var(--quiz-ink);font-size:13px;font-weight:600}
 .quiz-source-updated{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;margin:0}
 .quiz-source-updated time{display:inline-flex;padding:5px 10px;border-radius:6px;background:#fff;color:var(--quiz-ink);font-size:13px;font-weight:600;white-space:normal}
+
+/* Invisible native radios must not paint Safari's oval touch feedback. */
+.quiz-dialog .quiz-choice,.quiz-dialog .quiz-choice *{-webkit-tap-highlight-color:transparent}
+.quiz-dialog .quiz-choice input{appearance:none;-webkit-appearance:none;border:0;border-radius:inherit;background:transparent;box-shadow:none;outline:none}
+.quiz-dialog .quiz-choice .quiz-choice-mark{transition:background-color 220ms ease,border-color 220ms ease}
