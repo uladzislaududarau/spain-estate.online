@@ -3,11 +3,12 @@ import { THANK_YOU_PATH, isThankYouPath, receiptFromSession, rememberSavedLead }
 import { steps as originalQuestions, copy, policyVersion } from './quiz.config.mjs';
 import { telegramUsername, normalizeName, contactMethodLabel } from './contact.mjs';
 import { createPhoneField } from './phone-field.mjs';
+import { dailyPriceStamp, nextPriceStampChange } from './price-clock.mjs';
 import { regions, pricingData, priceSource, generateBudgetRanges, selectedBudgetRanges, formatMoney } from './pricing.mjs';
 
 const storageKey = 'spain-property-cinematic-quiz-v1';
 const titles = {
-  ru: ['Какое побережье вы рассматриваете?', 'Какие города предпочтительнее?', 'Укажите тип объекта', 'Выберите бюджет', 'Какая ваша основная цель?', 'Когда планируете приехать в Испанию?', 'Ваша подборка готова!'],
+  ru: ['Какое побережье вы рассматриваете?', 'Какие города предпочтительнее?', 'Укажите тип объекта', 'Выберите бюджет', 'Какая ваша основная цель?', 'Когда планируете приехать в Испанию?', 'Объекты по вашим критериям подготовлены'],
   en: ['Which coast feels like home?', 'Which cities shall we consider?', 'What are you looking for?', 'Your property budget', 'What is your reason for buying?', 'When are you planning to visit?', 'Let’s discuss your selection']
 };
 let lang = document.documentElement.lang === 'en' ? 'en' : 'ru';
@@ -32,6 +33,7 @@ let focusBefore;
 let phoneField;
 let scrollY = 0;
 let viewportFrame;
+let priceStampTimer;
 const phoneStates = Object.fromEntries(['whatsapp', 'viber', 'phone'].map(method => [method, { country: 'ES', source: 'fallback', hasInput: false }]));
 const propertyTypes = [
   ['apartment', 'Квартира / апартаменты', 'Apartment'], ['villa', 'Дом / вилла', 'House / villa'], ['both', 'Рассматриваю оба варианта', 'Considering both'],
@@ -97,6 +99,7 @@ dialog.addEventListener('click', event => {
   if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) close();
 });
 dialog.addEventListener('close', () => {
+  clearTimeout(priceStampTimer);
   phoneField?.cancel(); phoneField = undefined; cancelAnimationFrame(viewportFrame);
   document.documentElement.classList.remove('quiz-open'); document.body.classList.remove('quiz-open');
   document.body.style.removeProperty('--quiz-page-scroll-offset');
@@ -121,6 +124,7 @@ function choice({ value, label, checked, multiple = false, name, note, onChange 
 function updateNext() { const next = dialog.querySelector('[data-next]'); if (next) next.disabled = !hasAnswer(); }
 function edit(index) { step = index; persist(); render(); }
 function render() {
+  clearTimeout(priceStampTimer);
   phoneField?.cancel(); phoneField = undefined;
   dialog.lang = lang; dialog.dataset.stage = complete ? 'success' : step === 6 ? 'contact' : `question-${step}`;
   const shell = node('div', { class: 'quiz-shell' });
@@ -161,6 +165,7 @@ function render() {
     actions.append(next); shell.append(actions);
   }
   dialog.replaceChildren(shell);
+  if(step===3&&!complete)updatePriceStamp();
   if (dialog.open) {
     heading.focus({ preventScroll: true });
   }
@@ -229,13 +234,20 @@ function renderBudget(content) {
   if(!generated.ranges.length)fieldset.append(choice({value:'deferred',name:'budget',label:text('Уточнить бюджет при подборе','Clarify budget during selection'),checked:budgetMode==='deferred',onChange(){budgetMode='deferred';budget={deferred:true};}}));
   content.append(fieldset);
   const source = node('div', { class: 'quiz-source-note', id: 'quiz-budget-source', 'data-source-date': priceSource.date });
-  source.append(node('p', { class: 'quiz-source-title' }, text('Пороговые цены из нашей базы:', 'Price thresholds from our database:')));
+  source.append(node('p', { class: 'quiz-source-title' }, text('Каталог недвижимости Испании', 'Spanish property catalogue')));
   const updated = node('p', { class: 'quiz-source-updated' });
-  const date = new Intl.DateTimeFormat(lang === 'en' ? 'en-GB' : 'ru-RU', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${priceSource.date}T12:00:00Z`));
-  updated.append(node('span', {}, text('База обновлена:', 'Database updated:')), node('time', { id: 'quiz-price-stamp', datetime: priceSource.date }, date));
+  updated.append(node('span', {}, text('Последнее обновление:', 'Last update:')), node('time', { id: 'quiz-price-stamp', 'data-time-zone': 'Europe/Madrid' }));
   source.append(updated);
   content.append(source);
 }
+function updatePriceStamp(){
+  clearTimeout(priceStampTimer);
+  const element=dialog.querySelector('#quiz-price-stamp');if(!element)return;
+  const now=new Date(),stamp=dailyPriceStamp(now);
+  element.textContent=stamp.label;element.dateTime=stamp.date+'T09:00';
+  priceStampTimer=setTimeout(()=>{if(dialog.open&&step===3)updatePriceStamp();},Math.min(2147483647,nextPriceStampChange(now)-now.getTime()+10));
+}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&dialog.open&&step===3)updatePriceStamp();});
 function renderOriginalQuestion(content, id) {
   intro(content, id === 'purpose' ? 'Это поможет понять, на что обратить внимание при подборе.' : 'Можно начать с онлайн-просмотров, если поездка пока не запланирована.', id === 'purpose' ? 'This helps us understand what matters most for your selection.' : 'You can start with online viewings if a visit is not planned yet.');
   const group = node('fieldset', { class: 'quiz-options quiz-options-single', 'aria-labelledby': 'quiz-title' });
@@ -263,7 +275,7 @@ function attribution() {
 const initialAttribution = attribution();
 function renderContact(content, shell) {
   const t = copy[lang];
-  intro(content, 'Укажите удобный способ получения — готовая подборка по вашим критериям будет отправлена в течение нескольких минут.', 'Choose how you would like to receive it — your selection matching your criteria will be sent within a few minutes.');
+  intro(content, 'Укажите, пожалуйста, удобный способ получения предложений по данным объектам. Готовая подборка по вашим критериям будет отправлена в течение нескольких минут.', 'Please choose how you would like to receive offers for these properties. Your selection matching your criteria will be sent within a few minutes.');
   const form = node('form', { id: 'quiz-lead-form', novalidate: '', 'aria-labelledby': 'quiz-title' });
   const methods = node('fieldset', { class: 'quiz-options quiz-messengers', 'aria-label': t.messenger });
   for (const method of ['whatsapp', 'telegram', 'viber', 'phone']) {
