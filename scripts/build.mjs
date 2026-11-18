@@ -57,6 +57,14 @@ await emit('robots.txt', robots(origin));
 if (origin) await emit('sitemap.xml', sitemap(origin));
 await emit('404.html', '<!doctype html><html lang="ru"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>Страница не найдена | Spain Property for Sale</title><h1>Страница не найдена</h1><p><a href="/">Перейти на главную Spain Property for Sale</a></p></html>');
 await emit('_redirects', '/index.html / 301\n/concept-7-warm-travertine.html / 301\n/showcase/concept-7-warm-travertine.html / 301\n/showcase/index.html / 301\n/showcase/ / 301\n');
-await emit('_headers', `/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n${origin ? '' : '  X-Robots-Tag: noindex, nofollow\n'}`);
+// Static Assets may omit Content-Length inside the binding. Supply the exact size
+// of each deployed clip so the media handler can answer Safari's range probe.
+const clipHeaders = [];
+for (const tier of ['mobile', 'desktop']) {
+  const clip = `assets/cinema-main/scroll-${tier}.mp4`;
+  const { size } = await stat(path.join(output, clip));
+  clipHeaders.push(`/${clip}\n  X-Cinema-Length: ${size}`);
+}
+await emit('_headers', `/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n${origin ? '' : '  X-Robots-Tag: noindex, nofollow\n'}${clipHeaders.join('\n')}\n`);
 console.log(`Сборка dist готова: ${copied.size} связанных ресурсов. ${origin ? `Домен: ${origin}` : 'Предпросмотр без индексации.'}`);
 console.log('Для Cloudflare используется cloudflare/worker.mjs. Приём заявок включается после настройки D1 и секретов уведомлений.');

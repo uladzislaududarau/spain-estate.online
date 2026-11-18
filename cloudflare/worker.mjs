@@ -1,5 +1,6 @@
 import { canonicalRedirect, secureResponse } from '../server/security.mjs';
 import { validateLead } from '../server/schema.mjs';
+import { serveCinemaVideo } from './cinema-video.mjs';
 import { createCloudStore } from './store.mjs';
 
 function json(status, body, extra = {}) {
@@ -25,6 +26,10 @@ function createHandler(storeFactory = createCloudStore) {
   return {
     async fetch(request, env, ctx) {
       const url = new URL(request.url);
+      if (url.pathname === '/assets/cinema-main/scroll-mobile.mp4' ||
+          url.pathname === '/assets/cinema-main/scroll-desktop.mp4') {
+        return serveCinemaVideo(request, env.ASSETS);
+      }
       if (!url.pathname.startsWith('/api/')) return env.ASSETS.fetch(request);
       if (url.pathname === '/api/country') {
         if (request.method !== 'GET') return json(405, { code: 'method_not_allowed' }, { Allow: 'GET' });

@@ -9,7 +9,7 @@ if(gsap&&ScrollTrigger&&root){
  const qa={hero:()=>({range:heroTrigger?{start:heroTrigger.start,end:heroTrigger.end}:null,...(activePlayer?.state()||{renderer:'poster',reduced:true})}),chapters:()=>chapterPins.map(pin=>({id:pin.vars.id,start:pin.start,end:pin.end})),content:()=>contentScenes.map(({id,motion})=>({id,range:{start:motion.scrollTrigger.start,end:motion.scrollTrigger.end},progress:motion.progress()}))};
  window.__estateMotionQA=Object.freeze(qa);
  mm.add({desktop:'(min-width:800px)',phone:'(max-width:799px)',reduce:'(prefers-reduced-motion:reduce)'},context=>{
-  const {phone,reduce}=context.conditions;let player;let dead=false;const controller=new AbortController();
+  const {phone,reduce}=context.conditions;let player;let dead=false;
   if(reduce||location.pathname.startsWith('/thank-you')){root.classList.remove('motion-enabled');return;}
   root.classList.add('motion-enabled');
   const video=root.querySelector('video');const canvas=root.querySelector('canvas');const bar=root.querySelector('.cinema-progress-fill');
@@ -53,20 +53,13 @@ if(gsap&&ScrollTrigger&&root){
     y:phone?-36:-64,opacity:0,ease:'none'
   });
   contentScenes=createContentMotion(gsap,{phone});
-  const loadVideo=async()=>{
-    try{
-      const clip=await window.__loadCinemaVideo(phone);
-      if(dead)return;
-      if(video.src!==clip.url){delete video.dataset.painted;video.src=clip.url;video.load();}
-      player=new ScrollVideoPlayer(video,{progress:background.progress});activePlayer=player;
-      player.setActive(sceneActive&&!document.hidden);player.draw();
-    }catch(error){if(!dead)window.dispatchEvent(new Event('sp:cinema-unavailable'));}
-  };
-  if(window.__loadCinemaVideo)loadVideo();
-  else window.addEventListener('sp:cinema-loader',loadVideo,{once:true,signal:controller.signal});
-  const tick=()=>player?.draw();gsap.ticker.add(tick);
+  player=new ScrollVideoPlayer(video,{
+    progress:background.progress,
+    src:phone?'/assets/cinema-main/scroll-mobile.mp4':'/assets/cinema-main/scroll-desktop.mp4'
+  });
+  activePlayer=player;
+  player.setActive(sceneActive);
   const observer=new IntersectionObserver(entries=>{sceneActive=entries[0].isIntersecting;if(player)player.setActive(sceneActive&&!document.hidden);},{rootMargin:'200px'});observer.observe(root);
-  const resize=new ResizeObserver(()=>player?.resize());resize.observe(canvas);
   // A shorter city table changes the full-page sequence and text bounds.
   let layoutFrame;let layoutWidth=0;let layoutHeight=0;
   const refreshLayout=()=>{
@@ -91,7 +84,7 @@ if(gsap&&ScrollTrigger&&root){
   const dialogClosed=event=>{if(event.target.matches?.('dialog.quiz-dialog'))refreshLayout();};
   document.addEventListener('close',dialogClosed,true);
   const visibility=()=>player?.setActive(sceneActive&&!document.hidden);document.addEventListener('visibilitychange',visibility);
-  return()=>{dead=true;cancelAnimationFrame(backgroundRefreshFrame);controller.abort();cancelAnimationFrame(layoutFrame);layoutObserver.disconnect();document.removeEventListener('close',dialogClosed,true);gsap.ticker.remove(tick);observer.disconnect();resize.disconnect();document.removeEventListener('visibilitychange',visibility);player?.dispose();if(activePlayer===player)activePlayer=undefined;chapters.forEach(chapter=>chapter.classList.remove('coast-pinned'));chapterPins=[];root.classList.remove('motion-enabled');heroTrigger=undefined;contentScenes=[];if(bar)bar.style.transform='';};
+  return()=>{dead=true;cancelAnimationFrame(backgroundRefreshFrame);cancelAnimationFrame(layoutFrame);layoutObserver.disconnect();document.removeEventListener('close',dialogClosed,true);observer.disconnect();document.removeEventListener('visibilitychange',visibility);player?.dispose();if(activePlayer===player)activePlayer=undefined;chapters.forEach(chapter=>chapter.classList.remove('coast-pinned'));chapterPins=[];root.classList.remove('motion-enabled');heroTrigger=undefined;contentScenes=[];if(bar)bar.style.transform='';};
  });
  document.fonts.ready.then(()=>{if(!disposed)ScrollTrigger.refresh();});
  window.addEventListener('pagehide',()=>{disposed=true;mm.revert();},{once:true});
