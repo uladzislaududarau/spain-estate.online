@@ -7,7 +7,7 @@ import { regions, pricingData, priceSource, generateBudgetRanges, selectedBudget
 
 const storageKey = 'spain-property-cinematic-quiz-v1';
 const titles = {
-  ru: ['Какое побережье вы рассматриваете?', 'Какие выберем города?', 'Укажите тип объекта', 'Выберите бюджет', 'Какая ваша основная цель?', 'Когда планируете приехать в Испанию?', 'Ваша подборка готова!'],
+  ru: ['Какое побережье вы рассматриваете?', 'Какие города предпочтительнее?', 'Укажите тип объекта', 'Выберите бюджет', 'Какая ваша основная цель?', 'Когда планируете приехать в Испанию?', 'Ваша подборка готова!'],
   en: ['Which coast feels like home?', 'Which cities shall we consider?', 'What are you looking for?', 'Your property budget', 'What is your reason for buying?', 'When are you planning to visit?', 'Let’s discuss your selection']
 };
 let lang = document.documentElement.lang === 'en' ? 'en' : 'ru';
