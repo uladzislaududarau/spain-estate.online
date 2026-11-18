@@ -727,3 +727,7 @@ html[data-hero-fonts=fallback]{--font-display:Arial,sans-serif;--font-body:Arial
 @media(max-width:799px){
  .hero-action .search-cta,#region-search,.coast-pinned #region-search{min-height:58px;padding:18px 24px;gap:24px;font-size:14px}
 }
+
+/* Replacing city rows must not make them the page's scroll anchor. */
+#region-cities{overflow-anchor:none}
+.city-prices tbody td{font-weight:300}

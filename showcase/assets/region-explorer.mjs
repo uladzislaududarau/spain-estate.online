@@ -19,14 +19,14 @@ function animateUpdate(){
 }
 function render(animate=false){
  label.textContent=regions.find(r=>r.id===selected).name;
- const priceLabel=type==='villa'?'Виллы / дома от':'Квартиры от';
+ const priceLabel=type==='villa'?'Виллы / дома':'Квартиры';
  document.querySelector('#region-price-label').textContent=priceLabel;
  document.querySelector('#region-price-semantic').textContent=priceLabel;
  document.querySelector('#region-minimum').textContent=formatMoney(getMinimumPrice({regions:[selected],cities:[],propertyType:type}));
  const rows=pricingData.filter(row=>row.regionId===selected).sort((a,b)=>a[`${type}Min`]-b[`${type}Min`]);
  cities.replaceChildren(...rows.map(row=>{
    const tr=document.createElement('tr');const name=document.createElement('th');name.scope='row';name.textContent=row.city;
-   const money=document.createElement('td');money.textContent=formatMoney(row[`${type}Min`]);
+   const money=document.createElement('td');money.textContent='от '+formatMoney(row[`${type}Min`]);
    if(type==='villa'&&row.villaLocationNote){const note=document.createElement('small');note.textContent=row.villaLocationNote;name.append(note);}
    tr.append(name,money);return tr;
  }));

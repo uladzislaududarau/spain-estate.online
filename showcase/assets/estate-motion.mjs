@@ -72,7 +72,12 @@ if(gsap&&ScrollTrigger&&root){
   const refreshLayout=()=>{
     cancelAnimationFrame(layoutFrame);
     layoutFrame=requestAnimationFrame(()=>{
-      if(!dead&&!document.documentElement.classList.contains('quiz-open'))ScrollTrigger.refresh();
+      if(!dead&&!document.documentElement.classList.contains('quiz-open')){
+        const scrollTop=window.scrollY;
+        ScrollTrigger.refresh();
+        // A table update must not reset mobile scroll during trigger refresh.
+        if(phone){const restored=Math.min(scrollTop,Math.max(0,ScrollTrigger.maxScroll(window)));if(Math.abs(window.scrollY-restored)>.5)window.scrollTo({top:restored,behavior:'instant'});}
+      }
     });
   };
   const layoutObserver=new ResizeObserver(([entry])=>{
