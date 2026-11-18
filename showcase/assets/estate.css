@@ -731,3 +731,6 @@ html[data-hero-fonts=fallback]{--font-display:Arial,sans-serif;--font-body:Arial
 /* Replacing city rows must not make them the page's scroll anchor. */
 #region-cities{overflow-anchor:none}
 .city-prices tbody td{font-weight:300}
+
+/* Safari must restore scroll synchronously during a coast-table refresh. */
+@media(max-width:799px){html{scroll-behavior:auto}}
