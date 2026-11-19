@@ -1,20 +1,16 @@
-import { ScrollVideoPlayer } from './scroll-video.mjs';
 import { createContentMotion } from './content-motion.mjs';
 import './region-explorer.mjs';
 const {gsap,ScrollTrigger}=window;
 const root=document.querySelector('#cinema');
 if(gsap&&ScrollTrigger&&root){
  gsap.registerPlugin(ScrollTrigger);
- const mm=gsap.matchMedia();let disposed=false;let activePlayer;let heroTrigger;let contentScenes=[];let chapterPins=[];
- const qa={hero:()=>({range:heroTrigger?{start:heroTrigger.start,end:heroTrigger.end}:null,...(activePlayer?.state()||{renderer:'poster',reduced:true})}),chapters:()=>chapterPins.map(pin=>({id:pin.vars.id,start:pin.start,end:pin.end})),content:()=>contentScenes.map(({id,motion})=>({id,range:{start:motion.scrollTrigger.start,end:motion.scrollTrigger.end},progress:motion.progress()}))};
+ const mm=gsap.matchMedia();let disposed=false;let contentScenes=[];let chapterPins=[];
+ const qa={hero:()=>({renderer:'static-avif'}),chapters:()=>chapterPins.map(pin=>({id:pin.vars.id,start:pin.start,end:pin.end})),content:()=>contentScenes.map(({id,motion})=>({id,range:{start:motion.scrollTrigger.start,end:motion.scrollTrigger.end},progress:motion.progress()}))};
  window.__estateMotionQA=Object.freeze(qa);
  mm.add({desktop:'(min-width:800px)',phone:'(max-width:799px)',reduce:'(prefers-reduced-motion:reduce)'},context=>{
-  const {phone,reduce}=context.conditions;let player;let dead=false;
+  const {phone,reduce}=context.conditions;let dead=false;
   if(reduce||location.pathname.startsWith('/thank-you')){root.classList.remove('motion-enabled');return;}
   root.classList.add('motion-enabled');
-  const video=root.querySelector('video');const canvas=root.querySelector('canvas');const bar=root.querySelector('.cinema-progress-fill');
-  let sceneActive=!document.hidden;
-  video.pause();delete canvas.dataset.painted;
   const main=document.querySelector('#main')||document.body;
   const chapters=[...document.querySelectorAll('[data-pinned-chapter]')];
   if(!phone){
@@ -27,23 +23,6 @@ if(gsap&&ScrollTrigger&&root){
       invalidateOnRefresh:true,refreshPriority:chapters.length-index+1
     }));
   }
-  const background={progress:0};
-  // Fit every frame of the new Full HD source to the page, including the footer.
-  let backgroundRefreshFrame;
-  const paintBackground=progress=>{
-    background.progress=Math.max(0,Math.min(1,progress));
-    player?.setProgress(background.progress);if(bar)bar.style.transform=`scaleX(${background.progress})`;
-  };
-  // Read the native trigger position directly. Refreshing a scrubbed value tween
-  // can reset its value to zero while Safari still sits at the page bottom.
-  heroTrigger=ScrollTrigger.create({id:'estate-cinema',trigger:main,start:'top top',
-    end:()=>Math.max(1,ScrollTrigger.maxScroll(window)),invalidateOnRefresh:true,
-    onUpdate:self=>{if(!ScrollTrigger.isRefreshing)paintBackground(self.progress);},
-    onRefresh:self=>{
-      cancelAnimationFrame(backgroundRefreshFrame);
-      backgroundRefreshFrame=requestAnimationFrame(()=>{if(!dead)paintBackground((self.scroll()-self.start)/Math.max(1,self.end-self.start));});
-    }
-  });
   const heroCopy=document.querySelector('.hero-copy');
   // Text is visible at rest; only native scroll moves the parent.
   gsap.to(heroCopy,{
@@ -53,13 +32,6 @@ if(gsap&&ScrollTrigger&&root){
     y:phone?-36:-64,opacity:0,ease:'none'
   });
   contentScenes=createContentMotion(gsap,{phone});
-  player=new ScrollVideoPlayer(video,{
-    progress:background.progress,
-    src:phone?'/assets/cinema-main/scroll-mobile.mp4':'/assets/cinema-main/scroll-desktop.mp4'
-  });
-  activePlayer=player;
-  player.setActive(sceneActive);
-  const observer=new IntersectionObserver(entries=>{sceneActive=entries[0].isIntersecting;if(player)player.setActive(sceneActive&&!document.hidden);},{rootMargin:'200px'});observer.observe(root);
   // A shorter city table changes the full-page sequence and text bounds.
   let layoutFrame;let layoutWidth=0;let layoutHeight=0;
   const refreshLayout=()=>{
@@ -83,8 +55,7 @@ if(gsap&&ScrollTrigger&&root){
   // Capture close, then measure next frame after the quiz restores ordinary document scrolling.
   const dialogClosed=event=>{if(event.target.matches?.('dialog.quiz-dialog'))refreshLayout();};
   document.addEventListener('close',dialogClosed,true);
-  const visibility=()=>player?.setActive(sceneActive&&!document.hidden);document.addEventListener('visibilitychange',visibility);
-  return()=>{dead=true;cancelAnimationFrame(backgroundRefreshFrame);cancelAnimationFrame(layoutFrame);layoutObserver.disconnect();document.removeEventListener('close',dialogClosed,true);observer.disconnect();document.removeEventListener('visibilitychange',visibility);player?.dispose();if(activePlayer===player)activePlayer=undefined;chapters.forEach(chapter=>chapter.classList.remove('coast-pinned'));chapterPins=[];root.classList.remove('motion-enabled');heroTrigger=undefined;contentScenes=[];if(bar)bar.style.transform='';};
+  return()=>{dead=true;cancelAnimationFrame(layoutFrame);layoutObserver.disconnect();document.removeEventListener('close',dialogClosed,true);chapters.forEach(chapter=>chapter.classList.remove('coast-pinned'));chapterPins=[];root.classList.remove('motion-enabled');contentScenes=[];};
  });
  document.fonts.ready.then(()=>{if(!disposed)ScrollTrigger.refresh();});
  window.addEventListener('pagehide',()=>{disposed=true;mm.revert();},{once:true});

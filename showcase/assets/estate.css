@@ -569,7 +569,6 @@ html:not(.boot-pending) .preloader-overlay:not(.is-revealing) { display:none }
 @media(max-width:799px){.cinema{height:var(--cinema-fixed-height,100lvh)}}
 
 /* Crop the dark deck edge baked into the opening frame on phones. */
-@media(max-width:799px){.cinema-poster,.cinema-video{transform:scale(1.10);transform-origin:center}}
 
 /* Typography settles behind the overlay; deadline fallback cannot swap later. */
 html.boot-pending{overflow:hidden;scroll-behavior:auto}

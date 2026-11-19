@@ -21,8 +21,8 @@
  <link rel="preload" href="/assets/onest-latin.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
  <link rel="preload" href="/assets/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
  <link rel="preload" href="/assets/manrope-latin.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
- <link rel="preload" href="/assets/cinema-main/poster-fast.webp" as="image" media="(min-width:800px)" fetchpriority="high">
- <link rel="preload" href="/assets/cinema-main/poster-mobile-fast.webp" as="image" media="(max-width:799px)" fetchpriority="high">
+ <link rel="preload" href="/assets/spain-villa-desktop.avif" as="image" media="(min-width:800px)" fetchpriority="high">
+ <link rel="preload" href="/assets/spain-villa-mobile.avif" as="image" media="(max-width:799px)" fetchpriority="high">
  <link rel="preload" href="/assets/logo-white.svg" as="image" fetchpriority="high">
  <link rel="stylesheet" href="/assets/estate.css">
  <link rel="stylesheet" href="/assets/ads-consent.css">
@@ -83,11 +83,8 @@
  <!-- LAYER 1: FIXED CINEMATIC BACKGROUND -->
  <div class="cinema motion-enabled" id="cinema" aria-hidden="true" data-motion-scene="hero">
   <div class="cinema-stage">
-   <picture><source media="(max-width:799px)" srcset="/assets/cinema-main/poster-mobile-fast.webp"><img class="cinema-poster" src="/assets/cinema-main/poster-fast.webp" width="1920" height="1080" alt="Архитектурная визуализация: вечерняя вилла с бассейном" fetchpriority="high"></picture>
-   <video class="cinema-video" data-fallback-src="/assets/cinema-main/main-fallback.mp4" muted playsinline preload="none" disablepictureinpicture aria-hidden="true"></video>
-   <canvas class="cinema-canvas" width="1920" height="1080" aria-hidden="true"></canvas>
+   <picture><source media="(max-width:799px)" srcset="/assets/spain-villa-mobile.avif"><img class="cinema-poster" src="/assets/spain-villa-desktop.avif" width="1920" height="1080" alt="Архитектурная визуализация: вечерняя вилла с бассейном" fetchpriority="high"></picture>
    <div class="cinema-scrim" aria-hidden="true"></div>
-   <div class="cinema-progress" aria-hidden="true"><div class="cinema-progress-fill"></div></div>
   </div>
  </div>
 
