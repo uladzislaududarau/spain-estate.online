@@ -233,12 +233,6 @@ function renderBudget(content) {
   }));
   if(!generated.ranges.length)fieldset.append(choice({value:'deferred',name:'budget',label:text('Уточнить бюджет при подборе','Clarify budget during selection'),checked:budgetMode==='deferred',onChange(){budgetMode='deferred';budget={deferred:true};}}));
   content.append(fieldset);
-  const source = node('div', { class: 'quiz-source-note', id: 'quiz-budget-source', 'data-source-date': priceSource.date });
-  source.append(node('p', { class: 'quiz-source-title' }, text('Каталог недвижимости Испании', 'Spanish property catalogue')));
-  const updated = node('p', { class: 'quiz-source-updated' });
-  updated.append(node('span', {}, text('Последнее обновление:', 'Last update:')), node('time', { id: 'quiz-price-stamp', 'data-time-zone': 'Europe/Madrid' }));
-  source.append(updated);
-  content.append(source);
 }
 function updatePriceStamp(){
   clearTimeout(priceStampTimer);
