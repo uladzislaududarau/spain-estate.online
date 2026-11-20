@@ -33,19 +33,21 @@ export async function initPreloader() {
     if (video.readyState >= 2) resolve();
     else video.addEventListener('loadeddata', resolve, { once: true, signal: mediaEvents.signal });
   }));
-  const orbit = overlay.querySelector('.loader-orbit')?.getAnimations()[0];
-  const remaining = Math.max(0, 1800 - (orbit?.currentTime ?? 0));
-
-  // Hard 3-second safety timeout — page is always unlocked within 3s.
+  const displayTimer = new Promise(resolve => setTimeout(resolve, 1500));
   const hardTimeout = new Promise(resolve => setTimeout(resolve, 3000));
 
   await Promise.race([
     hardTimeout,
-    Promise.allSettled([
-      new Promise(resolve => setTimeout(resolve, remaining)),
-      Promise.race(backdrop),
-      document.querySelector('.header .brand-svg-logo')?.decode(),
-      window.__heroTypeReady ?? document.fonts.ready
+    Promise.all([
+      displayTimer,
+      Promise.race([
+        displayTimer,
+        Promise.allSettled([
+          Promise.race(backdrop),
+          document.querySelector('.header .brand-svg-logo')?.decode(),
+          window.__heroTypeReady ?? document.fonts.ready
+        ])
+      ])
     ])
   ]);
   mediaEvents.abort();

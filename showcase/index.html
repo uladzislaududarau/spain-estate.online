@@ -3,6 +3,11 @@
 <head>
  <meta charset="utf-8">
  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+ <script>if(sessionStorage.getItem('sp:preloader-seen')){document.documentElement.classList.remove('boot-pending')}</script>
+ <style>
+  html.boot-pending #site-preloader{position:fixed;inset:0;z-index:999999;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 45%, #132235 0%, #0b1320 54%)}
+  html.boot-pending .cinema,html.boot-pending .hero-screen{opacity:0}
+ </style>
  <title>Недвижимость в Испании | Spain Property for Sale</title>
  <meta name="description" content="Недвижимости в Испании с проживания и инвестиций. Выберите побережье, город, тип дома и бюджет — начните поиск под ваши критерии.">
  <meta name="robots" content="noindex, follow">
@@ -77,7 +82,7 @@
   </div>
  </div>
 
- <noscript><style>#site-preloader{display:none!important}html.boot-pending{overflow:auto!important}</style></noscript>
+ <noscript><style>#site-preloader{display:none!important}html.boot-pending{overflow:auto!important}html.boot-pending .cinema,html.boot-pending .hero-screen{opacity:1!important}</style></noscript>
  <a class="skip-link" href="#main">Перейти к содержимому</a>
 
  <!-- LAYER 1: FIXED CINEMATIC BACKGROUND -->
