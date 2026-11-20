@@ -8,7 +8,7 @@ import { regions, pricingData, priceSource, generateBudgetRanges, selectedBudget
 
 const storageKey = 'spain-property-cinematic-quiz-v1';
 const titles = {
-  ru: ['Какое побережье вы рассматриваете?', 'Какие города предпочтительнее?', 'Укажите тип объекта', 'Выберите бюджет', 'Какая ваша основная цель?', 'Когда планируете приехать в Испанию?', 'PDF презентация с объектами по вашим критериям сформирована и готова к отправке.'],
+  ru: ['Какое побережье вы рассматриваете?', 'Какие города предпочтительнее?', 'Укажите тип объекта', 'Выберите бюджет', 'Какая ваша основная цель?', 'Когда планируете приехать в Испанию?', 'Презентация с объектами по вашим критериям сформирована'],
   en: ['Which coast feels like home?', 'Which cities shall we consider?', 'What are you looking for?', 'Your property budget', 'What is your reason for buying?', 'When are you planning to visit?', 'A PDF PRESENTATION WITH THE PROPERTIES MATCHING YOUR CRITERIA IS PREPARED AND READY TO SEND.']
 };
 let lang = document.documentElement.lang === 'en' ? 'en' : 'ru';
@@ -279,7 +279,7 @@ function attribution() {
 const initialAttribution = attribution();
 function renderContact(content, shell) {
   const t = copy[lang];
-  content.append(node('p', { class: 'quiz-intro' }, text('Укажите, удобный способ получения презентации. Получение презентации не является бронированием недвижимости или обязательством заключить сделку и носит исключительно информационный характер. Контактные данные брокеров указаны в презентации.', 'Select how you would like to receive the presentation. Receiving the presentation is not a booking or an obligation to conclude a transaction and is purely informational. Broker contact details are listed in the presentation.')));
+  content.append(node('p', { class: 'quiz-intro' }, text('Укажите, удобный способ получения презентации. Получение презентации не является бронированием недвижимости или обязательством заключить сделку и носит исключительно информационный характер.', 'Select how you would like to receive the presentation. Receiving the presentation is not a booking or an obligation to conclude a transaction and is purely informational.')));
   const form = node('form', { id: 'quiz-lead-form', novalidate: '', 'aria-labelledby': 'quiz-title' });
   const methods = node('fieldset', { class: 'quiz-options quiz-messengers', 'aria-label': t.messenger });
   for (const method of ['whatsapp', 'telegram', 'viber', 'phone']) {
