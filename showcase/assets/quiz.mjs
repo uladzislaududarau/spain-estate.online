@@ -277,6 +277,13 @@ function attribution() {
   return result;
 }
 const initialAttribution = attribution();
+function fileIcon() {
+  const span = document.createElement('span');
+  span.className = 'quiz-btn-icon';
+  span.setAttribute('aria-hidden', 'true');
+  span.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>';
+  return span;
+}
 function renderContact(content, shell) {
   const t = copy[lang];
   content.append(node('p', { class: 'quiz-intro' }, text('Укажите, удобный способ получения презентации. Получение презентации не является бронированием недвижимости или обязательством заключить сделку и носит исключительно информационный характер.', 'Select how you would like to receive the presentation. Receiving the presentation is not a booking or an obligation to conclude a transaction and is purely informational.')));
@@ -312,7 +319,8 @@ function renderContact(content, shell) {
   form.append(methods, nameLabel, contactLabel, consentLabel, trap, error); content.append(form);
   const actions = node('div', { class: 'quiz-actions' });
   const back = button(t.back, 'quiz-secondary', () => edit(5));
-  const submit = node('button', { type: 'submit', class: 'quiz-primary', form: form.id }, text('Получить PDF', 'Get PDF'));
+  const submit = node('button', { type: 'submit', class: 'quiz-primary', form: form.id });
+  submit.append(fileIcon(), document.createTextNode(text('Получить PDF', 'Get PDF')));
   actions.append(back, submit); shell.append(actions);
   form.addEventListener('submit', async event => {
     event.preventDefault(); if (submitting) return;
@@ -339,7 +347,7 @@ function renderContact(content, shell) {
       if (rememberSavedLead(result, lang)) { location.assign(THANK_YOU_PATH); return; }
       render();
     } catch { error.textContent = t.networkError; }
-    finally { clearTimeout(timeout); submitting = false; if (!complete) { for (const control of controls) control.disabled = false; submit.removeAttribute('aria-busy'); submit.textContent = text('Получить PDF', 'Get PDF'); } }
+    finally { clearTimeout(timeout); submitting = false; if (!complete) { for (const control of controls) control.disabled = false; submit.removeAttribute('aria-busy'); submit.replaceChildren(fileIcon(), document.createTextNode(text('Получить PDF', 'Get PDF'))); } }
   });
 }
 function updateViewport() {
