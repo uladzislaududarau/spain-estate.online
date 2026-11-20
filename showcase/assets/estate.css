@@ -549,7 +549,6 @@ html:not(.boot-pending) .preloader-overlay:not(.is-revealing) { display:none }
 
 /* On readiness the orbit stops as the page opens. */
 .preloader-overlay.is-exiting { opacity:0; transition:opacity .46s cubic-bezier(.4,0,.2,1) }
-.is-exiting .loader-orbit { animation-play-state:paused }
 @media(prefers-reduced-motion:reduce) {
   .loader-orbit,.loader-counter,.loader-glint { animation:none }
   .loader-tilt,.loader-solid { transform:none }
