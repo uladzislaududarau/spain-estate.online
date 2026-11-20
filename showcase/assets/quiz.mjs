@@ -8,8 +8,8 @@ import { regions, pricingData, priceSource, generateBudgetRanges, selectedBudget
 
 const storageKey = 'spain-property-cinematic-quiz-v1';
 const titles = {
-  ru: ['Какое побережье вы рассматриваете?', 'Какие города предпочтительнее?', 'Укажите тип объекта', 'Выберите бюджет', 'Какая ваша основная цель?', 'Когда планируете приехать в Испанию?', 'Объекты по вашим критериям подготовлены'],
-  en: ['Which coast feels like home?', 'Which cities shall we consider?', 'What are you looking for?', 'Your property budget', 'What is your reason for buying?', 'When are you planning to visit?', 'Let’s discuss your selection']
+  ru: ['Какое побережье вы рассматриваете?', 'Какие города предпочтительнее?', 'Укажите тип объекта', 'Выберите бюджет', 'Какая ваша основная цель?', 'Когда планируете приехать в Испанию?', 'PDF презентация с объектами по вашим критериям сформирована и готова к отправке.'],
+  en: ['Which coast feels like home?', 'Which cities shall we consider?', 'What are you looking for?', 'Your property budget', 'What is your reason for buying?', 'When are you planning to visit?', 'A PDF PRESENTATION WITH THE PROPERTIES MATCHING YOUR CRITERIA IS PREPARED AND READY TO SEND.']
 };
 let lang = document.documentElement.lang === 'en' ? 'en' : 'ru';
 const text = (ru, en) => lang === 'en' ? en : ru;
@@ -55,7 +55,7 @@ try {
     timeline = validValue('timeline', saved.timeline) ? saved.timeline : '';
     onlineViewings = saved.onlineViewings === true;
     crossRegionOptIn = saved.crossRegionOptIn === true;
-    if (saved.budget?.deferred===true&&generateBudgetRanges(selection).minimum===null) {
+    if (saved.budget?.deferred===true&&!generateBudgetRanges(selection).ranges.length) {
       budget={deferred:true};budgetMode='deferred';
     } else {
       const restored = selectedBudgetRanges(selection, saved.budget?.ranges || (saved.budget?.custom === false ? [saved.budget] : []));
@@ -71,7 +71,7 @@ function persist() {
 function invalidateBudget() { budget = null; budgetMode = ''; crossRegionOptIn = false; }
 function validCities() { return selection.regions.length > 0 && selection.regions.every(id => selection.anyCityRegions.includes(id) || selection.cities.some(city => pricingData.some(row => row.cityId === city && row.regionId === id))); }
 function hasAnswer(index = step) {
-  return [selection.regions.length > 0, validCities(), Boolean(selection.propertyType), Boolean(budget&&(budget.deferred===true?generateBudgetRanges(selection).minimum===null:budgetMode==='range'&&selectedBudgetRanges(selection,budget.ranges).length>0)), Boolean(purpose), Boolean(timeline), true][index];
+  return [selection.regions.length > 0, validCities(), Boolean(selection.propertyType), Boolean(budget&&(budget.deferred===true?!generateBudgetRanges(selection).ranges.length:budgetMode==='range'&&selectedBudgetRanges(selection,budget.ranges).length>0)), Boolean(purpose), Boolean(timeline), true][index];
 }
 // Never resume beyond an unanswered selection, even if sessionStorage was edited.
 for (let i = 0; i < step; i++) if (!hasAnswer(i)) { step = i; break; }
@@ -210,16 +210,16 @@ function renderCities(content) {
 }
 function renderPropertyType(content) {
   intro(content, 'Для квартир и вилл рассчитаем ориентир по выбранным городам. Другие типы обсудим индивидуально.', 'Apartments and villas have location based price thresholds. Other property types are discussed individually.');
-  const fieldset = node('fieldset', { class: 'quiz-options', 'aria-labelledby': 'quiz-title' });
+  const fieldset = node('fieldset', { class: 'quiz-options quiz-property-options', 'aria-labelledby': 'quiz-title' });
   for (const [value, ru, en] of propertyTypes) fieldset.append(choice({ value, name: 'propertyType', label: text(ru, en), checked: selection.propertyType === value, onChange() { if (selection.propertyType !== value) invalidateBudget(); selection.propertyType = value; } }));
   content.append(fieldset);
 }
-function rangeLabel(range) { return range.max === null ? text(`От ${money(range.min)}`, `${money(range.min)} and above`) : `${money(range.min)} – ${money(range.max)}`; }
+function rangeLabel(range) { return range.max === null ? text(`От ${money(range.min)}`, `${money(range.min)} and above`) : range.min === 0 ? text(`До ${money(range.max)}`, `Up to ${money(range.max)}`) : `${money(range.min)} – ${money(range.max)}`; }
 function renderBudget(content) {
   const generated = generateBudgetRanges(selection);
-  intro(content, generated.minimum === null ? 'Для этого типа недвижимости бюджет уточним при персональном подборе.' : `Ориентир начинается от ${money(generated.minimum)}. Можно выбрать один или несколько вариантов.`, generated.minimum === null ? 'We will clarify the budget for this property type during your personal selection.' : `Indicative thresholds start at ${money(generated.minimum)}. Choose one or more options.`);
+  intro(content, generated.ranges.length ? 'Можно выбрать один или несколько вариантов.' : 'Для этого типа недвижимости бюджет уточним при персональном подборе.', generated.ranges.length ? 'Choose one or more options.' : 'We will clarify the budget for this property type during your personal selection.');
   const edits = node('div', { class: 'quiz-edit-links' }); edits.append(button(text('Изменить побережье', 'Change coast'), 'quiz-text-button', () => edit(0)), button(text('Изменить тип', 'Change property type'), 'quiz-text-button', () => edit(2))); content.append(edits);
-  const fieldset = node('fieldset', { class: 'quiz-options', 'aria-labelledby': 'quiz-title' });
+  const fieldset = node('fieldset', { class: 'quiz-options quiz-budget-options', 'aria-labelledby': 'quiz-title' });
   for (const range of generated.ranges) fieldset.append(choice({
     value: range.id, name: 'budget', multiple: true, label: rangeLabel(range),
     checked: budget?.ranges?.some(item => item.min === range.min && item.max === range.max),
@@ -269,7 +269,7 @@ function attribution() {
 const initialAttribution = attribution();
 function renderContact(content, shell) {
   const t = copy[lang];
-  intro(content, 'Укажите, пожалуйста, удобный способ получения предложений по данным объектам. Готовая подборка по вашим критериям будет отправлена в течение нескольких минут.', 'Please choose how you would like to receive offers for these properties. Your selection matching your criteria will be sent within a few minutes.');
+  content.append(node('p', { class: 'quiz-intro' }, text('Укажите, удобный способ получения презентации. Получение презентации не является бронированием недвижимости или обязательством заключить сделку и носит исключительно информационный характер. Контактные данные брокеров указаны в презентации.', 'Select how you would like to receive the presentation. Receiving the presentation is not a booking or an obligation to conclude a transaction and is purely informational. Broker contact details are listed in the presentation.')));
   const form = node('form', { id: 'quiz-lead-form', novalidate: '', 'aria-labelledby': 'quiz-title' });
   const methods = node('fieldset', { class: 'quiz-options quiz-messengers', 'aria-label': t.messenger });
   for (const method of ['whatsapp', 'telegram', 'viber', 'phone']) {
@@ -302,7 +302,7 @@ function renderContact(content, shell) {
   form.append(methods, nameLabel, contactLabel, consentLabel, trap, error); content.append(form);
   const actions = node('div', { class: 'quiz-actions' });
   const back = button(t.back, 'quiz-secondary', () => edit(5));
-  const submit = node('button', { type: 'submit', class: 'quiz-primary', form: form.id }, text('Получить подборку →', 'Request selection →'));
+  const submit = node('button', { type: 'submit', class: 'quiz-primary', form: form.id }, text('Получить PDF', 'Get PDF'));
   actions.append(back, submit); shell.append(actions);
   form.addEventListener('submit', async event => {
     event.preventDefault(); if (submitting) return;
@@ -329,7 +329,7 @@ function renderContact(content, shell) {
       if (rememberSavedLead(result, lang)) { location.assign(THANK_YOU_PATH); return; }
       render();
     } catch { error.textContent = t.networkError; }
-    finally { clearTimeout(timeout); submitting = false; if (!complete) { for (const control of controls) control.disabled = false; submit.removeAttribute('aria-busy'); submit.textContent = text('Получить подборку →', 'Request selection →'); } }
+    finally { clearTimeout(timeout); submitting = false; if (!complete) { for (const control of controls) control.disabled = false; submit.removeAttribute('aria-busy'); submit.textContent = text('Получить PDF', 'Get PDF'); } }
   });
 }
 function updateViewport() {

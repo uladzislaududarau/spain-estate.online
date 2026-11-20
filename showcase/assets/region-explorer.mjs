@@ -1,5 +1,5 @@
 import {regions,pricingData,getMinimumPrice,formatMoney} from './pricing.mjs';
-const list=document.querySelector('#region-tabs');let selected='costa-blanca';let type='apartment';
+const list=document.querySelector('#region-tabs');if(!list)return;let selected='costa-blanca';let type='apartment';
 const label=document.querySelector('#region-name');const cities=document.querySelector('#region-cities');const cta=document.querySelector('#region-search');
 const reduced=matchMedia('(prefers-reduced-motion:reduce)');
 let transitions=[];

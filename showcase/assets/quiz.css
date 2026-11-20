@@ -182,6 +182,13 @@ body.quiz-open { position: fixed; inset-inline: 0; top: var(--quiz-page-scroll-o
 .quiz-messenger-icon[data-method=viber]{color:#7360f2}
 .quiz-messenger-icon[data-method=phone]{color:#000}
 
+/* Budget ranges stack as a single vertical column, one under another. */
+.quiz-budget-options{display:flex;flex-direction:column;align-items:stretch;gap:10px}
+.quiz-budget-options>.quiz-choice{width:100%}
+@media(max-width:799px){
+ .quiz-property-options{grid-template-columns:1fr}
+}
+
 /* Price provenance stays separate from selectable budget ranges. */
 .quiz-dialog .quiz-source-note{margin-top:24px;padding:16px 18px;background:#edf1f5;border-radius:12px;color:var(--quiz-muted);font-size:12px;line-height:1.5}
 .quiz-source-title{margin:0 0 9px;color:var(--quiz-ink);font-size:13px;font-weight:600}

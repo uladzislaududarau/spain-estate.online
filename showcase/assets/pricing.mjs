@@ -29,19 +29,26 @@ function minimumsByType(selection, data) {
   }));
 }
 
-/** Numeric half-open ranges [min,max), followed by an open range [min,infinity). */
+/**
+ * Contiguous ranges without a starting floor: «До ×1,4», «×1,4–×2», «×2–×3»,
+ * «×3–×4», «От ×4». The table minimum is no longer shown or used as a boundary.
+ * A leading range uses min:0 to mean «no lower bound»; the trailing range uses
+ * max:null to mean «no upper bound». Exact products, no coefficient rounding.
+ */
 export function generateBudgetRanges(selection = {}, data = pricingData) {
-  const minimum = getMinimumPrice(selection, data);
   const byType = minimumsByType(selection, data);
-  if (minimum === null) return { minimum, byType, ranges: [], customAllowed: true, missingData: true };
-  const roundTo = minimum >= 1000000 ? 100000 : minimum >= 500000 ? 50000 : 25000;
-  const boundaries = [minimum, ...[1.4, 2, 3, 4].map(factor => Math.ceil(minimum * factor / roundTo) * roundTo)];
-  const distinct = [...new Set(boundaries)].sort((a, b) => a - b);
-  const ranges = distinct.map((min, index) => {
-    const max = distinct[index + 1] ?? null;
-    return { id: `eur-${min}-${max ?? 'plus'}`, min, max };
-  });
-  return { minimum, byType, ranges, customAllowed: true, missingData: Object.values(byType).some(value => value === null) };
+  const missingData = Object.values(byType).some(value => value === null);
+  if (missingData) return { minimum: null, byType, ranges: [], customAllowed: true, missingData: true };
+  const minimum = Math.min(...Object.values(byType));
+  const b = [1.4, 2, 3, 4].map(factor => Math.round(minimum * factor));
+  const ranges = [
+    { id: `eur-floor-${b[0]}`, min: 0, max: b[0] },
+    { id: `eur-${b[0]}-${b[1]}`, min: b[0], max: b[1] },
+    { id: `eur-${b[1]}-${b[2]}`, min: b[1], max: b[2] },
+    { id: `eur-${b[2]}-${b[3]}`, min: b[2], max: b[3] },
+    { id: `eur-from-${b[3]}`, min: b[3], max: null },
+  ];
+  return { minimum, byType, ranges, customAllowed: true, missingData };
 }
 
 /** Preserve exact generated choices, including disjoint ranges, in price order. */
