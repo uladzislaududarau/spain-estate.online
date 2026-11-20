@@ -70,7 +70,9 @@ function persist() {
 }
 function invalidateBudget() { budget = null; budgetMode = ''; crossRegionOptIn = false; }
 function validCities() { return selection.regions.length > 0 && selection.regions.every(id => selection.anyCityRegions.includes(id) || selection.cities.some(city => pricingData.some(row => row.cityId === city && row.regionId === id))); }
+function budgetStepNeeded() { return generateBudgetRanges(selection).ranges.length > 0; }
 function hasAnswer(index = step) {
+  if (index === 3 && !budgetStepNeeded()) return true;
   return [selection.regions.length > 0, validCities(), Boolean(selection.propertyType), Boolean(budget&&(budget.deferred===true?!generateBudgetRanges(selection).ranges.length:budgetMode==='range'&&selectedBudgetRanges(selection,budget.ranges).length>0)), Boolean(purpose), Boolean(timeline), true][index];
 }
 // Never resume beyond an unanswered selection, even if sessionStorage was edited.
@@ -122,7 +124,15 @@ function choice({ value, label, checked, multiple = false, name, note, onChange 
   return wrapper;
 }
 function updateNext() { const next = dialog.querySelector('[data-next]'); if (next) next.disabled = !hasAnswer(); }
-function edit(index) { step = index; persist(); render(); }
+function edit(index) {
+  // Auto-skip step 3 (budget) when no ranges are available.
+  if (index === 3 && !budgetStepNeeded()) {
+    // Clear any stale budget value and jump over.
+    if (budget !== null) invalidateBudget();
+    index = step < 3 ? 4 : 2; // forward → 4, backward → 2
+  }
+  step = index; persist(); render();
+}
 function render() {
   clearTimeout(priceStampTimer);
   phoneField?.cancel(); phoneField = undefined;
