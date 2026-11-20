@@ -187,12 +187,7 @@ body.quiz-open { position: fixed; inset-inline: 0; top: var(--quiz-page-scroll-o
 .quiz-budget-options{display:flex;flex-direction:column;align-items:stretch;gap:10px}
 .quiz-budget-options>.quiz-choice{width:100%}
 @media(min-width:600px){
-  .quiz-budget-options{display:grid;grid-template-columns:repeat(6,minmax(0,1fr))}
-  .quiz-budget-options>.quiz-choice:nth-child(1){grid-column:1/3}
-  .quiz-budget-options>.quiz-choice:nth-child(2){grid-column:3/5}
-  .quiz-budget-options>.quiz-choice:nth-child(3){grid-column:5/7}
-  .quiz-budget-options>.quiz-choice:nth-child(4){grid-column:2/4}
-  .quiz-budget-options>.quiz-choice:nth-child(5){grid-column:4/6}
+  .quiz-budget-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 @media(max-width:799px){
  .quiz-property-options{grid-template-columns:1fr}
