@@ -8,7 +8,7 @@ import { regions, pricingData, priceSource, generateBudgetRanges, selectedBudget
 
 const storageKey = 'spain-property-cinematic-quiz-v1';
 const titles = {
-  ru: ['Какое побережье вы рассматриваете?', 'Какие города предпочтительнее?', 'Укажите тип объекта', 'Выберите бюджет', 'Какая ваша основная цель?', 'Когда планируете приехать в Испанию?', 'Презентация с объектами по вашим критериям сформирована'],
+  ru: ['Выберите побережье Испании:', 'Какие города предпочтительнее?', 'Укажите тип объекта', 'Выберите бюджет', 'Какая ваша основная цель?', 'Когда планируете приехать в Испанию?', 'Презентация с объектами по вашим критериям сформирована'],
   en: ['Which coast feels like home?', 'Which cities shall we consider?', 'What are you looking for?', 'Your property budget', 'What is your reason for buying?', 'When are you planning to visit?', 'A PDF PRESENTATION WITH THE PROPERTIES MATCHING YOUR CRITERIA IS PREPARED AND READY TO SEND.']
 };
 let lang = document.documentElement.lang === 'en' ? 'en' : 'ru';
@@ -182,7 +182,7 @@ function render() {
 }
 function intro(content, ru, en) { content.append(node('p', { class: 'quiz-intro' }, text(ru, en))); }
 function renderRegions(content) {
-  intro(content, 'Выберите одно или несколько направлений. Затем уточним города и бюджет.', 'Choose one or more destinations. We will then refine the cities and budget.');
+  intro(content, 'Выберите одно или несколько направлений.', 'Choose one or more destinations.');
   const fieldset = node('fieldset', { class: 'quiz-options quiz-region-options', 'aria-labelledby': 'quiz-title' });
   for (const region of regions) fieldset.append(choice({ value: region.id, name: 'regions', multiple: true, label: region[lang], note: region.name !== region[lang] ? region.name : undefined, checked: selection.regions.includes(region.id), onChange(checked) {
     selection.regions = checked ? [...selection.regions, region.id] : selection.regions.filter(id => id !== region.id);

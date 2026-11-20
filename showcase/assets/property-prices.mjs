@@ -10,9 +10,9 @@ export const priceSource = Object.freeze({
 
 export const regions = Object.freeze([
   { id: 'costa-brava', name: 'Costa Brava', ru: 'Коста-Брава', en: 'Costa Brava' },
-  { id: 'costa-barcelona', name: 'Costa de Barcelona', ru: 'Барселона и побережье', en: 'Costa de Barcelona' },
+  { id: 'costa-barcelona', name: 'Costa de Barcelona', ru: 'Барселона', en: 'Costa de Barcelona' },
   { id: 'costa-dorada', name: 'Costa Daurada', ru: 'Коста-Дорада', en: 'Costa Daurada' },
-  { id: 'valencia', name: 'Costa de Valencia', ru: 'Побережье Валенсии', en: 'Costa de Valencia' },
+  { id: 'valencia', name: 'Costa de Valencia', ru: 'Валенсия', en: 'Costa de Valencia' },
   { id: 'costa-blanca', name: 'Costa Blanca', ru: 'Коста-Бланка', en: 'Costa Blanca' },
   { id: 'costa-calida', name: 'Costa Cálida', ru: 'Коста-Калида', en: 'Costa Cálida' },
   { id: 'costa-del-sol', name: 'Costa del Sol', ru: 'Коста-дель-Соль', en: 'Costa del Sol' },

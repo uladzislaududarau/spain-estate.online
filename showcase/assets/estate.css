@@ -46,7 +46,7 @@ h2{font-size:clamp(40px,5.2vw,76px)}.page-frame{padding-left:var(--frame);paddin
 .hero-content{max-width:1120px;width:100%}
 .hero-copy{will-change:transform,opacity}
 .hero-title{font-size:clamp(46px,4.8vw,76px);line-height:1.08;letter-spacing:-.045em;font-weight:700;color:#ffffff;text-shadow:0 2px 4px rgba(0,0,0,.65),0 8px 28px rgba(0,0,0,.55)}
-.hero-copy p{font-size:clamp(16px,1.25vw,20px);line-height:1.5;margin-top:24px;color:#eaf0ed;max-width:480px;text-shadow:0 2px 12px rgba(0,0,0,.5);border-left:2px solid var(--accent);padding-left:14px}
+.hero-copy p{font-family:var(--font-display);font-weight:400;font-size:clamp(16px,1.25vw,20px);line-height:1.5;margin-top:24px;color:#eaf0ed;max-width:480px;text-shadow:0 2px 12px rgba(0,0,0,.5);border-left:2px solid var(--accent);padding-left:14px}
 .hero-action{display:grid;gap:14px;justify-items:start;margin-top:40px}
 
 /* BUTTONS & LINKS */
