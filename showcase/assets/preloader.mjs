@@ -34,11 +34,10 @@ export async function initPreloader() {
     else video.addEventListener('loadeddata', resolve, { once: true, signal: mediaEvents.signal });
   }));
   const orbit = overlay.querySelector('.loader-orbit')?.getAnimations()[0];
-  const elapsed = typeof orbit?.currentTime === 'number' ? orbit.currentTime : 0;
-  const remaining = Math.max(0, 1300 - elapsed);
+  const remaining = Math.max(0, 1800 - (orbit?.currentTime ?? 0));
 
   // Hard 3-second safety timeout — page is always unlocked within 3s.
-  const hardTimeout = new Promise(resolve => setTimeout(resolve, Math.max(remaining, 3000 - elapsed)));
+  const hardTimeout = new Promise(resolve => setTimeout(resolve, 3000));
 
   await Promise.race([
     hardTimeout,
@@ -62,24 +61,8 @@ export async function initPreloader() {
     history.scrollRestoration = previousRestoration;
   }
   overlay.classList.add('is-exiting');
-  // Wait for the CSS 500ms fade-out animation to finish before removing overlay.
-  await new Promise(resolve => {
-    let resolved = false;
-    const done = () => {
-      if (!resolved) {
-        resolved = true;
-        resolve();
-      }
-    };
-    const onEnd = event => {
-      if (event.target === overlay) {
-        overlay.removeEventListener('animationend', onEnd);
-        done();
-      }
-    };
-    overlay.addEventListener('animationend', onEnd);
-    setTimeout(done, 520);
-  });
+  // Wait only for the CSS opacity transition (~460ms), not infinite child animations.
+  await new Promise(resolve => setTimeout(resolve, 500));
   overlay.remove();
   window.dispatchEvent(new Event('sp:preloader-done'));
 }

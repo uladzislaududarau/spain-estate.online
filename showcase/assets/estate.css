@@ -521,7 +521,6 @@ html{background:#0b1320}
   position:fixed; inset:0; z-index:999999; display:grid; place-items:center;
   overflow:hidden; touch-action:none; overscroll-behavior:none;
   background:radial-gradient(ellipse at 50% 45%, #132235 0%, #0b1320 54%);
-  animation:preloader-fade-in 300ms ease-out forwards;
 }
 html:not(.boot-pending) .preloader-overlay:not(.is-revealing) { display:none }
 .loader-stage {
@@ -549,22 +548,11 @@ html:not(.boot-pending) .preloader-overlay:not(.is-revealing) { display:none }
 @keyframes loader-glint { 0%,100% {x:-16px} 50% {x:44px} }
 
 /* On readiness the orbit stops as the page opens. */
-.preloader-overlay.is-exiting {
-  animation:preloader-fade-out 500ms cubic-bezier(.4,0,.2,1) forwards;
-}
-@keyframes preloader-fade-in {
-  from { opacity:0 }
-  to { opacity:1 }
-}
-@keyframes preloader-fade-out {
-  from { opacity:1 }
-  to { opacity:0 }
-}
+.preloader-overlay.is-exiting { opacity:0; transition:opacity .46s cubic-bezier(.4,0,.2,1) }
 @media(prefers-reduced-motion:reduce) {
-  .preloader-overlay { animation:none }
   .loader-orbit,.loader-counter,.loader-glint { animation:none }
   .loader-tilt,.loader-solid { transform:none }
-  .preloader-overlay.is-exiting { animation:none; opacity:0 }
+  .preloader-overlay.is-exiting { transition:opacity .12s linear!important }
 }
 
 .icon-arrow{display:inline-block;width:1em;height:1em;vertical-align:-.12em;flex-shrink:0}

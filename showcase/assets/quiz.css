@@ -210,8 +210,4 @@ body.quiz-open { position: fixed; inset-inline: 0; top: var(--quiz-page-scroll-o
 
 @media(min-width:800px){
  .quiz-dialog .quiz-online-viewings{grid-template-columns:18px auto auto;justify-content:start}
- /* Last lonely item in a 2-col grid stays left, not stretched across the row. */
- .quiz-options:not(.quiz-budget-options):not(.quiz-options-single) > .quiz-choice:last-child:nth-child(odd) { max-width:calc(50% - 5px); }
- .quiz-region-options > .quiz-choice:last-child:nth-child(3n+1),
- .quiz-region-options > .quiz-choice:last-child:nth-child(3n+2) { max-width:calc(33.333% - 7px); }
 }
