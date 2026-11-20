@@ -4,12 +4,12 @@ import { CONSENT_VERSION, readPreferences, createAdsConsent } from './ads-consen
 const storageKey = 'spain-property-cookie-consent';
 const english = document.documentElement.lang === 'en';
 const text = english ? {
-  title: 'Cookies', description: 'We use cookies to run this website and measure advertising.',
-  accept: 'Accept all', reject: 'Reject optional', settings: 'Details and settings', save: 'Save preferences', privacy: 'Privacy policy',
+  title: 'Cookies', description: 'Cookies — to run this site and for advertising.',
+  accept: 'Accept', close: 'Reject optional cookies', gear: 'Cookie settings', save: 'Save preferences', privacy: 'Privacy policy',
   necessary: 'Necessary — always enabled', analytics: 'Allow visit analytics', marketing: 'Allow advertising measurement and personalisation', change: 'Cookie settings'
 } : {
-  title: 'Cookie', description: 'Используем cookie для работы сайта и измерения рекламы.',
-  accept: 'Принять все', reject: 'Отказаться', settings: 'Подробнее и настройки', save: 'Сохранить выбор', privacy: 'Политика обработки данных',
+  title: 'Cookie', description: 'Используем cookie для работы сайта и рекламы.',
+  accept: 'Принять', close: 'Отказаться от необязательных cookie', gear: 'Настройки cookie', save: 'Сохранить выбор', privacy: 'Политика обработки данных',
   necessary: 'Необходимые — включены всегда', analytics: 'Разрешить статистику посещений', marketing: 'Разрешить измерение и персонализацию рекламы', change: 'Настройки cookie'
 };
 window.dataLayer = window.dataLayer || [];
@@ -37,13 +37,11 @@ function element(tag, className, content) {
   return node;
 }
 const panel = element('section', 'cookie-panel');
-panel.setAttribute('aria-labelledby', 'cookie-title');
 panel.setAttribute('role', 'region');
-const title = element('h2', 'cookie-title', text.title); title.id = 'cookie-title';
 const description = element('p', 'cookie-description', text.description);
-const policy = element('a', '', text.privacy); policy.href = english ? '/en/privacy' : '/privacy';
-policy.target = '_blank'; policy.rel = 'noopener';
 const details = element('div', 'cookie-details'); details.id = 'cookie-details'; details.hidden = true;
+const policy = element('a', 'cookie-policy', text.privacy); policy.href = english ? '/en/privacy' : '/privacy';
+policy.target = '_blank'; policy.rel = 'noopener';
 const choices = element('div', 'cookie-choices');
 details.append(policy, choices);
 function choice(label, disabled = false) {
@@ -54,11 +52,6 @@ function choice(label, disabled = false) {
 }
 choice(text.necessary, true);
 const analytics = choice(text.analytics); const marketing = choice(text.marketing);
-const actions = element('div', 'cookie-actions');
-function button(label, action) {
-  const node = element('button', 'cookie-button', label); node.type = 'button';
-  node.addEventListener('click', action); return node;
-}
 let focusBefore;
 function save(analytics, marketing) {
   const revoke = Boolean(preferences?.marketing && !marketing);
@@ -69,28 +62,36 @@ function save(analytics, marketing) {
   // После отзыва загруженная ранее библиотека убирается при перезагрузке страницы.
   if (revoke) location.reload();
 }
-const saveButton = button(text.save, () => save(analytics.checked, marketing.checked)); saveButton.hidden = true;
-const accept = button(text.accept, () => save(true, true));
-const reject = button(text.reject, () => save(false, false));
-reject.classList.add('cookie-button-reject');
-const settings = button(text.settings, () => {
+const saveButton = element('button', 'cookie-button-save', text.save); saveButton.type = 'button';
+saveButton.hidden = true; saveButton.addEventListener('click', () => save(analytics.checked, marketing.checked));
+details.append(saveButton);
+const bar = element('div', 'cookie-bar');
+bar.append(description);
+const actions = element('div', 'cookie-actions');
+const accept = element('button', 'cookie-button-accept', text.accept); accept.type = 'button';
+accept.addEventListener('click', () => save(true, true));
+const closeBtn = element('button', 'cookie-icon cookie-close'); closeBtn.type = 'button';
+closeBtn.setAttribute('aria-label', text.close);
+closeBtn.innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+closeBtn.addEventListener('click', () => save(false, false));
+const gear = element('button', 'cookie-icon cookie-gear'); gear.type = 'button';
+gear.setAttribute('aria-label', text.gear); gear.setAttribute('aria-expanded', 'false');
+gear.innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
+gear.addEventListener('click', () => {
   details.hidden = !details.hidden; saveButton.hidden = details.hidden;
-  settings.setAttribute('aria-expanded', String(!details.hidden));
+  gear.setAttribute('aria-expanded', String(!details.hidden));
   analytics.checked = preferences?.analytics === true; marketing.checked = preferences?.marketing === true;
   if (!details.hidden) analytics.focus();
 });
-settings.className = 'cookie-details-link';
-settings.setAttribute('aria-expanded', 'false');
-settings.setAttribute('aria-controls', 'cookie-details');
-actions.append(accept, reject, saveButton);
-panel.append(title, description, settings, details, actions); panel.hidden = Boolean(preferences);
-document.body.append(panel);
-const change = button(text.change, () => {
+actions.append(accept, element('span', 'cookie-divider'), closeBtn, gear);
+bar.append(actions);
+panel.append(details, bar); panel.hidden = Boolean(preferences);
+document.body.append(panel);const openSettings = () => {
   focusBefore = document.activeElement;
   panel.hidden = false; details.hidden = false; saveButton.hidden = false;
-  settings.setAttribute('aria-expanded', 'true');
+  gear.setAttribute('aria-expanded', 'true');
   analytics.checked = preferences?.analytics === true; marketing.checked = preferences?.marketing === true;
   analytics.focus();
-});
-change.className = 'cookie-settings-link';
-document.querySelector('.footer-links')?.append(change);
+};
+// Вход в настройки cookie — строка «Управлять настройками куки можно здесь» в футере.
+document.querySelector('#footer-cookie-settings')?.addEventListener('click', event => { event.preventDefault(); openSettings(); });
