@@ -44,7 +44,8 @@ export const leadSchema = z.object({
     regions: z.array(z.enum(regionIds)).min(1).max(regionIds.length).transform(items => [...new Set(items)].sort()).refine(items => !items.includes('undecided') || items.length === 1),
     budgets: z.array(z.enum([...values('budgets'), 'dynamic'])).min(1).max(6).transform(items => [...new Set(items)].sort()),
     timeline: z.enum(values('timeline')),
-    onlineViewings: z.boolean().optional()
+    onlineViewings: z.boolean().optional(),
+    checklist: z.boolean().optional()
   }).strict(),
   region: z.enum(['costa-blanca', 'marbella', 'mallorca', 'barcelona', 'unspecified']),
   messenger: z.enum(['whatsapp', 'telegram', 'viber', 'phone']),

@@ -52,6 +52,9 @@ for (const file of await readdir(path.join(source, 'assets'))) {
 await cp(path.join(source, 'assets/sequence'), path.join(output, 'assets/sequence'), { recursive: true });
 await cp(path.join(source, 'assets/cinema-main'), path.join(output, 'assets/cinema-main'), { recursive: true });
 await cp(path.join(source, 'assets/vendor'), path.join(output, 'assets/vendor'), { recursive: true });
+// Hero gallery frames and buyer-guide media are requested from JavaScript by name.
+await cp(path.join(source, 'assets/hero-gallery'), path.join(output, 'assets/hero-gallery'), { recursive: true });
+await cp(path.join(source, 'assets/buyer-guide'), path.join(output, 'assets/buyer-guide'), { recursive: true });
 await copyFile(path.join(source, 'favicon.ico'), path.join(output, 'favicon.ico'));
 await emit('robots.txt', robots(origin));
 if (origin) await emit('sitemap.xml', sitemap(origin));

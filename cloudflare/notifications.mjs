@@ -52,6 +52,7 @@ export function leadMessage(lead, timeZone = 'Asia/Nicosia', format = 'text') {
     'Способ связи: ' + value(contactMethodLabel(lead.messenger)) + '\nКонтакт: ' + value(lead.contact),
     'Критерии подбора:', ...answers,
     ...(lead.answers.onlineViewings === true ? ['Онлайн-просмотры: Хочу смотреть объекты онлайн'] : []),
+    ...(lead.answers.checklist === true ? ['Чек-лист: отправить «Что нужно проверить перед покупкой недвижимости в Испании»'] : []),
     ...pricingLines(lead.pricing).map(line => value(line)),
     ...attributionLines(lead.attribution).map(line => value(line))
   ];

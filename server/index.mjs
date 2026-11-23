@@ -74,6 +74,8 @@ export async function createApp({ storage = path.join(root, 'storage', 'leads'),
       let asset;
       if (pathname === '/') asset = 'index.html';
       else if (['/thank-you', '/thank-you/'].includes(pathname)) asset = sourceAssets ? 'index.html' : 'thank-you/index.html';
+      // Local-only design review of the buyer guide prototypes (source dev server, never the build).
+      else if (sourceAssets && /^\/preview\/buyer-guide-[abc]\/?$/.test(pathname)) asset = 'index.html';
       else if (!sourceAssets && ['/robots.txt', '/sitemap.xml'].includes(pathname)) asset = pathname.slice(1);
       else if (pathname === '/favicon.ico') asset = 'favicon.ico';
       else if (pathname === '/favicon.svg') asset = 'favicon.svg';

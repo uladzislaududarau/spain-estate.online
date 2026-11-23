@@ -21,7 +21,7 @@ export function sheetRow(lead, timeZone = 'Asia/Nicosia') {
     new Intl.DateTimeFormat('ru-RU', { timeZone, hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' }).format(date),
     timeZone, lead.name, contactMethodLabel(lead.messenger), lead.contact,
     lead.language === 'ru' ? 'Русский' : 'Английский', answer('regions'), answer('purpose'),
-    answer('propertyType'), lead.pricing ? pricingLines(lead.pricing).join('\n') : answer('budgets'), (Object.hasOwn(legacyAnswerLabels, lead.answers.timeline) ? '' : 'Приезд в Испанию: ') + answer('timeline') + (lead.answers.onlineViewings === true ? '\nХочу смотреть объекты онлайн' : ''),
+    answer('propertyType'), lead.pricing ? pricingLines(lead.pricing).join('\n') : answer('budgets'), (Object.hasOwn(legacyAnswerLabels, lead.answers.timeline) ? '' : 'Приезд в Испанию: ') + answer('timeline') + (lead.answers.onlineViewings === true ? '\nХочу смотреть объекты онлайн' : '') + (lead.answers.checklist === true ? '\nДобавить чек-лист перед покупкой' : ''),
     lead.consent.accepted ? 'Да' : 'Нет', lead.consent.timestamp, lead.consent.policyVersion,
     lead.savedAt, ['https://spain-estate.online', ...attributionLines(lead.attribution)].join('\n')
   ].map(value => String(value ?? ''));

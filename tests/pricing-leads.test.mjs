@@ -62,6 +62,23 @@ test('Online-viewing preference is independent of visit timing and retained in d
   }
 });
 
+test('Checklist request is optional, validated as a boolean and retained in delivery', () => {
+  for (const checklist of [undefined, false, true]) {
+    const input = payload();
+    if (checklist !== undefined) input.answers.checklist = checklist;
+    const result = validateLead(input);
+    assert.equal(result.error, undefined);
+    assert.equal(result.data.answers.checklist, checklist);
+    const lead = { ...result.data, leadId: randomUUID(), savedAt: '2026-11-23T12:00:00.000Z' };
+    assert.equal(leadMessage(lead).includes('Что нужно проверить перед покупкой недвижимости в Испании'), checklist === true);
+    assert.equal(sheetRow(lead)[12].includes('Добавить чек-лист перед покупкой'), checklist === true);
+    assert.equal(sheetRow(lead).length, 18);
+  }
+  const invalid = payload();
+  invalid.answers.checklist = 'yes';
+  assert.equal(validateLead(invalid).error, 'invalid_request');
+});
+
 test('Viber and telephone leads validate phone/country and preserve the delivery method', () => {
   for (const [messenger, label] of [['viber', 'Viber'], ['phone', 'Телефон']]) {
     const input = payload();

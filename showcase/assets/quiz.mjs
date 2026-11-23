@@ -21,6 +21,8 @@ let budgetMode = '';
 let purpose = '';
 let timeline = '';
 let onlineViewings = false;
+// The buyer checklist PDF is offered with every presentation and is pre-selected.
+let checklist = true;
 let crossRegionOptIn = false;
 let contactName = '';
 let contactValues = { whatsapp: '', telegram: '', viber: '', phone: '' };
@@ -54,6 +56,7 @@ try {
     purpose = validValue('purpose', saved.purpose) ? saved.purpose : '';
     timeline = validValue('timeline', saved.timeline) ? saved.timeline : '';
     onlineViewings = saved.onlineViewings === true;
+    checklist = saved.checklist !== false;
     crossRegionOptIn = saved.crossRegionOptIn === true;
     if (saved.budget?.deferred===true&&!generateBudgetRanges(selection).ranges.length) {
       budget={deferred:true};budgetMode='deferred';
@@ -66,7 +69,7 @@ try {
   }
 } catch { /* Selection restoration is optional; contacts are never stored. */ }
 function persist() {
-  try { sessionStorage.setItem(storageKey, JSON.stringify({ policyVersion, selection, budget, budgetMode, purpose, timeline, onlineViewings, crossRegionOptIn, step, requestId })); } catch {}
+  try { sessionStorage.setItem(storageKey, JSON.stringify({ policyVersion, selection, budget, budgetMode, purpose, timeline, onlineViewings, checklist, crossRegionOptIn, step, requestId })); } catch {}
 }
 function invalidateBudget() { budget = null; budgetMode = ''; crossRegionOptIn = false; }
 function validCities() { return selection.regions.length > 0 && selection.regions.every(id => selection.anyCityRegions.includes(id) || selection.cities.some(city => pricingData.some(row => row.cityId === city && row.regionId === id))); }
@@ -109,7 +112,7 @@ dialog.addEventListener('close', () => {
   focusBefore?.focus({ preventScroll: true });
   if (complete) {
     if (isThankYouPath(location.pathname)) { location.replace('/'); return; }
-    selection = { regions: [], cities: [], anyCityRegions: [], propertyType: '' }; budget = null; budgetMode = ''; purpose = ''; timeline = ''; onlineViewings = false; step = 0;
+    selection = { regions: [], cities: [], anyCityRegions: [], propertyType: '' }; budget = null; budgetMode = ''; purpose = ''; timeline = ''; onlineViewings = false; checklist = true; step = 0;
     contactName = ''; contactValues = { whatsapp: '', telegram: '', viber: '', phone: '' }; consent = true; complete = false; crossRegionOptIn = false; requestId = crypto.randomUUID();
     try { sessionStorage.removeItem(storageKey); } catch {}
   }
@@ -262,7 +265,7 @@ function renderOriginalQuestion(content, id) {
     const input = node('input', { type: 'checkbox', name: 'onlineViewings', id: 'quiz-online-viewings' });
     input.checked = onlineViewings;
     input.addEventListener('change', () => { onlineViewings = input.checked; persist(); });
-    online.append(input, node('span', {}, text('Хочу смотреть объекты онлайн', 'I want to view properties online')),
+    online.append(input, node('span', {}, text('Хочу смотреть объекты по видео онлайн', 'I want to view properties via video online')),
       node('span', { class: 'quiz-popular', 'aria-hidden': 'true' }, text('Популярно', 'Popular')));
     content.append(online);
   }
@@ -286,8 +289,18 @@ function fileIcon() {
 }
 function renderContact(content, shell) {
   const t = copy[lang];
-  content.append(node('p', { class: 'quiz-intro' }, text('Укажите, удобный способ получения презентации. Получение презентации не является бронированием недвижимости или обязательством заключить сделку и носит исключительно информационный характер.', 'Select how you would like to receive the presentation. Receiving the presentation is not a booking or an obligation to conclude a transaction and is purely informational.')));
+  const introText = () => checklist
+    ? text('Укажите удобный способ получения презентации и чек-листа. Получение презентации и чек-листа не является бронированием недвижимости или обязательством заключить сделку и носит исключительно информационный характер.', 'Select how you would like to receive the presentation and the checklist. Receiving them is not a booking or an obligation to conclude a transaction and is purely informational.')
+    : text('Укажите удобный способ получения презентации. Получение презентации не является бронированием недвижимости или обязательством заключить сделку и носит исключительно информационный характер.', 'Select how you would like to receive the presentation. Receiving the presentation is not a booking or an obligation to conclude a transaction and is purely informational.');
+  const introNode = node('p', { class: 'quiz-intro' }, introText());
+  content.append(introNode);
   const form = node('form', { id: 'quiz-lead-form', novalidate: '', 'aria-labelledby': 'quiz-title' });
+  const checklistLabel = node('label', { class: 'quiz-expand-geography quiz-online-viewings quiz-checklist' });
+  const checklistInput = node('input', { type: 'checkbox', name: 'checklist', id: 'quiz-checklist' });
+  checklistInput.checked = checklist;
+  checklistInput.addEventListener('change', () => { checklist = checklistInput.checked; introNode.textContent = introText(); persist(); });
+  checklistLabel.append(checklistInput, node('span', {}, text('Добавить чек-лист «Что нужно проверить перед покупкой недвижимости в Испании»', 'Add the checklist “What to check before buying property in Spain”')),
+    node('span', { class: 'quiz-popular', 'aria-hidden': 'true' }, text('Бесплатно', 'Free')));
   const methods = node('fieldset', { class: 'quiz-options quiz-messengers', 'aria-label': t.messenger });
   for (const method of ['whatsapp', 'telegram', 'viber', 'phone']) {
     const option = choice({ value: method, name: 'messenger', label: contactMethodLabel(method, lang), checked: messenger === method, onChange() { messenger = method; render(); } });
@@ -316,7 +329,7 @@ function renderContact(content, shell) {
   const words = node('span'); words.append(document.createTextNode(t.consentBefore), node('a', { href: lang === 'en' ? '/en/privacy' : '/privacy', target: '_blank', rel: 'noopener noreferrer' }, t.consentLink), document.createTextNode(t.consentAfter)); consentLabel.append(checkbox, words);
   const trap = node('div', { class: 'quiz-trap', 'aria-hidden': 'true' }); trap.append(node('input', { name: 'website', type: 'text', tabindex: '-1', autocomplete: 'off' }));
   const error = node('p', { class: 'quiz-error', id: 'quiz-error', role: 'alert' });
-  form.append(methods, nameLabel, contactLabel, consentLabel, trap, error); content.append(form);
+  form.append(checklistLabel, methods, nameLabel, contactLabel, consentLabel, trap, error); content.append(form);
   const actions = node('div', { class: 'quiz-actions' });
   const back = button(t.back, 'quiz-secondary', () => edit(5));
   const submit = node('button', { type: 'submit', class: 'quiz-primary', form: form.id });
@@ -336,7 +349,7 @@ function renderContact(content, shell) {
     const controls = [...dialog.querySelectorAll('input,select,button')]; for (const control of controls) control.disabled = true;
     const controller = new AbortController(); const timeout = setTimeout(() => controller.abort(), 15000);
     try {
-      const response = await fetch('/api/lead', { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: controller.signal, body: JSON.stringify({ requestId, name, language: lang, answers: { regions: selection.regions, propertyType: selection.propertyType, budgets: ['dynamic'], purpose, timeline, onlineViewings }, region: 'unspecified', messenger, contact: raw, ...(usesPhone ? { phoneCountry: phoneState.country } : {}), consent: { accepted: true, policyVersion }, website: trap.querySelector('input').value, pricing: { version: 1, ...selection, budget, crossRegionOptIn }, attribution: initialAttribution }) });
+      const response = await fetch('/api/lead', { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: controller.signal, body: JSON.stringify({ requestId, name, language: lang, answers: { regions: selection.regions, propertyType: selection.propertyType, budgets: ['dynamic'], purpose, timeline, onlineViewings, checklist }, region: 'unspecified', messenger, contact: raw, ...(usesPhone ? { phoneCountry: phoneState.country } : {}), consent: { accepted: true, policyVersion }, website: trap.querySelector('input').value, pricing: { version: 1, ...selection, budget, crossRegionOptIn }, attribution: initialAttribution }) });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) { error.textContent = response.status === 429 ? t.rateError : result.code === 'invalid_name' ? t.invalidName : result.code === 'invalid_contact' ? usesPhone ? t.invalidPhone : t.invalidTelegram : t.networkError; return; }
       if (result.success !== true || !result.leadId) throw new Error('unconfirmed');
