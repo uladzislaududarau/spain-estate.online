@@ -5,11 +5,14 @@
 // open dialog. At most three photo layers stay in the DOM.
 const SLIDES = [
   'marbella-travertine-villa',
-  'marbella-sea-terrace',
-  'marbella-infinity-villa',
   'marbella-garden-terraces',
-  'fuengirola-sea-penthouse'
-];
+  'video-sunset-pool-villa',
+  'video-sea-terrace',
+  'costa-del-sol-white-villa',
+  'fuengirola-white-apartments',
+  'forest-dark-house',
+  'interior-living-room'
+]; // chosen on /preview/hero-photos (docs/hero-gallery/selection.json); slot 0 is the poster
 const HOLD_MS = 6500; // fully visible time per photo
 const FADE_MS = 2600; // must match the CSS opacity transition
 

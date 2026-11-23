@@ -1,6 +1,6 @@
 import { securityHeaders } from './security.mjs';
 import http from 'node:http';
-import { readFile, stat } from 'node:fs/promises';
+import { readFile, stat, writeFile, mkdir } from 'node:fs/promises';
 import { createReadStream } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -60,6 +60,25 @@ export async function createApp({ storage = path.join(root, 'storage', 'leads'),
         const { lead, duplicate } = await save({ ...data, leadId: randomUUID(), savedAt, consent: { ...data.consent, timestamp: savedAt }, deliveryStatus: 'pending_crm_configuration' });
         return json(200, { success: true, leadId: lead.leadId, status: 'saved', duplicate });
       }
+      // Local review tool only (source dev server): store the Hero photo choice made on /preview/hero-photos.
+      if (pathname === '/api/dev/hero-selection') {
+        if (!sourceAssets) return json(404, { code: 'not_found' });
+        const file = path.join(root, 'docs', 'hero-gallery', 'selection.json');
+        if (request.method === 'GET') {
+          try { return json(200, JSON.parse(await readFile(file, 'utf8'))); } catch { return json(200, { photos: null }); }
+        }
+        if (request.method !== 'POST') { response.setHeader('Allow', 'GET, POST'); return json(405, { code: 'method_not_allowed' }); }
+        if (request.headers.origin !== (allowedOrigin || `http://${request.headers.host}`)) return json(403, { code: 'invalid_origin' });
+        if (!request.headers['content-type']?.startsWith('application/json')) return json(415, { code: 'invalid_content_type' });
+        let bytes = 0; const chunks = [];
+        for await (const chunk of request) { bytes += chunk.length; if (bytes > 4096) return json(413, { code: 'payload_too_large' }); chunks.push(chunk); }
+        let photos;
+        try { photos = JSON.parse(Buffer.concat(chunks).toString()).photos; } catch { return json(400, { code: 'invalid_json' }); }
+        if (!Array.isArray(photos) || !photos.length || photos.length > 40 || new Set(photos).size !== photos.length || !photos.every(id => typeof id === 'string' && /^[a-z0-9-]{2,48}$/.test(id))) return json(422, { code: 'invalid_selection' });
+        await mkdir(path.dirname(file), { recursive: true });
+        await writeFile(file, JSON.stringify({ savedAt: new Date().toISOString(), photos }, null, 2) + '\n');
+        return json(200, { success: true, photos });
+      }
       if (request.method !== 'GET' && request.method !== 'HEAD') return json(405, { code: 'method_not_allowed' });
       if (sourceAssets && (pathname === '/robots.txt' || pathname === '/sitemap.xml')) {
         if (pathname === '/sitemap.xml' && !originUrl) return json(404, { code: 'site_url_not_configured' });
@@ -76,6 +95,7 @@ export async function createApp({ storage = path.join(root, 'storage', 'leads'),
       else if (['/thank-you', '/thank-you/'].includes(pathname)) asset = sourceAssets ? 'index.html' : 'thank-you/index.html';
       // Local-only design review of the buyer guide prototypes (source dev server, never the build).
       else if (sourceAssets && /^\/preview\/buyer-guide-[abc]\/?$/.test(pathname)) asset = 'index.html';
+      else if (sourceAssets && /^\/preview\/hero-photos\/?$/.test(pathname)) asset = 'preview/hero-photos.html';
       else if (!sourceAssets && ['/robots.txt', '/sitemap.xml'].includes(pathname)) asset = pathname.slice(1);
       else if (pathname === '/favicon.ico') asset = 'favicon.ico';
       else if (pathname === '/favicon.svg') asset = 'favicon.svg';

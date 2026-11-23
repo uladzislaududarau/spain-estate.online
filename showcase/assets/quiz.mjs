@@ -289,16 +289,12 @@ function fileIcon() {
 }
 function renderContact(content, shell) {
   const t = copy[lang];
-  const introText = () => checklist
-    ? text('Укажите удобный способ получения презентации и чек-листа. Получение презентации и чек-листа не является бронированием недвижимости или обязательством заключить сделку и носит исключительно информационный характер.', 'Select how you would like to receive the presentation and the checklist. Receiving them is not a booking or an obligation to conclude a transaction and is purely informational.')
-    : text('Укажите удобный способ получения презентации. Получение презентации не является бронированием недвижимости или обязательством заключить сделку и носит исключительно информационный характер.', 'Select how you would like to receive the presentation. Receiving the presentation is not a booking or an obligation to conclude a transaction and is purely informational.');
-  const introNode = node('p', { class: 'quiz-intro' }, introText());
-  content.append(introNode);
+  content.append(node('p', { class: 'quiz-intro' }, text('Укажите удобный способ получения презентации. Получение презентации не является бронированием недвижимости или обязательством заключить сделку и носит исключительно информационный характер.', 'Select how you would like to receive the presentation. Receiving the presentation is not a booking or an obligation to conclude a transaction and is purely informational.')));
   const form = node('form', { id: 'quiz-lead-form', novalidate: '', 'aria-labelledby': 'quiz-title' });
   const checklistLabel = node('label', { class: 'quiz-expand-geography quiz-online-viewings quiz-checklist' });
   const checklistInput = node('input', { type: 'checkbox', name: 'checklist', id: 'quiz-checklist' });
   checklistInput.checked = checklist;
-  checklistInput.addEventListener('change', () => { checklist = checklistInput.checked; introNode.textContent = introText(); persist(); });
+  checklistInput.addEventListener('change', () => { checklist = checklistInput.checked; persist(); });
   checklistLabel.append(checklistInput, node('span', {}, text('Добавить чек-лист «Что нужно проверить перед покупкой недвижимости в Испании»', 'Add the checklist “What to check before buying property in Spain”')),
     node('span', { class: 'quiz-popular', 'aria-hidden': 'true' }, text('Бесплатно', 'Free')));
   const methods = node('fieldset', { class: 'quiz-options quiz-messengers', 'aria-label': t.messenger });
