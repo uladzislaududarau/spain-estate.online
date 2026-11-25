@@ -176,7 +176,7 @@ function pathPage() {
 function renderB() {
   const cta = cls => `<button type="button" class="gb-cta ${cls}" data-guide-quiz>${esc(C.quizOffer.button)}${icon('arrow')}</button>`;
   return `<div class="gb">
-  <header class="gb-bar"><img class="gb-logo" src="/assets/logo.svg" width="236" height="52" alt="Spain Property for Sale"><span class="gb-bar-note">Гид покупателя</span>${closeButton('gb-close')}</header>
+  <header class="gb-bar"><img class="gb-logo" src="/assets/logo.svg" width="236" height="52" alt="Spain Property for Sale">${closeButton('gb-close')}</header>
   <section class="gb-hello">
    <figure class="gb-portrait">
     <div class="gb-photo"><img class="gb-cutout" src=${quoted(C.expert.cutout)} width="988" height="887" alt="${esc(C.expert.photoAlt)}" decoding="async"></div>

@@ -652,6 +652,9 @@ html.footer-open .header::before{opacity:0}
 .hero-points{display:flex;flex-wrap:wrap;gap:10px;max-width:1110px;margin:24px 0 0;padding:0;list-style:none}
 .hero-points li{display:inline-flex;align-items:center;gap:11px;padding:11px 21px 11px 16px;border:1px solid rgba(255,255,255,.24);border-radius:99px;background:rgba(11,19,32,.62);color:#fff;font:400 17.5px/1.3 var(--font-display);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .hero-mark{width:14px;height:15px;flex:none;fill:#3b82f6}
+@media(min-width:800px){
+ .hero-points{flex-direction:column;align-items:flex-start;flex-wrap:nowrap}
+}
 @media(max-width:799px){
  .hero-points{gap:7px;margin-top:20px}
  .hero-points li{gap:9px;padding:8px 15px 8px 12px;font-size:15px}
