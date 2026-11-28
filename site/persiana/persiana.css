@@ -235,7 +235,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .legal strong { color: var(--bone); }
 .legal a { color: var(--bone); text-underline-offset: 3px; }
 .legal-actions { margin-top: 48px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; }
-.legal-actions .btn-bone { text-decoration: none; }
+.legal-actions .btn-bone, .legal .btn-bone { color: var(--ink); text-decoration: none; }
 .legal-alt { font-size: 15px; }
 
 /* Телефон и узкие экраны: ставни становятся горизонтальными ламелями */
