@@ -102,7 +102,12 @@ export async function createApp({ storage = path.join(root, 'storage', 'leads'),
       else if (['/privacy', '/legal', '/en/privacy', '/en/legal'].includes(pathname)) asset = sourceAssets ? `legal/${pathname.startsWith('/en/') ? 'en' : 'ru'}-${pathname.endsWith('privacy') ? 'privacy' : 'legal'}.html` : `${pathname.slice(1)}/index.html`;
       else {
         const match = pathname.match(/^\/(?:showcase\/)?assets\/([a-zA-Z0-9_./-]+\.(?:css|mjs|js|webp|avif|jpg|jpeg|mp4|json|woff2|svg|png|ico|txt|xml))$/);
+        // Витрина (site/persiana) существует только в сборке dist.
+        const site = !sourceAssets && pathname.match(/^\/(?:persiana|shared)\/[a-zA-Z0-9_./-]+\.(?:css|mjs|js|webp|json|woff2|svg)$/);
+        const page = !sourceAssets && pathname.match(/^\/(nature-resort|horizon-ii|coronella-living|villas-de-la-sal|tm-tower|catalog|quiz)\/?$/);
         if (match && !match[1].includes('..')) asset = `assets/${match[1]}`;
+        else if (site && !pathname.includes('..')) asset = pathname.slice(1);
+        else if (page) asset = `${page[1]}/index.html`;
       }
       if (!asset) return json(404, { code: 'not_found' });
       if(asset.endsWith('.mp4')){

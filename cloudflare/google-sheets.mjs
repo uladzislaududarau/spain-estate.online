@@ -2,6 +2,7 @@ import { contactMethodLabel } from '../showcase/assets/contact.mjs';
 import { steps, legacyAnswerLabels } from '../showcase/assets/quiz.config.mjs';
 
 import { pricingLines, attributionLines, regionLabel } from './pricing-labels.mjs';
+import { isShowcaseLead, showcaseRequest } from '../server/showcase-lead.mjs';
 
 export const sheetColumns = [
   'ID заявки', 'Дата', 'Время', 'Часовой пояс', 'Имя', 'Способ связи', 'Контакт',
@@ -11,6 +12,17 @@ export const sheetColumns = [
 
 export function sheetRow(lead, timeZone = 'Asia/Nicosia') {
   const date = new Date(lead.savedAt);
+  if (isShowcaseLead(lead)) {
+    // Колонки прежние: запрос с витрины записывается в «Цель покупки», критерии квиза пустые.
+    return [
+      lead.leadId,
+      new Intl.DateTimeFormat('ru-RU', { timeZone, day: '2-digit', month: '2-digit', year: 'numeric' }).format(date),
+      new Intl.DateTimeFormat('ru-RU', { timeZone, hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' }).format(date),
+      timeZone, lead.name, contactMethodLabel(lead.messenger), lead.contact, 'Русский', '', showcaseRequest(lead), '', '', '',
+      lead.consent.accepted ? 'Да' : 'Нет', lead.consent.timestamp, lead.consent.policyVersion,
+      lead.savedAt, ['https://spain-estate.online', ...attributionLines(lead.attribution)].join('\n')
+    ].map(value => String(value ?? ''));
+  }
   const answer = id => {
     const question = steps.find(step => step.id === id);
     return [].concat(lead.answers[id]).map(value => question.options.find(option => option[0] === value)?.[1] || legacyAnswerLabels[value] || (id === 'regions' ? regionLabel(value) : value === 'both' ? 'Квартира и вилла' : value === 'dynamic' ? 'Индивидуальный бюджет' : value)).join('\n');

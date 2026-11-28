@@ -4,6 +4,7 @@ import { steps, policyVersion } from '../showcase/assets/quiz.config.mjs';
 import { normalizeContact, normalizeName } from '../showcase/assets/contact.mjs';
 import { normalizePricing, pricingRegionIds, pricingCityIds, pricingDataForRegion } from './pricing-lead.mjs';
 import { getMinimumPrice, selectedBudgetRanges } from '../showcase/assets/pricing.mjs';
+import { showcaseProperties, showcaseLeadTypes } from './showcase-lead.mjs';
 const values = id => steps.find(step => step.id === id).options.map(option => option[0]);
 const propertyTypes = [...new Set([...values('propertyType'), 'both'])];
 const regionIds = [...new Set([...values('regions'), ...pricingRegionIds])];
@@ -56,7 +57,34 @@ export const leadSchema = z.object({
   pricing: pricingSchema.optional(),
   attribution: attributionSchema.optional()
 }).strict();
+// Короткая форма витрины: объект (или «все объекты»), мессенджер и контакт.
+export const showcaseLeadSchema = z.object({
+  kind: z.literal('showcase'),
+  requestId: z.string().uuid(),
+  name: z.string().max(80).transform(normalizeName).refine(value => value !== null),
+  language: z.literal('ru'),
+  leadType: z.enum(showcaseLeadTypes),
+  property: z.enum(Object.keys(showcaseProperties)).optional(),
+  messenger: z.enum(['whatsapp', 'telegram']),
+  phoneCountry: z.string().length(2).refine(isSupportedCountry).optional(),
+  contact: z.string().trim().min(5).max(64),
+  consent: z.object({ accepted: z.literal(true), policyVersion: z.literal(policyVersion) }).strict(),
+  website: z.string().max(200).default(''),
+  attribution: attributionSchema.optional()
+}).strict().refine(lead => (lead.leadType === 'property_presentation') === Boolean(lead.property));
+function validateShowcaseLead(body) {
+  const result = showcaseLeadSchema.safeParse(body);
+  if (!result.success) return { error: result.error.issues.some(issue => issue.path[0] === 'name') ? 'invalid_name' : 'invalid_request' };
+  const contact = normalizeContact(result.data.messenger, result.data.contact, parsePhoneNumberFromString);
+  if (!contact) return { error: 'invalid_contact' };
+  if (result.data.messenger === 'whatsapp' && result.data.phoneCountry) {
+    const phone = parsePhoneNumberFromString(contact);
+    if (phone.countryCallingCode !== getCountryCallingCode(result.data.phoneCountry)) return { error: 'invalid_contact' };
+  }
+  return { data: { ...result.data, contact } };
+}
 export function validateLead(body) {
+  if (body?.kind === 'showcase') return validateShowcaseLead(body);
   const result = leadSchema.safeParse(body);
   if (!result.success) return { error: result.error.issues.some(issue => issue.path[0] === 'name') ? 'invalid_name' : 'invalid_request' };
   if (result.data.answers.budgets.includes('dynamic') && !result.data.pricing) return { error: 'invalid_request' };

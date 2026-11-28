@@ -1,7 +1,8 @@
 import { readFile, writeFile, mkdir, copyFile, readdir, stat, rm, cp } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { buildSiteOrigin, renderLanding, renderThankYou, robots, sitemap } from '../server/seo.mjs';
+import { buildSiteOrigin, robots, sitemap } from '../server/seo.mjs';
+import { buildPersiana, persianaPaths } from '../site/build.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const source = path.join(root, 'showcase');
@@ -35,15 +36,16 @@ async function dependencies(relative) {
     if (/\.(?:css|mjs)$/.test(file)) await dependencies(file);
   }
 }
+// Главная и страницы объектов — витрина site/persiana. Прежний лендинг с квизом остаётся на /quiz без индексации.
 for (const [input, target] of [
-  ['index.html', 'index.html'], ['index.html', 'thank-you/index.html'],
-  ['legal/ru-privacy.html', 'privacy/index.html'], ['legal/ru-legal.html', 'legal/index.html'],
+  ['index.html', 'quiz/index.html'],
   ['legal/en-privacy.html', 'en/privacy/index.html'], ['legal/en-legal.html', 'en/legal/index.html']
 ]) {
   const html = await readFile(path.join(source, input), 'utf8');
-  await emit(target, target === 'thank-you/index.html' ? renderThankYou(html) : input === 'index.html' ? renderLanding(html, origin) : html);
+  await emit(target, html);
   await dependencies(input);
 }
+await buildPersiana({ output, origin, source });
 // Лицензии поставляются вместе с используемыми ресурсами.
 for (const file of await readdir(path.join(source, 'assets'))) {
   if (['logo.svg', 'logo-white.svg'].includes(file) || /(?:OFL\.txt|\.LICENSE)$/.test(file)) await copyFile(path.join(source, 'assets', file), path.join(output, 'assets', file));
@@ -57,8 +59,8 @@ await cp(path.join(source, 'assets/hero-gallery'), path.join(output, 'assets/her
 await cp(path.join(source, 'assets/buyer-guide'), path.join(output, 'assets/buyer-guide'), { recursive: true });
 await copyFile(path.join(source, 'favicon.ico'), path.join(output, 'favicon.ico'));
 await emit('robots.txt', robots(origin));
-if (origin) await emit('sitemap.xml', sitemap(origin));
-await emit('404.html', '<!doctype html><html lang="ru"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>Страница не найдена | Spain Property for Sale</title><h1>Страница не найдена</h1><p><a href="/">Перейти на главную Spain Property for Sale</a></p></html>');
+if (origin) await emit('sitemap.xml', sitemap(origin, persianaPaths));
+// 404.html формирует витрина (buildPersiana).
 await emit('_redirects', '/index.html / 301\n/concept-7-warm-travertine.html / 301\n/showcase/concept-7-warm-travertine.html / 301\n/showcase/index.html / 301\n/showcase/ / 301\n');
 // Static Assets may omit Content-Length inside the binding. Supply the exact size
 // of each deployed clip so the media handler can answer Safari's range probe.

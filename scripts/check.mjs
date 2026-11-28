@@ -16,5 +16,5 @@ async function walk(directory) {
     }
   }
 }
-for (const directory of ['cloudflare', 'server', 'scripts', 'tests', 'showcase']) await walk(directory);
+for (const directory of ['cloudflare', 'server', 'scripts', 'tests', 'showcase', 'site']) await walk(directory);
 console.log(`Проверен синтаксис ${count} JavaScript-файлов и встроенных скриптов.`);

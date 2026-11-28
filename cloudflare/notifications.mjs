@@ -2,6 +2,7 @@ import { contactMethodLabel } from '../showcase/assets/contact.mjs';
 import { steps, legacyAnswerLabels } from '../showcase/assets/quiz.config.mjs';
 import { pricingLines, attributionLines, regionLabel } from './pricing-labels.mjs';
 import { z } from 'zod';
+import { isShowcaseLead, showcaseRequest } from '../server/showcase-lead.mjs';
 
 const emailAddress = z.string().email();
 export function notificationRecipients(raw) {
@@ -39,6 +40,18 @@ export function leadMessage(lead, timeZone = 'Asia/Nicosia', format = 'text') {
       'Время: ' + new Intl.DateTimeFormat('ru-RU', { timeZone, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(date),
       'Часовой пояс: ' + (html ? escapeHtml(timeZone) : timeZone)
     ].join('\n');
+  }
+  if (isShowcaseLead(lead)) {
+    const blocks = [
+      'Заявка с сайта Spain Property for Sale',
+      dateAndTime(lead.savedAt),
+      'Имя: ' + value(lead.name) + '\nЯзык: ' + value('Русский'),
+      'Способ связи: ' + value(contactMethodLabel(lead.messenger)) + '\nКонтакт: ' + value(lead.contact),
+      'Запрос: ' + value(showcaseRequest(lead)),
+      ...attributionLines(lead.attribution).map(line => value(line))
+    ];
+    if (format === 'email') return '<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:#1c2445">' + blocks.map(block => '<p style="margin:0 0 16px">' + block.replaceAll('\n', '<br>') + '</p>').join('') + '</div>';
+    return blocks.join('\n\n');
   }
   const labels = { regions: 'Регион Испании', purpose: 'Цель покупки', propertyType: 'Тип объекта', budgets: 'Бюджет', timeline: Object.hasOwn(legacyAnswerLabels, lead.answers.timeline) ? 'Срок покупки' : 'Приезд в Испанию' };
   const answers = steps.map(question => {
